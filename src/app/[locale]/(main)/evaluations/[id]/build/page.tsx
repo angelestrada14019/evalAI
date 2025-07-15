@@ -182,7 +182,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   }, []);
   
   useEffect(() => {
-    if (isMobile === false) { // When switching to desktop
+    if (!isMobile) {
       setIsFabOpen(false);
       setIsElementsSheetOpen(false);
       setIsPropertiesSheetOpen(false);
@@ -370,133 +370,127 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   const activePaletteItem = activeId && activeId.startsWith('palette-') ? questionTypes.find(q => `palette-${q.type}` === activeId) : null;
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="flex flex-col h-screen bg-muted/20">
-        <header className="flex-shrink-0 p-3 md:p-4 border-b bg-card">
-            <div className='flex items-center justify-between flex-wrap gap-4'>
-                <div className="min-w-0 flex-1">
-                  <h1 className="text-lg md:text-xl font-bold truncate">{template.title}</h1>
-                  <p className="text-xs md:text-sm text-muted-foreground truncate">{template.description}</p>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap justify-end">
-                    <Button variant="outline">
-                        <Eye className="mr-0 sm:mr-2 h-4 w-4" /> 
-                        <span className='hidden sm:inline'>{t('preview')}</span>
-                    </Button>
-                    <AIFormulaSuggester />
-                    <Button>
-                        <Save className="mr-0 sm:mr-2 h-4 w-4" />
-                        <span className='hidden sm:inline'>{t('save')}</span>
-                    </Button>
-                </div>
+    <div className='h-screen'>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <div className="flex flex-col h-full bg-muted/20">
+          <header className="flex-shrink-0 p-3 md:p-4 border-b bg-card">
+              <div className='flex items-center justify-between flex-wrap gap-4'>
+                  <div className="min-w-0 flex-1">
+                    <h1 className="text-lg md:text-xl font-bold truncate">{template.title}</h1>
+                    <p className="text-xs md:text-sm text-muted-foreground truncate">{template.description}</p>
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap justify-end">
+                      <Button variant="outline">
+                          <Eye className="mr-0 sm:mr-2 h-4 w-4" /> 
+                          <span className='hidden sm:inline'>{t('preview')}</span>
+                      </Button>
+                      <AIFormulaSuggester />
+                      <Button>
+                          <Save className="mr-0 sm:mr-2 h-4 w-4" />
+                          <span className='hidden sm:inline'>{t('save')}</span>
+                      </Button>
+                  </div>
+              </div>
+          </header>
+
+          <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
+            <div className="hidden lg:block lg:col-span-2 bg-card border-r">
+              <FormElementsPanel />
             </div>
-        </header>
 
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
-          {/* Panel de Elementos (Desktop y Sheet en mobile) */}
-          <div className="hidden lg:block lg:col-span-2 bg-card border-r">
-            <FormElementsPanel />
-          </div>
-
-          {/* Lienzo Principal */}
-          <main id="canvas-droppable" className="lg:col-span-7 py-4 md:py-8 overflow-y-auto">
-             <SortableContext items={template.items.map(i => i.id)} strategy={verticalListSortingStrategy}>
-              <div className="space-y-6 max-w-3xl mx-auto px-4">
-                {template.items.map((item, index) => (
-                  <SortableFormItem
-                    key={item.id}
-                    item={item}
-                    index={index}
-                    selected={selectedQuestion?.id === item.id}
-                    onSelect={() => {
-                      setSelectedQuestion(item);
-                      if (isMobile) setIsPropertiesSheetOpen(true);
-                    }}
-                    onDelete={deleteQuestion}
-                  />
-                ))}
-              </div>
-            </SortableContext>
-            {template.items.length === 0 && (
-              <div className="text-center py-20 border-2 border-dashed rounded-lg text-muted-foreground max-w-3xl mx-auto">
-                <p>{t('noQuestions')}</p>
-                 <p className="text-sm">{t('noQuestionsHint')}</p>
-              </div>
-            )}
-          </main>
-          
-          {/* Panel de Propiedades (Desktop y Sheet en mobile) */}
-          <div className="hidden lg:block lg:col-span-3 bg-card border-l">
-            <PropertiesPanel />
+            <main id="canvas-droppable" className="lg:col-span-7 py-4 md:py-8 overflow-y-auto">
+               <SortableContext items={template.items.map(i => i.id)} strategy={verticalListSortingStrategy}>
+                <div className="space-y-6 max-w-3xl mx-auto px-4">
+                  {template.items.map((item, index) => (
+                    <SortableFormItem
+                      key={item.id}
+                      item={item}
+                      index={index}
+                      selected={selectedQuestion?.id === item.id}
+                      onSelect={() => {
+                        setSelectedQuestion(item);
+                        if (isMobile) setIsPropertiesSheetOpen(true);
+                      }}
+                      onDelete={deleteQuestion}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+              {template.items.length === 0 && (
+                <div className="text-center py-20 border-2 border-dashed rounded-lg text-muted-foreground max-w-3xl mx-auto">
+                  <p>{t('noQuestions')}</p>
+                   <p className="text-sm">{t('noQuestionsHint')}</p>
+                </div>
+              )}
+            </main>
+            
+            <div className="hidden lg:block lg:col-span-3 bg-card border-l">
+              <PropertiesPanel />
+            </div>
           </div>
         </div>
 
-        {/* FAB y Paneles deslizables (Mobile) */}
-        {isMobile && (
-            <div className="fixed bottom-6 right-6 z-50">
-                 <div className="relative flex flex-col-reverse items-center gap-2">
-                    {/* Botones de acción del FAB */}
-                    <div className={cn(
-                        "transition-all duration-300 ease-in-out flex flex-col-reverse items-center gap-2",
-                        isFabOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
-                    )}>
-                        {/* Botón de Propiedades */}
-                        <Button variant="default" size="icon" className="shadow-lg rounded-full h-12 w-12" onClick={() => { setIsPropertiesSheetOpen(true); setIsFabOpen(false); }}>
-                            <Settings2 className="h-6 w-6" />
-                            <span className="sr-only">{t('properties')}</span>
-                        </Button>
-                        {/* Botón de Elementos */}
-                         <Button variant="default" size="icon" className="shadow-lg rounded-full h-12 w-12" onClick={() => { setIsElementsSheetOpen(true); setIsFabOpen(false); }}>
-                            <PanelLeft className="h-6 w-6" />
-                            <span className="sr-only">{t('formElements')}</span>
-                        </Button>
-                    </div>
+        <DragOverlay>
+          {activePaletteItem ? (
+            <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
+              <activePaletteItem.icon className="mr-2 h-4 w-4" />
+              {tq(activePaletteeItem.type as any)}
+            </Button>
+          ) : activeId && template.items.find(i => i.id === activeId) ? (
+              <Card className="p-4 shadow-xl opacity-90">
+                   <p>{template.items.find(i => i.id === activeId)?.label}</p>
+              </Card>
+          ): null}
+        </DragOverlay>
+      </DndContext>
 
-                    {/* Botón principal del FAB */}
-                    <Button 
-                        variant="default" 
-                        size="icon" 
-                        className="shadow-lg rounded-full h-16 w-16 z-10"
-                        onClick={() => setIsFabOpen(prev => !prev)}
-                    >
-                        {isFabOpen ? <X className="h-7 w-7" /> : <PlusCircle className="h-7 w-7" />}
-                    </Button>
-                </div>
+      {isMobile && (
+          <div className="fixed bottom-6 right-6 z-50">
+               <div className="relative flex flex-col-reverse items-center gap-2">
+                  <div className={cn(
+                      "transition-all duration-300 ease-in-out flex flex-col-reverse items-center gap-2",
+                      isFabOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
+                  )}>
+                      <Button variant="default" size="icon" className="shadow-lg rounded-full h-12 w-12" onClick={() => { setIsPropertiesSheetOpen(true); setIsFabOpen(false); }}>
+                          <Settings2 className="h-6 w-6" />
+                          <span className="sr-only">{t('properties')}</span>
+                      </Button>
+                       <Button variant="default" size="icon" className="shadow-lg rounded-full h-12 w-12" onClick={() => { setIsElementsSheetOpen(true); setIsFabOpen(false); }}>
+                          <PanelLeft className="h-6 w-6" />
+                          <span className="sr-only">{t('formElements')}</span>
+                      </Button>
+                  </div>
 
-                {/* Sheet de Elementos */}
-                 <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
-                    <SheetContent side="left" className="p-0 w-[85vw] max-w-sm">
-                      <SheetHeader className="p-4 border-b">
-                        <SheetTitle className="sr-only">{t('formElements')}</SheetTitle>
-                      </SheetHeader>
-                      <FormElementsPanel />
-                    </SheetContent>
-                </Sheet>
-                {/* Sheet de Propiedades */}
-                 <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
-                    <SheetContent side="right" className="p-0 w-[85vw] max-w-sm">
-                      <SheetHeader className="p-4 border-b">
-                        <SheetTitle className="sr-only">{t('properties')}</SheetTitle>
-                      </SheetHeader>
-                      <PropertiesPanel />
-                    </SheetContent>
-                </Sheet>
-            </div>
-        )}
-      </div>
+                  <Button 
+                      variant="default" 
+                      size="icon" 
+                      className="shadow-lg rounded-full h-16 w-16 z-10"
+                      onClick={() => setIsFabOpen(prev => !prev)}
+                  >
+                      {isFabOpen ? <X className="h-7 w-7" /> : <PlusCircle className="h-7 w-7" />}
+                  </Button>
+              </div>
 
-      <DragOverlay>
-        {activePaletteItem ? (
-          <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
-            <activePaletteItem.icon className="mr-2 h-4 w-4" />
-            {tq(activePaletteItem.type as any)}
-          </Button>
-        ) : activeId && template.items.find(i => i.id === activeId) ? (
-            <Card className="p-4 shadow-xl opacity-90">
-                 <p>{template.items.find(i => i.id === activeId)?.label}</p>
-            </Card>
-        ): null}
-      </DragOverlay>
-    </DndContext>
+               <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
+                  <SheetContent side="left" className="p-0 w-[85vw] max-w-sm">
+                    <SheetHeader className="p-4 border-b">
+                      <SheetTitle>{t('formElements')}</SheetTitle>
+                    </SheetHeader>
+                    <FormElementsPanel />
+                  </SheetContent>
+              </Sheet>
+               <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
+                  <SheetContent side="right" className="p-0 w-[85vw] max-w-sm">
+                    <SheetHeader className="p-4 border-b">
+                      <SheetTitle>{t('properties')}</SheetTitle>
+                    </SheetHeader>
+                    <PropertiesPanel />
+                  </SheetContent>
+              </Sheet>
+          </div>
+      )}
+    </div>
   )
 }
+
+    
