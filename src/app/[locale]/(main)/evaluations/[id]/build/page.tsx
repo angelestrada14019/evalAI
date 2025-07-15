@@ -182,10 +182,11 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   }, []);
   
   useEffect(() => {
-    // Reset FAB and sheets on breakpoint change
-    setIsFabOpen(false);
-    setIsElementsSheetOpen(false);
-    setIsPropertiesSheetOpen(false);
+    if (isMobile) {
+      setIsFabOpen(false);
+      setIsElementsSheetOpen(false);
+      setIsPropertiesSheetOpen(false);
+    }
   }, [isMobile]);
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -404,7 +405,10 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                     item={item}
                     index={index}
                     selected={selectedQuestion?.id === item.id}
-                    onSelect={() => setSelectedQuestion(item)}
+                    onSelect={() => {
+                      setSelectedQuestion(item);
+                      if (isMobile) setIsPropertiesSheetOpen(true);
+                    }}
                     onDelete={deleteQuestion}
                   />
                 ))}
@@ -430,7 +434,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                  <div className="relative flex flex-col-reverse items-center gap-2">
                     {/* Botones de acción del FAB */}
                     <div className={cn(
-                        "transition-all duration-300 ease-in-out flex flex-col items-center gap-2",
+                        "transition-all duration-300 ease-in-out flex flex-col-reverse items-center gap-2",
                         isFabOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
                     )}>
                         {/* Botón de Propiedades */}
@@ -460,7 +464,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                  <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
                     <SheetContent side="left" className="p-0 w-[85vw] max-w-sm">
                       <SheetHeader className="p-4 border-b">
-                        <SheetTitle>{t('formElements')}</SheetTitle>
+                        <SheetTitle className="sr-only">Form Elements</SheetTitle>
                       </SheetHeader>
                       <FormElementsPanel />
                     </SheetContent>
@@ -469,7 +473,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                  <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
                     <SheetContent side="right" className="p-0 w-[85vw] max-w-sm">
                       <SheetHeader className="p-4 border-b">
-                        <SheetTitle>{t('properties')}</SheetTitle>
+                        <SheetTitle className="sr-only">Properties</SheetTitle>
                       </SheetHeader>
                       <PropertiesPanel />
                     </SheetContent>
@@ -493,3 +497,5 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     </DndContext>
   )
 }
+
+    
