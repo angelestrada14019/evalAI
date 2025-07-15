@@ -31,5 +31,84 @@
     "settings": "Configuración",
     "support": "Soporte",
     "logout": "Cerrar Sesión"
+  },
+  "DashboardPage": {
+    "title": "Panel de Control",
+    "newEvaluationButton": "Nueva Evaluación",
+    "totalEvaluations": "Evaluaciones Totales",
+    "avgScore": "Puntaje Prom.",
+    "activeForms": "Formularios Activos",
+    "responseRate": "Tasa de Respuesta",
+    "overview": "Resumen General",
+    "recentEvaluations": "Evaluaciones Recientes",
+    "recentEvaluationsDescription": "Tuviste {count} evaluaciones este mes."
+  },
+  "RecentEvaluations": {
+    "title": "Evaluaciones Recientes",
+    "description": "Tuviste {count} evaluaciones este mes."
+  },
+  "FormBuilderPage": {
+    "preview": "Vista Previa",
+    "save": "Guardar",
+    "formElements": "Elementos de Formulario",
+    "properties": "Propiedades",
+    "newQuestionLabel": "Nueva Pregunta de {type}",
+    "noQuestions": "Aún no hay preguntas.",
+    "noQuestionsHint": "Arrastra elementos del panel izquierdo para empezar a construir.",
+    "questionText": "Texto de la Pregunta",
+    "options": "Opciones",
+    "addOption": "Añadir Opción",
+    "required": "Obligatorio",
+    "selectQuestion": "Selecciona una pregunta para ver sus propiedades."
+  },
+  "ReportsPage": {
+    "title": "Reportes",
+    "generateReportButton": "Generar Nuevo Reporte",
+    "tableTitle": "Título del Reporte",
+    "tableType": "Tipo",
+    "tableDate": "Fecha",
+    "tableStatus": "Estado",
+    "tableActions": "Acciones",
+    "viewAction": "Ver",
+    "downloadAction": "Descargar PDF",
+    "deleteAction": "Eliminar"
+  },
+  "SettingsNav": {
+    "profile": "Perfil",
+    "team": "Equipo",
+    "workspace": "Espacio de Trabajo",
+    "billing": "Facturación"
+  },
+  "SettingsPage": {
+    "title": "Configuración",
+    "description": "Gestiona la configuración de tu cuenta y espacio de trabajo.",
+    "comingSoonTitle": "Próximamente",
+    "comingSoonDescription": "Esta página de configuración está en construcción."
+  },
+  "TeamSettingsPage": {
+    "title": "Miembros del Equipo",
+    "description": "Invita y gestiona los miembros de tu equipo.",
+    "inviteButton": "Invitar Miembro",
+    "tableMember": "Miembro",
+    "tableRole": "Rol",
+    "tableActions": "Acciones",
+    "editRoleAction": "Editar rol",
+    "removeAction": "Eliminar del equipo"
+  },
+  "Sidebar": {
+    "dashboard": "Panel de Control",
+    "evaluations": "Evaluaciones",
+    "reports": "Reportes",
+    "settings": "Configuración",
+    "newEvaluation": "Nueva Evaluación"
+  },
+  "QuestionTypes": {
+    "Multiple Choice": "Opción Múltiple",
+    "Text Input": "Entrada de Texto",
+    "Slider": "Deslizador",
+    "Rating Scale": "Escala de Puntuación",
+    "Image Choice": "Elección de Imagen",
+    "Matrix Table": "Tabla de Matriz",
+    "File Upload": "Subida de Archivo"
   }
 }

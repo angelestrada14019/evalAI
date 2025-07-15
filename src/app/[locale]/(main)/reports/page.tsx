@@ -1,4 +1,5 @@
-import Link from 'next/link'
+
+import { Link } from '@/navigation'
 import {
   Table,
   TableBody,
@@ -16,6 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { getTranslations } from 'next-intl/server'
 
 const reports = [
   { id: 'REP-001', title: 'Q1 2024 Engineering Performance', date: '2024-04-05', type: 'Aggregate', status: 'Completed' },
@@ -25,13 +27,15 @@ const reports = [
   { id: 'REP-005', title: 'Jane Smith - Onboarding Evaluation', date: '2024-03-12', type: 'Individual', status: 'Completed' },
 ]
 
-export default function ReportsPage() {
+export default async function ReportsPage() {
+  const t = await getTranslations('ReportsPage');
+
   return (
     <div className="container mx-auto py-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Reports</h1>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
         <Button>
-          <FileDown className="mr-2 h-4 w-4" /> Generate New Report
+          <FileDown className="mr-2 h-4 w-4" /> {t('generateReportButton')}
         </Button>
       </div>
 
@@ -39,11 +43,11 @@ export default function ReportsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Report Title</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t('tableTitle')}</TableHead>
+              <TableHead>{t('tableType')}</TableHead>
+              <TableHead>{t('tableDate')}</TableHead>
+              <TableHead>{t('tableStatus')}</TableHead>
+              <TableHead className="text-right">{t('tableActions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -69,9 +73,9 @@ export default function ReportsPage() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild><Link href={`/reports/${report.id}`}>View</Link></DropdownMenuItem>
-                      <DropdownMenuItem>Download PDF</DropdownMenuItem>
-                      <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                      <DropdownMenuItem asChild><Link href={`/reports/${report.id}`}>{t('viewAction')}</Link></DropdownMenuItem>
+                      <DropdownMenuItem>{t('downloadAction')}</DropdownMenuItem>
+                      <DropdownMenuItem className="text-destructive">{t('deleteAction')}</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

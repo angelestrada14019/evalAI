@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Eye, GripVertical, Save, Trash2, ListChecks, Pilcrow, SlidersHorizontal, Star, Image as ImageIcon, Table, Upload, PlusCircle } from "lucide-react"
 import { AIFormulaSuggester } from "@/components/evaluations/ai-formula-suggester"
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 const iconMap: { [key: string]: React.ElementType } = {
   "Multiple Choice": ListChecks,
@@ -53,12 +54,13 @@ interface FormTemplate {
 
 function DraggablePaletteItem({ type, icon: Icon }: { type: string, icon: React.ElementType }) {
   const { attributes, listeners, setNodeRef, isDragging } = useSortable({ id: `palette-${type}` });
+  const t = useTranslations('QuestionTypes');
 
   return (
     <div ref={setNodeRef} {...attributes} {...listeners}>
       <Button variant="ghost" className={cn("w-full justify-start cursor-grab", isDragging && "opacity-50")}>
         <Icon className="mr-2 h-4 w-4 text-muted-foreground" />
-        {type}
+        {t(type as any)}
       </Button>
     </div>
   )
@@ -66,6 +68,7 @@ function DraggablePaletteItem({ type, icon: Icon }: { type: string, icon: React.
 
 function SortableFormItem({ item, index, selected, onSelect, onDelete }: { item: FormItem, index: number, selected: boolean, onSelect: () => void, onDelete: (id: string) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
+  const t = useTranslations('QuestionTypes');
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -88,8 +91,8 @@ function SortableFormItem({ item, index, selected, onSelect, onDelete }: { item:
           <GripVertical className="h-5 w-5 text-muted-foreground mt-1" />
         </div>
         <div className="flex-1">
-          <p className="text-sm text-muted-foreground">{index + 1}. {item.type}</p>
-          <p className="font-semibold">{item.label || "New Question"}</p>
+          <p className="text-sm text-muted-foreground">{index + 1}. {t(item.type as any)}</p>
+          <p className="font-semibold">{item.label}</p>
           {item.type === 'Multiple Choice' && item.options && (
             <div className="space-y-2 mt-2 text-sm">
               {item.options.map((opt, i) => (
@@ -119,7 +122,9 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   const [template, setTemplate] = useState<FormTemplate | null>(null);
   const [selectedQuestion, setSelectedQuestion] = useState<FormItem | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
-  
+  const t = useTranslations('FormBuilderPage');
+  const tq = useTranslations('QuestionTypes');
+
   const sensors = useSensors(useSensor(PointerSensor));
 
   useEffect(() => {
@@ -149,13 +154,12 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     setActiveId(null);
     if (!over || !template) return;
 
-    // Handling adding new item from palette
     if (active.id.toString().startsWith('palette-') && over.id === 'canvas-droppable') {
         const type = active.id.toString().replace('palette-', '');
         const newItem: FormItem = {
             id: uuidv4(),
             type: type,
-            label: `New ${type} Question`,
+            label: t('newQuestionLabel', { type: tq(type as any) }),
             required: false,
             ...(type === 'Multiple Choice' && { options: ['Option 1', 'Option 2'] })
         };
@@ -165,7 +169,6 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         return;
     }
 
-    // Handling reordering items on canvas
     if (active.id !== over.id && !active.id.toString().startsWith('palette-')) {
         const oldIndex = template.items.findIndex(item => item.id === active.id);
         const newIndex = template.items.findIndex(item => item.id === over.id);
@@ -200,24 +203,6 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     }
   };
 
-  const updateOption = (questionId: string, optionIndex: number, newValue: string) => {
-      if (!template) return;
-      const newItems = template.items.map(item => {
-          if (item.id === questionId && item.options) {
-              const newOptions = [...item.options];
-              newOptions[optionIndex] = newValue;
-              return { ...item, options: newOptions };
-          }
-          return item;
-      });
-      setTemplate({ ...template, items: newItems });
-      if (selectedQuestion?.id === questionId) {
-        const newSelOptions = [...(selectedQuestion.options || [])];
-        newSelOptions[optionIndex] = newValue;
-        setSelectedQuestion(prev => prev ? { ...prev, options: newSelOptions } : null);
-    }
-  };
-
   const deleteQuestion = (id: string) => {
     if (!template) return;
     const newItems = template.items.filter(item => item.id !== id);
@@ -242,15 +227,14 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             <p className="text-sm text-muted-foreground">{template.description}</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline"><Eye className="mr-2 h-4 w-4" /> Preview</Button>
+            <Button variant="outline"><Eye className="mr-2 h-4 w-4" /> {t('preview')}</Button>
             <AIFormulaSuggester />
-            <Button><Save className="mr-2 h-4 w-4" /> Save</Button>
+            <Button><Save className="mr-2 h-4 w-4" /> {t('save')}</Button>
           </div>
         </header>
         <div className="flex-1 grid grid-cols-1 md:grid-cols-12 overflow-hidden">
-          {/* Question Palette */}
           <aside className="md:col-span-2 border-r p-4 bg-card">
-            <h2 className="text-lg font-semibold mb-4">Form Elements</h2>
+            <h2 className="text-lg font-semibold mb-4">{t('formElements')}</h2>
             <SortableContext items={questionTypes.map(q => `palette-${q.type}`)} strategy={verticalListSortingStrategy}>
                 <div className="space-y-2">
                     {questionTypes.map((q) => <DraggablePaletteItem key={q.type} type={q.type} icon={q.icon} />)}
@@ -258,7 +242,6 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             </SortableContext>
           </aside>
 
-          {/* Form Canvas */}
           <main id="canvas-droppable" className="md:col-span-7 p-8 overflow-y-auto bg-secondary/50">
              <SortableContext items={template.items.map(i => i.id)} strategy={verticalListSortingStrategy}>
               <div className="space-y-6">
@@ -276,40 +259,40 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             </SortableContext>
             {template.items.length === 0 && (
               <div className="text-center py-20 border-2 border-dashed rounded-lg text-muted-foreground">
-                <p>Drag elements from the left panel to start building.</p>
+                <p>{t('noQuestions')}</p>
+                 <p className="text-sm">{t('noQuestionsHint')}</p>
               </div>
             )}
           </main>
 
-          {/* Properties Panel */}
           <aside className="md:col-span-3 border-l p-4 bg-card overflow-y-auto">
-            <h2 className="text-lg font-semibold mb-4">Properties</h2>
+            <h2 className="text-lg font-semibold mb-4">{t('properties')}</h2>
             {selectedQuestion ? (
               <Card>
-                <CardHeader><CardTitle className="text-base">{selectedQuestion.type}</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="text-base">{tq(selectedQuestion.type as any)}</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="question-text">Question Text</Label>
+                    <Label htmlFor="question-text">{t('questionText')}</Label>
                     <Input id="question-text" value={selectedQuestion.label} onChange={(e) => updateQuestion(selectedQuestion.id, { label: e.target.value })} />
                   </div>
                   {selectedQuestion.type === 'Multiple Choice' && (
                     <div className="space-y-2">
-                      <Label>Options</Label>
+                      <Label>{t('options')}</Label>
                       {selectedQuestion.options?.map((opt, i) => (
                         <Input key={i} value={opt} onChange={(e) => updateQuestion(selectedQuestion.id, { options: selectedQuestion.options?.map((o, idx) => idx === i ? e.target.value : o) })} />
                       ))}
-                      <Button variant="outline" size="sm" className="w-full" onClick={() => addOption(selectedQuestion.id)}><PlusCircle className="mr-2 h-4 w-4" />Add Option</Button>
+                      <Button variant="outline" size="sm" className="w-full" onClick={() => addOption(selectedQuestion.id)}><PlusCircle className="mr-2 h-4 w-4" />{t('addOption')}</Button>
                     </div>
                   )}
                   <div className="flex items-center justify-between pt-4 border-t">
-                    <Label htmlFor="required-switch">Required</Label>
+                    <Label htmlFor="required-switch">{t('required')}</Label>
                     <Switch id="required-switch" checked={selectedQuestion.required} onCheckedChange={(checked) => updateQuestion(selectedQuestion.id, { required: checked })} />
                   </div>
                 </CardContent>
               </Card>
             ) : (
               <div className="text-center py-12 text-muted-foreground">
-                <p>Select a question to see its properties.</p>
+                <p>{t('selectQuestion')}</p>
               </div>
             )}
           </aside>
@@ -319,7 +302,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         {activePaletteItem ? (
           <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
             <activePaletteItem.icon className="mr-2 h-4 w-4" />
-            {activePaletteItem.type}
+            {tq(activePaletteItem.type as any)}
           </Button>
         ) : activeId && template.items.find(i => i.id === activeId) ? (
             <Card className="p-4 shadow-xl opacity-90">

@@ -1,7 +1,7 @@
+
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { Link, usePathname } from '@/navigation'
 import { Home, FileText, BarChart2, Settings, LifeBuoy, PackagePlus } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -13,22 +13,27 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-
-const navItems = [
-  { href: '/dashboard', icon: Home, label: 'Dashboard' },
-  { href: '/evaluations', icon: FileText, label: 'Evaluations' },
-  { href: '/reports', icon: BarChart2, label: 'Reports' },
-]
-
-const bottomNavItems = [
-  { href: '/settings', icon: Settings, label: 'Settings' },
-]
+import { useTranslations } from 'next-intl'
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const t = useTranslations('Sidebar');
+
+  const navItems = [
+    { href: '/dashboard', icon: Home, label: t('dashboard') },
+    { href: '/evaluations', icon: FileText, label: t('evaluations') },
+    { href: '/reports', icon: BarChart2, label: t('reports') },
+  ]
+
+  const bottomNavItems = [
+    { href: '/settings', icon: Settings, label: t('settings') },
+  ]
+
 
   const isNavItemActive = (href: string) => {
-    return pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
+    // Exact match for dashboard, startsWith for others
+    if (href === '/dashboard') return pathname === href
+    return pathname.startsWith(href)
   }
 
   return (
@@ -60,7 +65,7 @@ export function AppSidebar() {
           <Button asChild className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
             <Link href="/evaluations/new">
               <PackagePlus className="mr-2 h-4 w-4" />
-              New Evaluation
+              {t('newEvaluation')}
             </Link>
           </Button>
         </div>

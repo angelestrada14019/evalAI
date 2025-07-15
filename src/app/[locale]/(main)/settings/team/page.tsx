@@ -1,3 +1,4 @@
+
 import { SettingsNav } from '@/components/settings/settings-nav'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,6 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { getTranslations } from 'next-intl/server'
 
 const teamMembers = [
   { name: 'Alice Johnson', email: 'alice@acme.com', role: 'Admin', fallback: 'AJ' },
@@ -19,12 +21,15 @@ const teamMembers = [
   { name: 'Diana Prince', email: 'diana@acme.com', role: 'Participant', fallback: 'DP' },
 ]
 
-export default function TeamSettingsPage() {
+export default async function TeamSettingsPage() {
+  const t = await getTranslations('TeamSettingsPage');
+  const ts = await getTranslations('SettingsPage');
+
   return (
     <div className="container mx-auto py-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">Manage your account and workspace settings.</p>
+        <h1 className="text-3xl font-bold">{ts('title')}</h1>
+        <p className="text-muted-foreground">{ts('description')}</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="md:col-span-1">
@@ -34,12 +39,12 @@ export default function TeamSettingsPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                    <CardTitle>Team Members</CardTitle>
-                    <CardDescription>Invite and manage your team members.</CardDescription>
+                    <CardTitle>{t('title')}</CardTitle>
+                    <CardDescription>{t('description')}</CardDescription>
                 </div>
                 <Button>
                     <UserPlus className="mr-2 h-4 w-4" />
-                    Invite Member
+                    {t('inviteButton')}
                 </Button>
             </CardHeader>
             <CardContent>
@@ -47,9 +52,9 @@ export default function TeamSettingsPage() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Member</TableHead>
-                            <TableHead>Role</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>{t('tableMember')}</TableHead>
+                            <TableHead>{t('tableRole')}</TableHead>
+                            <TableHead className="text-right">{t('tableActions')}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -78,8 +83,8 @@ export default function TeamSettingsPage() {
                                         </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                        <DropdownMenuItem>Edit role</DropdownMenuItem>
-                                        <DropdownMenuItem className="text-destructive">Remove from team</DropdownMenuItem>
+                                        <DropdownMenuItem>{t('editRoleAction')}</DropdownMenuItem>
+                                        <DropdownMenuItem className="text-destructive">{t('removeAction')}</DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>

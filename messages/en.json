@@ -31,5 +31,84 @@
     "settings": "Settings",
     "support": "Support",
     "logout": "Logout"
+  },
+  "DashboardPage": {
+    "title": "Dashboard",
+    "newEvaluationButton": "New Evaluation",
+    "totalEvaluations": "Total Evaluations",
+    "avgScore": "Avg. Score",
+    "activeForms": "Active Forms",
+    "responseRate": "Response Rate",
+    "overview": "Overview",
+    "recentEvaluations": "Recent Evaluations",
+    "recentEvaluationsDescription": "You had {count} evaluations this month."
+  },
+  "RecentEvaluations": {
+    "title": "Recent Evaluations",
+    "description": "You had {count} evaluations this month."
+  },
+  "FormBuilderPage": {
+    "preview": "Preview",
+    "save": "Save",
+    "formElements": "Form Elements",
+    "properties": "Properties",
+    "newQuestionLabel": "New {type} Question",
+    "noQuestions": "No questions yet.",
+    "noQuestionsHint": "Drag elements from the left panel to start building.",
+    "questionText": "Question Text",
+    "options": "Options",
+    "addOption": "Add Option",
+    "required": "Required",
+    "selectQuestion": "Select a question to see its properties."
+  },
+  "ReportsPage": {
+    "title": "Reports",
+    "generateReportButton": "Generate New Report",
+    "tableTitle": "Report Title",
+    "tableType": "Type",
+    "tableDate": "Date",
+    "tableStatus": "Status",
+    "tableActions": "Actions",
+    "viewAction": "View",
+    "downloadAction": "Download PDF",
+    "deleteAction": "Delete"
+  },
+  "SettingsNav": {
+    "profile": "Profile",
+    "team": "Team",
+    "workspace": "Workspace",
+    "billing": "Billing"
+  },
+  "SettingsPage": {
+    "title": "Settings",
+    "description": "Manage your account and workspace settings.",
+    "comingSoonTitle": "Coming Soon",
+    "comingSoonDescription": "This settings page is under construction."
+  },
+  "TeamSettingsPage": {
+    "title": "Team Members",
+    "description": "Invite and manage your team members.",
+    "inviteButton": "Invite Member",
+    "tableMember": "Member",
+    "tableRole": "Role",
+    "tableActions": "Actions",
+    "editRoleAction": "Edit role",
+    "removeAction": "Remove from team"
+  },
+  "Sidebar": {
+    "dashboard": "Dashboard",
+    "evaluations": "Evaluations",
+    "reports": "Reports",
+    "settings": "Settings",
+    "newEvaluation": "New Evaluation"
+  },
+  "QuestionTypes": {
+    "Multiple Choice": "Multiple Choice",
+    "Text Input": "Text Input",
+    "Slider": "Slider",
+    "Rating Scale": "Rating Scale",
+    "Image Choice": "Image Choice",
+    "Matrix Table": "Matrix Table",
+    "File Upload": "File Upload"
   }
 }
