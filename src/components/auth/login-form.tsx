@@ -17,26 +17,39 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-
-const formSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email.' }),
-  password: z.string().min(1, { message: 'Password is required.' }),
-})
+import { useToast } from '@/hooks/use-toast'
+import { auth } from '@/services/auth/auth'
+import { LoginInputSchema } from '@/services/auth/types'
 
 export function LoginForm() {
   const router = useRouter()
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const { toast } = useToast()
+  
+  const form = useForm<z.infer<typeof LoginInputSchema>>({
+    resolver: zodResolver(LoginInputSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    // Here you would typically handle authentication
-    router.push('/dashboard')
+  async function onSubmit(values: z.infer<typeof LoginInputSchema>) {
+    try {
+      const result = await auth().login(values)
+      console.log('Login successful for:', result.user.email)
+      toast({
+        title: `Welcome back, ${result.user.name}!`,
+      });
+      router.push('/dashboard')
+    } catch (error) {
+      console.error(error)
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      toast({
+        variant: 'destructive',
+        title: 'Login Failed',
+        description: errorMessage,
+      })
+    }
   }
 
   return (
@@ -55,7 +68,7 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="name@example.com" {...field} />
+                    <Input placeholder="alice@example.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -74,8 +87,8 @@ export function LoginForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
-              Sign In
+            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? 'Signing In...' : 'Sign In'}
             </Button>
           </form>
         </Form>

@@ -17,17 +17,17 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { useToast } from '@/hooks/use-toast'
+import { auth } from '@/services/auth/auth'
+import { SignUpInputSchema } from '@/services/auth/types'
 
-const formSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  email: z.string().email({ message: 'Please enter a valid email.' }),
-  password: z.string().min(8, { message: 'Password must be at least 8 characters.' }),
-})
 
 export function SignUpForm() {
   const router = useRouter()
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const { toast } = useToast()
+  
+  const form = useForm<z.infer<typeof SignUpInputSchema>>({
+    resolver: zodResolver(SignUpInputSchema),
     defaultValues: {
       name: '',
       email: '',
@@ -35,10 +35,24 @@ export function SignUpForm() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    // Here you would typically handle user registration
-    router.push('/dashboard')
+  async function onSubmit(values: z.infer<typeof SignUpInputSchema>) {
+    try {
+      const result = await auth().signup(values)
+      console.log('Signup successful for:', result.user.email)
+      toast({
+        title: `Account created for ${result.user.name}!`,
+        description: "You are now logged in.",
+      });
+      router.push('/dashboard')
+    } catch (error) {
+      console.error(error)
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      toast({
+        variant: 'destructive',
+        title: 'Sign Up Failed',
+        description: errorMessage,
+      })
+    }
   }
 
   return (
@@ -89,8 +103,8 @@ export function SignUpForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
-              Create Account
+            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? 'Creating Account...' : 'Create Account'}
             </Button>
           </form>
         </Form>

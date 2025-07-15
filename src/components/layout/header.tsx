@@ -1,4 +1,8 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link'
+import { useRouter } from 'next/navigation';
 import {
   Bell,
   ChevronsUpDown,
@@ -21,9 +25,43 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { AppLogo } from '@/components/icons'
+import { auth } from '@/services/auth/auth';
+import type { User } from '@/services/auth/types';
+import { Skeleton } from '../ui/skeleton';
 
 export function AppHeader() {
+  const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const { user: currentUser } = await auth().getCurrentUser();
+        setUser(currentUser);
+      } catch (error) {
+        console.error("Failed to fetch user", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const handleLogout = async () => {
+    await auth().logout();
+    router.push('/login');
+  };
+  
+  const getFallback = (name?: string) => {
+    if (!name) return 'U';
+    const parts = name.split(' ');
+    if (parts.length > 1) {
+      return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  }
+
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-card px-4 md:px-6">
       <div className="flex items-center gap-4">
@@ -83,22 +121,26 @@ export function AppHeader() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full">
-              <Avatar className="h-9 w-9">
-                <AvatarImage src="https://placehold.co/100x100.png" alt="@shadcn" data-ai-hint="person" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
+              {isLoading ? (
+                <Skeleton className="h-9 w-9 rounded-full" />
+              ) : (
+                <Avatar className="h-9 w-9">
+                  <AvatarImage src={user?.avatarUrl} alt={user?.name} data-ai-hint="person" />
+                  <AvatarFallback>{getFallback(user?.name)}</AvatarFallback>
+                </Avatar>
+              )}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{user?.name || 'My Account'}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Link href="/settings" className="w-full">Settings</Link>
+            <DropdownMenuItem asChild>
+              <Link href="/settings">Settings</Link>
             </DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Link href="/login">Logout</Link>
+            <DropdownMenuItem onClick={handleLogout}>
+              Logout
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

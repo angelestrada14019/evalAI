@@ -6,9 +6,9 @@ export const systemConfig = {
   auth: {
     /**
      * The active authentication provider.
-     * @type {'supabase' | 'keycloak' | 'azure_b2c' | 'auth0' | 'custom'}
+     * @type {'mock' | 'supabase' | 'keycloak' | 'b2c'}
      */
-    provider: 'custom',
+    provider: 'mock',
   },
   ai: {
     /**
@@ -27,9 +27,9 @@ export const systemConfig = {
   backend: {
     /**
      * The active data backend provider.
-     * @type {'supabase' | 'rest'}
+     * @type {'mock' | 'supabase' | 'rest'}
      */
-    provider: 'supabase',
+    provider: 'mock',
   }
 };
 

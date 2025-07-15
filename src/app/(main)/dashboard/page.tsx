@@ -4,8 +4,27 @@ import { ArrowUpRight, DollarSign, Users, CreditCard, Activity, PackagePlus } fr
 import Link from 'next/link'
 import { OverviewChart } from '@/components/dashboard/overview-chart'
 import { RecentEvaluations } from '@/components/dashboard/recent-evaluations'
+import { backend } from '@/services/backend/backend'
+import { DashboardStats } from '@/services/backend/types'
 
-export default function DashboardPage() {
+async function StatsCard({ title, icon: Icon, value, change }: { title: string, icon: React.ElementType, value: string | number, change: string }) {
+  return (
+     <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          <Icon className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{value}</div>
+          <p className="text-xs text-muted-foreground">{change}</p>
+        </CardContent>
+      </Card>
+  )
+}
+
+export default async function DashboardPage() {
+  const stats: DashboardStats = await backend().getDashboardStats();
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -19,60 +38,10 @@ export default function DashboardPage() {
       </div>
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Evaluations
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1,257</div>
-            <p className="text-xs text-muted-foreground">
-              +20.1% from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Avg. Score
-            </CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">82.4</div>
-            <p className="text-xs text-muted-foreground">
-              +2.1 from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Forms</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">
-              +2 since last week
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Response Rate
-            </CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">94%</div>
-            <p className="text-xs text-muted-foreground">
-              -1.2% from last month
-            </p>
-          </CardContent>
-        </Card>
+        <StatsCard title="Total Evaluations" icon={Users} value={stats.totalEvaluations.value} change={stats.totalEvaluations.change} />
+        <StatsCard title="Avg. Score" icon={Activity} value={stats.avgScore.value} change={stats.avgScore.change} />
+        <StatsCard title="Active Forms" icon={CreditCard} value={stats.activeForms.value} change={stats.activeForms.change} />
+        <StatsCard title="Response Rate" icon={DollarSign} value={stats.responseRate.value} change={stats.responseRate.change} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-7">
