@@ -36,5 +36,3 @@ export function BuilderHeader({ title, description }: BuilderHeaderProps) {
         </header>
     )
 }
-
-    
