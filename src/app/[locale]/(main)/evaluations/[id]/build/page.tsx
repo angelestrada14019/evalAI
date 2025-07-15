@@ -182,7 +182,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   }, []);
   
   useEffect(() => {
-    if (isMobile) {
+    if (isMobile === false) { // When switching to desktop
       setIsFabOpen(false);
       setIsElementsSheetOpen(false);
       setIsPropertiesSheetOpen(false);
@@ -212,7 +212,10 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         const updatedItems = [...template.items, newItem];
         setTemplate({ ...template, items: updatedItems });
         setSelectedQuestion(newItem);
-        setIsElementsSheetOpen(false); // Close sheet on mobile after dropping
+        if (isMobile) {
+            setIsElementsSheetOpen(false); // Close sheet on mobile after dropping
+            setIsPropertiesSheetOpen(true);
+        }
         return;
     }
 
@@ -368,7 +371,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="flex flex-col min-h-screen bg-muted/20">
+      <div className="flex flex-col h-screen bg-muted/20">
         <header className="flex-shrink-0 p-3 md:p-4 border-b bg-card">
             <div className='flex items-center justify-between flex-wrap gap-4'>
                 <div className="min-w-0 flex-1">
@@ -464,7 +467,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                  <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
                     <SheetContent side="left" className="p-0 w-[85vw] max-w-sm">
                       <SheetHeader className="p-4 border-b">
-                        <SheetTitle className="sr-only">Form Elements</SheetTitle>
+                        <SheetTitle className="sr-only">{t('formElements')}</SheetTitle>
                       </SheetHeader>
                       <FormElementsPanel />
                     </SheetContent>
@@ -473,7 +476,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                  <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
                     <SheetContent side="right" className="p-0 w-[85vw] max-w-sm">
                       <SheetHeader className="p-4 border-b">
-                        <SheetTitle className="sr-only">Properties</SheetTitle>
+                        <SheetTitle className="sr-only">{t('properties')}</SheetTitle>
                       </SheetHeader>
                       <PropertiesPanel />
                     </SheetContent>
@@ -497,5 +500,3 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     </DndContext>
   )
 }
-
-    
