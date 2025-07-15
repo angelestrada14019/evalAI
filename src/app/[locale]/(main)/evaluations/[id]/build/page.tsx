@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import { Eye, GripVertical, Save, Trash2, ListChecks, Pilcrow, SlidersHorizontal, Star, Image as ImageIcon, Table, Upload, PlusCircle, PanelLeft, Settings2, ImagePlus } from "lucide-react"
+import { Eye, GripVertical, Save, Trash2, ListChecks, Pilcrow, SlidersHorizontal, Star, Image as ImageIcon, Table, Upload, PlusCircle, PanelLeft, Settings2, ImagePlus, Heading1 } from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { AIFormulaSuggester } from "@/components/evaluations/ai-formula-suggester"
 import { cn } from '@/lib/utils'
@@ -30,6 +30,7 @@ const iconMap: { [key: string]: React.ElementType } = {
   "Image Choice": ImageIcon,
   "Matrix Table": Table,
   "File Upload": Upload,
+  "Section Header": Heading1,
 }
 
 const questionTypes = [
@@ -40,6 +41,7 @@ const questionTypes = [
   { type: "Image Choice", icon: ImageIcon },
   { type: "Matrix Table", icon: Table },
   { type: "File Upload", icon: Upload },
+  { type: "Section Header", icon: Heading1 },
 ]
 
 interface FormItem {
@@ -84,6 +86,18 @@ function SortableFormItem({ item, index, selected, onSelect, onDelete }: { item:
   if (isDragging) {
     return <Card ref={setNodeRef} style={style} className="p-4 h-32 bg-primary/10 border-primary border-dashed" />;
   }
+
+  if (item.type === 'Section Header') {
+    return (
+      <div ref={setNodeRef} style={style} className="flex items-center gap-4 py-2" onClick={onSelect}>
+         <div {...attributes} {...listeners} className="cursor-grab touch-none">
+          <GripVertical className="h-5 w-5 text-muted-foreground" />
+        </div>
+        <h3 className="text-xl font-bold flex-1">{item.label}</h3>
+        <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onDelete(item.id); }}><Trash2 className="h-4 w-4 text-muted-foreground" /></Button>
+      </div>
+    )
+  }
   
   return (
     <Card
@@ -110,6 +124,11 @@ function SortableFormItem({ item, index, selected, onSelect, onDelete }: { item:
                 <div key={i} className="flex items-center gap-2"><div className="w-4 h-4 rounded-full border"></div><span>{opt}</span></div>
               ))}
             </div>
+          )}
+           {item.type === 'Rating Scale' && (
+             <div className="flex gap-2 mt-2">
+                {[1,2,3,4,5].map(i => <Star key={i} className="text-muted-foreground/50"/>)}
+             </div>
           )}
           {item.type === 'Text Input' && (
             <Textarea placeholder="User will type their answer here..." className="mt-2" disabled />
@@ -143,6 +162,9 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   const t = useTranslations('FormBuilderPage');
   const tq = useTranslations('QuestionTypes');
   const isMobile = useIsMobile();
+  const [isElementsSheetOpen, setIsElementsSheetOpen] = useState(false);
+  const [isPropertiesSheetOpen, setIsPropertiesSheetOpen] = useState(false);
+
 
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -163,6 +185,14 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
       setTemplate({ title: "New Evaluation", description: "Start building your form.", items: [] });
     }
   }, []);
+
+  useEffect(() => {
+    if (selectedQuestion) {
+        if (isMobile) {
+            setIsPropertiesSheetOpen(true);
+        }
+    }
+  }, [selectedQuestion, isMobile]);
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
@@ -271,55 +301,59 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             <CardHeader><CardTitle className="text-base">{tq(selectedQuestion.type as any)}</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="question-text">{t('questionText')}</Label>
+                <Label htmlFor="question-text">{selectedQuestion.type === 'Section Header' ? 'Section Title' : t('questionText')}</Label>
                 <Textarea id="question-text" value={selectedQuestion.label} onChange={(e) => updateQuestion(selectedQuestion.id, { label: e.target.value })} />
               </div>
-               <div className="space-y-2">
-                  <Label>Image</Label>
-                   <Button variant="outline" size="sm" className="w-full" onClick={() => updateQuestion(selectedQuestion.id, {imageUrl: `https://placehold.co/600x400.png?text=${selectedQuestion.id.substring(0,4)}` })}>
-                      <ImagePlus className="mr-2 h-4 w-4" /> Add/Change Image
-                  </Button>
-                  {selectedQuestion.imageUrl && (
-                      <Button variant="link" size="sm" className="w-full text-destructive" onClick={() => updateQuestion(selectedQuestion.id, {imageUrl: null})}>
-                          Remove Image
+              {selectedQuestion.type !== 'Section Header' && (
+                <>
+                  <div className="space-y-2">
+                      <Label>Image</Label>
+                       <Button variant="outline" size="sm" className="w-full" onClick={() => updateQuestion(selectedQuestion.id, {imageUrl: `https://placehold.co/600x400.png?text=${selectedQuestion.id.substring(0,4)}` })}>
+                          <ImagePlus className="mr-2 h-4 w-4" /> Add/Change Image
                       </Button>
-                  )}
-              </div>
-              {selectedQuestion.type === 'Multiple Choice' && (
-                <div className="space-y-2">
-                  <Label>{t('options')}</Label>
-                  {selectedQuestion.options?.map((opt, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                        <Input value={opt} onChange={(e) => updateQuestion(selectedQuestion.id, { options: selectedQuestion.options?.map((o, idx) => idx === i ? e.target.value : o) })} />
-                        <Button variant="ghost" size="icon" onClick={() => deleteOption(selectedQuestion.id, i)}><Trash2 className="h-4 w-4 text-muted-foreground"/></Button>
-                    </div>
-                  ))}
-                  <Button variant="outline" size="sm" className="w-full" onClick={() => addOption(selectedQuestion.id)}><PlusCircle className="mr-2 h-4 w-4" />{t('addOption')}</Button>
-                </div>
-              )}
-              {selectedQuestion.type === 'Slider' && (
-                <div className="space-y-4">
-                  <Label>Slider Configuration</Label>
-                  <div className='flex items-center gap-2'>
-                    <div className='flex-1 space-y-1'>
-                      <Label htmlFor="slider-min" className='text-xs'>Min</Label>
-                      <Input id="slider-min" type="number" value={selectedQuestion.sliderConfig?.min} onChange={(e) => updateQuestion(selectedQuestion.id, { sliderConfig: { ...selectedQuestion.sliderConfig!, min: Number(e.target.value) } })} />
-                    </div>
-                    <div className='flex-1 space-y-1'>
-                      <Label htmlFor="slider-max" className='text-xs'>Max</Label>
-                      <Input id="slider-max" type="number" value={selectedQuestion.sliderConfig?.max} onChange={(e) => updateQuestion(selectedQuestion.id, { sliderConfig: { ...selectedQuestion.sliderConfig!, max: Number(e.target.value) } })} />
-                    </div>
-                     <div className='flex-1 space-y-1'>
-                      <Label htmlFor="slider-step" className='text-xs'>Step</Label>
-                      <Input id="slider-step" type="number" value={selectedQuestion.sliderConfig?.step} onChange={(e) => updateQuestion(selectedQuestion.id, { sliderConfig: { ...selectedQuestion.sliderConfig!, step: Number(e.target.value) } })} />
-                    </div>
+                      {selectedQuestion.imageUrl && (
+                          <Button variant="link" size="sm" className="w-full text-destructive" onClick={() => updateQuestion(selectedQuestion.id, {imageUrl: null})}>
+                              Remove Image
+                          </Button>
+                      )}
                   </div>
-                </div>
+                  {selectedQuestion.type === 'Multiple Choice' && (
+                    <div className="space-y-2">
+                      <Label>{t('options')}</Label>
+                      {selectedQuestion.options?.map((opt, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                            <Input value={opt} onChange={(e) => updateQuestion(selectedQuestion.id, { options: selectedQuestion.options?.map((o, idx) => idx === i ? e.target.value : o) })} />
+                            <Button variant="ghost" size="icon" onClick={() => deleteOption(selectedQuestion.id, i)}><Trash2 className="h-4 w-4 text-muted-foreground"/></Button>
+                        </div>
+                      ))}
+                      <Button variant="outline" size="sm" className="w-full" onClick={() => addOption(selectedQuestion.id)}><PlusCircle className="mr-2 h-4 w-4" />{t('addOption')}</Button>
+                    </div>
+                  )}
+                  {selectedQuestion.type === 'Slider' && (
+                    <div className="space-y-4">
+                      <Label>Slider Configuration</Label>
+                      <div className='flex items-center gap-2'>
+                        <div className='flex-1 space-y-1'>
+                          <Label htmlFor="slider-min" className='text-xs'>Min</Label>
+                          <Input id="slider-min" type="number" value={selectedQuestion.sliderConfig?.min} onChange={(e) => updateQuestion(selectedQuestion.id, { sliderConfig: { ...selectedQuestion.sliderConfig!, min: Number(e.target.value) } })} />
+                        </div>
+                        <div className='flex-1 space-y-1'>
+                          <Label htmlFor="slider-max" className='text-xs'>Max</Label>
+                          <Input id="slider-max" type="number" value={selectedQuestion.sliderConfig?.max} onChange={(e) => updateQuestion(selectedQuestion.id, { sliderConfig: { ...selectedQuestion.sliderConfig!, max: Number(e.target.value) } })} />
+                        </div>
+                         <div className='flex-1 space-y-1'>
+                          <Label htmlFor="slider-step" className='text-xs'>Step</Label>
+                          <Input id="slider-step" type="number" value={selectedQuestion.sliderConfig?.step} onChange={(e) => updateQuestion(selectedQuestion.id, { sliderConfig: { ...selectedQuestion.sliderConfig!, step: Number(e.target.value) } })} />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between pt-4 border-t">
+                    <Label htmlFor="required-switch">{t('required')}</Label>
+                    <Switch id="required-switch" checked={selectedQuestion.required} onCheckedChange={(checked) => updateQuestion(selectedQuestion.id, { required: checked })} />
+                  </div>
+                </>
               )}
-              <div className="flex items-center justify-between pt-4 border-t">
-                <Label htmlFor="required-switch">{t('required')}</Label>
-                <Switch id="required-switch" checked={selectedQuestion.required} onCheckedChange={(checked) => updateQuestion(selectedQuestion.id, { required: checked })} />
-              </div>
             </CardContent>
           </Card>
         ) : (
@@ -338,47 +372,33 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="h-dvh flex flex-col">
-        <header className="flex-shrink-0 flex items-center justify-between gap-2 md:gap-4 p-2 md:p-4 border-b bg-card">
-            <div className="min-w-0 flex-1">
-              <h1 className="text-lg md:text-xl font-bold truncate">{template.title}</h1>
-              <p className="text-xs md:text-sm text-muted-foreground truncate">{template.description}</p>
+      <div className="h-dvh flex flex-col bg-muted/20">
+        <header className="flex-shrink-0 p-3 md:p-4 border-b bg-card">
+            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-lg md:text-xl font-bold truncate">{template.title}</h1>
+                  <p className="text-xs md:text-sm text-muted-foreground truncate">{template.description}</p>
+                </div>
+                <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 flex-shrink-0">
+                    <Button variant="outline">
+                        <Eye className="mr-2 h-4 w-4" /> 
+                        {t('preview')}
+                    </Button>
+                    <AIFormulaSuggester />
+                    <Button>
+                        <Save className="mr-2 h-4 w-4" />
+                        {t('save')}
+                    </Button>
+                </div>
             </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Button variant="outline" size={isMobile ? "icon" : "default"}>
-                <Eye className={cn(!isMobile && "mr-2", "h-4 w-4")} /> 
-                <span className="hidden md:inline">{t('preview')}</span>
-            </Button>
-            <AIFormulaSuggester />
-            <Button size={isMobile ? "icon" : "default"}>
-                <Save className={cn(!isMobile && "mr-2", "h-4 w-4")} />
-                <span className="hidden md:inline">{t('save')}</span>
-            </Button>
-          </div>
         </header>
 
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
-          {/* Left Panel - Elements */}
-           <Sheet>
-              <SheetTrigger asChild>
-                  <Button variant="outline" size="icon" className="lg:hidden fixed bottom-4 left-4 z-10 shadow-lg rounded-full h-12 w-12">
-                      <PanelLeft className="h-6 w-6" />
-                      <span className="sr-only">{t('formElements')}</span>
-                  </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="p-0 w-72">
-                  <SheetHeader>
-                      <SheetTitle className="sr-only">{t('formElements')}</SheetTitle>
-                  </SheetHeader>
-                  <FormElementsPanel />
-              </SheetContent>
-          </Sheet>
-          <div className="hidden lg:block lg:col-span-2 border-r">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden gap-6">
+          <div className="hidden lg:block lg:col-span-2 bg-card border-r h-full overflow-y-auto">
             <FormElementsPanel />
           </div>
 
-          {/* Center Panel - Canvas */}
-          <main id="canvas-droppable" className="lg:col-span-7 p-4 md:p-8 overflow-y-auto bg-secondary/50">
+          <main id="canvas-droppable" className="lg:col-span-7 py-4 md:py-8 overflow-y-auto">
              <SortableContext items={template.items.map(i => i.id)} strategy={verticalListSortingStrategy}>
               <div className="space-y-6 max-w-3xl mx-auto">
                 {template.items.map((item, index) => (
@@ -401,31 +421,49 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             )}
           </main>
 
-          {/* Right Panel - Properties */}
-          <Sheet>
-                <SheetTrigger asChild>
-                    <Button variant="outline" size="icon" className="lg:hidden fixed bottom-4 right-4 z-10 shadow-lg rounded-full h-12 w-12">
-                        <Settings2 className="h-6 w-6" />
-                        <span className="sr-only">{t('properties')}</span>
-                    </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="p-0 w-80">
-                    <SheetHeader>
-                        <SheetTitle className="sr-only">{t('properties')}</SheetTitle>
-                    </SheetHeader>
-                    <PropertiesPanel />
-                </SheetContent>
-            </Sheet>
-          <div className="hidden lg:block lg:col-span-3 border-l">
+          <div className="hidden lg:block lg:col-span-3 bg-card border-l h-full overflow-y-auto">
             <PropertiesPanel />
           </div>
         </div>
+
+        {isMobile && (
+            <div className="fixed bottom-4 right-4 z-10 flex flex-col gap-2">
+                 <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
+                    <SheetTrigger asChild>
+                        <Button variant="outline" size="icon" className="shadow-lg rounded-full h-12 w-12">
+                            <PanelLeft className="h-6 w-6" />
+                            <span className="sr-only">{t('formElements')}</span>
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent side="left" className="p-0 w-72">
+                        <SheetHeader>
+                            <SheetTitle className="sr-only">{t('formElements')}</SheetTitle>
+                        </SheetHeader>
+                        <FormElementsPanel />
+                    </SheetContent>
+                </Sheet>
+                 <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
+                    <SheetTrigger asChild>
+                        <Button variant="outline" size="icon" className="shadow-lg rounded-full h-12 w-12">
+                            <Settings2 className="h-6 w-6" />
+                            <span className="sr-only">{t('properties')}</span>
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent side="right" className="p-0 w-80">
+                        <SheetHeader>
+                            <SheetTitle className="sr-only">{t('properties')}</SheetTitle>
+                        </SheetHeader>
+                        <PropertiesPanel />
+                    </SheetContent>
+                </Sheet>
+            </div>
+        )}
       </div>
       <DragOverlay>
         {activePaletteItem ? (
           <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
             <activePaletteItem.icon className="mr-2 h-4 w-4" />
-            {tq(activePalette-item.type as any)}
+            {tq(activePaletteItem.type as any)}
           </Button>
         ) : activeId && template.items.find(i => i.id === activeId) ? (
             <Card className="p-4 shadow-xl opacity-90">
@@ -436,3 +474,5 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     </DndContext>
   )
 }
+
+    

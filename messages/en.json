@@ -157,7 +157,8 @@
     "Rating Scale": "Rating Scale",
     "Image Choice": "Image Choice",
     "Matrix Table": "Matrix Table",
-    "File Upload": "File Upload"
+    "File Upload": "File Upload",
+    "Section Header": "Section Header"
   },
   "DataTable": {
     "previous": "Previous",
@@ -168,3 +169,5 @@
     "filterPlaceholder": "Filter items..."
   }
 }
+
+    

@@ -157,7 +157,8 @@
     "Rating Scale": "Escala de Puntuación",
     "Image Choice": "Elección de Imagen",
     "Matrix Table": "Tabla de Matriz",
-    "File Upload": "Subida de Archivo"
+    "File Upload": "Subida de Archivo",
+    "Section Header": "Encabezado de Sección"
   },
   "DataTable": {
     "previous": "Anterior",
@@ -168,3 +169,5 @@
     "filterPlaceholder": "Filtrar elementos..."
   }
 }
+
+    
