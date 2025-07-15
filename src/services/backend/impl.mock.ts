@@ -18,6 +18,8 @@ export async function getDashboardStats(): Promise<DashboardStats> {
 
 export async function getEvaluations(): Promise<Evaluation[]> {
     console.log('[Backend Mock] Fetching evaluations list');
+    // Simulate a network delay
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     return [
         { id: 'eval_001', title: 'Q3 2024 Engineering Performance Review', status: 'Active', responses: 45, lastModified: '2024-07-15T10:00:00Z' },

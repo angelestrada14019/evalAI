@@ -2,26 +2,61 @@
 import { Suspense } from 'react';
 import { getTranslations } from 'next-intl/server';
 import { backend } from '@/services/backend/backend';
-import { EvaluationsClient } from '@/components/evaluations/evaluations-client';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/navigation';
 import { PackagePlus } from 'lucide-react';
+import { DataTable } from '@/components/ui/data-table';
+import { columns } from '@/components/evaluations/columns';
+import { Evaluation } from '@/services/backend/types';
 
-// This is an async Server Component
 async function EvaluationsContent() {
-    const initialEvaluations = await backend().getEvaluations();
-    // The client component receives data fetched on the server as props
-    return <EvaluationsClient initialEvaluations={initialEvaluations} />;
+    const data: Evaluation[] = await backend().getEvaluations();
+    const t = await getTranslations('EvaluationsPage');
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>{t('listTitle')}</CardTitle>
+                <CardDescription>{t('listDescription')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <DataTable columns={columns} data={data} />
+            </CardContent>
+        </Card>
+    );
 }
 
-// This is a synchronous Server Component that renders a loading state
-async function EvaluationsSkeleton() {
-    const t = await getTranslations('EvaluationsPage');
+function EvaluationsSkeleton() {
     return (
-         <div className="container mx-auto py-8">
-            <div className="flex items-center justify-between mb-6 gap-4">
+        <Card>
+            <CardHeader>
+                <Skeleton className="h-8 w-48" />
+                <Skeleton className="h-4 w-72 mt-2" />
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-4">
+                    <Skeleton className="h-10 w-1/3" />
+                    <div className="border rounded-md">
+                        <div className="h-12 w-full" />
+                        {[...Array(5)].map((_, i) => (
+                            <div key={i} className="h-16 w-full border-t" />
+                        ))}
+                    </div>
+                     <Skeleton className="h-10 w-full" />
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
+
+export default async function EvaluationsPage() {
+    const t = await getTranslations('EvaluationsPage');
+
+    return (
+        <div className="container mx-auto py-8 space-y-6">
+            <div className="flex items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold">{t('title')}</h1>
                     <p className="text-muted-foreground">{t('description')}</p>
@@ -33,50 +68,9 @@ async function EvaluationsSkeleton() {
                     </Link>
                 </Button>
             </div>
-            <Card>
-                <CardHeader>
-                    <Skeleton className="h-8 w-48" />
-                    <Skeleton className="h-4 w-72 mt-2" />
-                     <div className="relative pt-2">
-                        <Skeleton className="h-10 w-full md:w-1/3" />
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <div className="rounded-lg border">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead><Skeleton className="h-5 w-24" /></TableHead>
-                                    <TableHead><Skeleton className="h-5 w-16" /></TableHead>
-                                    <TableHead><Skeleton className="h-5 w-20" /></TableHead>
-                                    <TableHead><Skeleton className="h-5 w-32" /></TableHead>
-                                    <TableHead className="text-right"><Skeleton className="h-5 w-16 ml-auto" /></TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {[...Array(3)].map((_, i) => (
-                                    <TableRow key={i}>
-                                        <TableCell><Skeleton className="h-5 w-full" /></TableCell>
-                                        <TableCell><Skeleton className="h-5 w-full" /></TableCell>
-                                        <TableCell><Skeleton className="h-5 w-full" /></TableCell>
-                                        <TableCell><Skeleton className="h-5 w-full" /></TableCell>
-                                        <TableCell><Skeleton className="h-5 w-10 ml-auto" /></TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </CardContent>
-            </Card>
+            <Suspense fallback={<EvaluationsSkeleton />}>
+                <EvaluationsContent />
+            </Suspense>
         </div>
     );
-}
-
-// The main page is a Server Component that uses Suspense to handle loading
-export default function EvaluationsPage() {
-  return (
-    <Suspense fallback={<EvaluationsSkeleton />}>
-      <EvaluationsContent />
-    </Suspense>
-  );
 }

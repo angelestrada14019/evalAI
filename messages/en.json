@@ -107,8 +107,7 @@
     "viewResponsesAction": "View Responses",
     "duplicateAction": "Duplicate",
     "deleteAction": "Delete",
-    "searchPlaceholder": "Search evaluations...",
-    "noResultsFound": "No results found."
+    "filterPlaceholder": "Filter by {column}..."
   },
   "ReportsPage": {
     "title": "Reports",
@@ -120,7 +119,8 @@
     "tableActions": "Actions",
     "viewAction": "View",
     "downloadAction": "Download PDF",
-    "deleteAction": "Delete"
+    "deleteAction": "Delete",
+    "filterPlaceholder": "Filter by {column}..."
   },
   "SettingsNav": {
     "profile": "Profile",
@@ -159,5 +159,12 @@
     "Image Choice": "Image Choice",
     "Matrix Table": "Matrix Table",
     "File Upload": "File Upload"
+  },
+  "DataTable": {
+    "previous": "Previous",
+    "next": "Next",
+    "noResultsFound": "No results found.",
+    "page": "Page",
+    "of": "of"
   }
 }

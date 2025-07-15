@@ -70,7 +70,7 @@ export function EvaluationsClient({ initialEvaluations }: { initialEvaluations: 
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder={t('searchPlaceholder')}
+              placeholder={t('filterPlaceholder', { column: 'title' })}
               className="w-full appearance-none bg-background pl-8 md:w-1/3"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

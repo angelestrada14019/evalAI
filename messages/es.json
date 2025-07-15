@@ -107,8 +107,7 @@
     "viewResponsesAction": "Ver Respuestas",
     "duplicateAction": "Duplicar",
     "deleteAction": "Eliminar",
-    "searchPlaceholder": "Buscar evaluaciones...",
-    "noResultsFound": "No se encontraron resultados."
+    "filterPlaceholder": "Filtrar por {column}..."
   },
   "ReportsPage": {
     "title": "Reportes",
@@ -120,7 +119,8 @@
     "tableActions": "Acciones",
     "viewAction": "Ver",
     "downloadAction": "Descargar PDF",
-    "deleteAction": "Eliminar"
+    "deleteAction": "Eliminar",
+    "filterPlaceholder": "Filtrar por {column}..."
   },
   "SettingsNav": {
     "profile": "Perfil",
@@ -159,5 +159,12 @@
     "Image Choice": "Elección de Imagen",
     "Matrix Table": "Tabla de Matriz",
     "File Upload": "Subida de Archivo"
+  },
+  "DataTable": {
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "noResultsFound": "No se encontraron resultados.",
+    "page": "Página",
+    "of": "de"
   }
 }
