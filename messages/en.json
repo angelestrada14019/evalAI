@@ -1,3 +1,4 @@
+
 {
   "LoginPage": {
     "title": "Welcome back",
@@ -91,6 +92,22 @@
     "closeButton": "Close",
     "errorTitle": "Suggestion Failed",
     "errorDescription": "Could not get an AI suggestion. Please try again."
+  },
+  "EvaluationsPage": {
+    "title": "Evaluations",
+    "description": "Manage all your evaluation forms here.",
+    "newEvaluationButton": "New Evaluation",
+    "listTitle": "All Forms",
+    "listDescription": "Here is a list of all your created forms.",
+    "tableTitle": "Title",
+    "tableStatus": "Status",
+    "tableResponses": "Responses",
+    "tableModified": "Last Modified",
+    "tableActions": "Actions",
+    "editAction": "Edit",
+    "viewResponsesAction": "View Responses",
+    "duplicateAction": "Duplicate",
+    "deleteAction": "Delete"
   },
   "ReportsPage": {
     "title": "Reports",

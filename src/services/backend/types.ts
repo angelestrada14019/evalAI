@@ -1,3 +1,4 @@
+
 /**
  * @fileOverview This file defines the common types used by the backend service implementations.
  */
@@ -21,5 +22,14 @@ export const DashboardStatsSchema = z.object({
         change: z.string()
     }),
 });
-
 export type DashboardStats = z.infer<typeof DashboardStatsSchema>;
+
+
+export const EvaluationSchema = z.object({
+    id: z.string(),
+    title: z.string(),
+    status: z.enum(['Draft', 'Active', 'Archived']),
+    responses: z.number(),
+    lastModified: z.string().datetime() | z.string(),
+});
+export type Evaluation = z.infer<typeof EvaluationSchema>;

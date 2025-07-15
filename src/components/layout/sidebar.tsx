@@ -3,10 +3,8 @@
 
 import { Link, usePathname } from '@/navigation'
 import { Home, FileText, BarChart2, Settings, LifeBuoy, PackagePlus } from 'lucide-react'
-
 import { cn } from '@/lib/utils'
 import { AppLogo } from '@/components/icons'
-import { Button } from '@/components/ui/button'
 import {
   Tooltip,
   TooltipContent,
@@ -14,78 +12,97 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useTranslations } from 'next-intl'
+import { useIsMobile } from '@/hooks/use-mobile'
 
-export function AppSidebar() {
-  const pathname = usePathname()
+interface AppSidebarProps {
+  isCollapsed: boolean;
+  closeSidebar?: () => void;
+}
+
+export function AppSidebar({ isCollapsed, closeSidebar }: AppSidebarProps) {
+  const pathname = usePathname();
   const t = useTranslations('Sidebar');
+  const isMobile = useIsMobile();
+
+  const handleLinkClick = () => {
+    if (isMobile && closeSidebar) {
+      closeSidebar();
+    }
+  };
 
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
     { href: '/evaluations', icon: FileText, label: t('evaluations') },
     { href: '/reports', icon: BarChart2, label: t('reports') },
-  ]
+  ];
 
   const bottomNavItems = [
     { href: '/settings', icon: Settings, label: t('settings') },
-  ]
-
+  ];
 
   const isNavItemActive = (href: string) => {
-    // Exact match for dashboard, startsWith for others
-    if (href === '/dashboard') return pathname === href
-    return pathname.startsWith(href)
-  }
+    if (href === '/dashboard') return pathname === href;
+    return pathname.startsWith(href);
+  };
+
+  const SidebarLink = ({ item }: { item: typeof navItems[0] }) => {
+    const isActive = isNavItemActive(item.href);
+    if (isCollapsed) {
+      return (
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href={item.href}
+                onClick={handleLinkClick}
+                className={cn(
+                  'flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary hover:bg-secondary',
+                  isActive && 'bg-secondary text-primary'
+                )}
+              >
+                <item.icon className="h-5 w-5" />
+                <span className="sr-only">{item.label}</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">{item.label}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    }
+
+    return (
+      <Link
+        href={item.href}
+        onClick={handleLinkClick}
+        className={cn(
+          'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-secondary',
+          isActive && 'bg-secondary text-primary font-semibold'
+        )}
+      >
+        <item.icon className="h-4 w-4" />
+        {item.label}
+      </Link>
+    );
+  };
 
   return (
-    <aside className="hidden w-64 flex-col border-r bg-card md:flex">
-      <div className="flex h-16 items-center border-b px-6">
-        <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg">
+    <aside className="flex h-full max-h-screen flex-col border-r bg-card">
+      <div className={cn("flex h-16 items-center border-b px-6", isCollapsed && "justify-center")}>
+        <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg" onClick={handleLinkClick}>
           <AppLogo className="h-7 w-7 text-primary" />
-          <span>EvalAI</span>
+          <span className={cn(isCollapsed && "sr-only")}>EvalAI</span>
         </Link>
       </div>
-      <div className="flex flex-1 flex-col gap-y-4 py-4">
-        <nav className="flex-1 px-4 space-y-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-secondary',
-                isNavItemActive(item.href) && 'bg-secondary text-primary font-semibold'
-              )}
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </Link>
-          ))}
+      
+      <div className="flex-1 overflow-y-auto overflow-x-hidden py-4">
+        <nav className={cn("flex flex-col gap-1 px-4", isCollapsed && "items-center")}>
+          {navItems.map((item) => <SidebarLink key={item.href} item={item} />)}
         </nav>
-        
-        <div className="px-4">
-          <Button asChild className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-            <Link href="/evaluations/new">
-              <PackagePlus className="mr-2 h-4 w-4" />
-              {t('newEvaluation')}
-            </Link>
-          </Button>
-        </div>
-
-        <div className="mt-auto flex flex-col gap-y-1 px-4">
-          {bottomNavItems.map((item) => (
-             <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-secondary',
-                isNavItemActive(item.href) && 'bg-secondary text-primary font-semibold'
-              )}
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </Link>
-          ))}
-        </div>
+      </div>
+      
+      <div className={cn("mt-auto flex flex-col gap-1 border-t p-4", isCollapsed && "items-center")}>
+        {bottomNavItems.map((item) => <SidebarLink key={item.href} item={item} />)}
       </div>
     </aside>
-  )
+  );
 }

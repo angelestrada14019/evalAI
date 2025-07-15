@@ -1,3 +1,4 @@
+
 {
   "LoginPage": {
     "title": "Bienvenido de nuevo",
@@ -91,6 +92,22 @@
     "closeButton": "Cerrar",
     "errorTitle": "Falló la Sugerencia",
     "errorDescription": "No se pudo obtener una sugerencia de la IA. Por favor, inténtalo de nuevo."
+  },
+  "EvaluationsPage": {
+    "title": "Evaluaciones",
+    "description": "Gestiona todos tus formularios de evaluación aquí.",
+    "newEvaluationButton": "Nueva Evaluación",
+    "listTitle": "Todos los Formularios",
+    "listDescription": "Aquí hay una lista de todos tus formularios creados.",
+    "tableTitle": "Título",
+    "tableStatus": "Estado",
+    "tableResponses": "Respuestas",
+    "tableModified": "Última Modificación",
+    "tableActions": "Acciones",
+    "editAction": "Editar",
+    "viewResponsesAction": "Ver Respuestas",
+    "duplicateAction": "Duplicar",
+    "deleteAction": "Eliminar"
   },
   "ReportsPage": {
     "title": "Reportes",

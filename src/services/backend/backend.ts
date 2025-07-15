@@ -1,15 +1,16 @@
+
 /**
  * @fileOverview This file defines the abstract interface for the Backend service.
  * It uses the system configuration to dynamically load and export the
  * implementation specified in `systemConfig.backend.provider`.
  */
 import { systemConfig } from '@/config/system';
-import type { DashboardStats } from './types';
+import type { DashboardStats, Evaluation } from './types';
 
 export interface BackendService {
   getDashboardStats(): Promise<DashboardStats>;
+  getEvaluations(): Promise<Evaluation[]>;
   // Add other methods here, e.g.:
-  // getEvaluations(options: any): Promise<any>;
   // getEvaluationById(id: string): Promise<any>;
   // createEvaluation(data: any): Promise<any>;
 }
@@ -26,6 +27,7 @@ export function backend(): BackendService {
       const mockImpl = require('./impl.mock');
       return {
         getDashboardStats: mockImpl.getDashboardStats,
+        getEvaluations: mockImpl.getEvaluations,
       };
     case 'supabase':
       const supabaseBackendService = require('./impl.supabase');
