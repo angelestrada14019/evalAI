@@ -35,7 +35,7 @@ export default function ReportsPage() {
             <CardDescription>{t('description')}</CardDescription>
         </CardHeader>
         <CardContent>
-            <DataTable columns={columns} data={reports} />
+            <DataTable columns={columns} data={reports} filterColumnId='title' />
         </CardContent>
       </Card>
     </div>

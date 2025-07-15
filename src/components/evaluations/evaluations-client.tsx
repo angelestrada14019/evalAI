@@ -18,7 +18,7 @@ export function EvaluationsClient({ initialEvaluations }: { initialEvaluations: 
                 <CardDescription>{t('listDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
-                <DataTable columns={columns} data={initialEvaluations} />
+                <DataTable columns={columns} data={initialEvaluations} filterColumnId="title" />
             </CardContent>
         </Card>
     );

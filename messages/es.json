@@ -106,8 +106,7 @@
     "editAction": "Editar",
     "viewResponsesAction": "Ver Respuestas",
     "duplicateAction": "Duplicar",
-    "deleteAction": "Eliminar",
-    "filterPlaceholder": "Filtrar por {column}..."
+    "deleteAction": "Eliminar"
   },
   "ReportsPage": {
     "title": "Reportes",
@@ -120,8 +119,7 @@
     "tableActions": "Acciones",
     "viewAction": "Ver",
     "downloadAction": "Descargar PDF",
-    "deleteAction": "Eliminar",
-    "filterPlaceholder": "Filtrar por {column}..."
+    "deleteAction": "Eliminar"
   },
   "SettingsNav": {
     "profile": "Perfil",
@@ -166,6 +164,7 @@
     "next": "Siguiente",
     "noResultsFound": "No se encontraron resultados.",
     "page": "Página",
-    "of": "de"
+    "of": "de",
+    "filterPlaceholder": "Filtrar elementos..."
   }
 }
