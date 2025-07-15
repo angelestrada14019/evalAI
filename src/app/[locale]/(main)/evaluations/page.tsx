@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo, Suspense, use } from 'react';
+import { useState, useMemo, Suspense } from 'react';
 import { Link } from '@/navigation';
 import {
   Table,
@@ -28,8 +28,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 
-// Fetch data once and pass to client component
-const evaluationsPromise = backend().getEvaluations();
 
 function EvaluationsClient({ initialEvaluations }: { initialEvaluations: Evaluation[] }) {
   const t = useTranslations('EvaluationsPage');
@@ -141,12 +139,15 @@ function EvaluationsClient({ initialEvaluations }: { initialEvaluations: Evaluat
   );
 }
 
-function EvaluationsContent() {
-    const initialEvaluations = use(evaluationsPromise);
+// This is an async Server Component
+async function EvaluationsContent() {
+    const initialEvaluations = await backend().getEvaluations();
     return <EvaluationsClient initialEvaluations={initialEvaluations} />;
 }
 
+// This is a synchronous Server Component
 function EvaluationsSkeleton() {
+    // We can use useTranslations here because it will be rendered within the main layout's provider
     const t = useTranslations('EvaluationsPage');
     return (
          <div className="container mx-auto py-8">
