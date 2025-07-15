@@ -374,33 +374,33 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="h-dvh flex flex-col bg-muted/20">
         <header className="flex-shrink-0 p-3 md:p-4 border-b bg-card">
-            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+            <div className='flex items-center justify-between flex-wrap gap-4'>
                 <div className="min-w-0 flex-1">
                   <h1 className="text-lg md:text-xl font-bold truncate">{template.title}</h1>
                   <p className="text-xs md:text-sm text-muted-foreground truncate">{template.description}</p>
                 </div>
-                <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-2 flex-wrap justify-end">
                     <Button variant="outline">
-                        <Eye className="mr-2 h-4 w-4" /> 
-                        {t('preview')}
+                        <Eye className="mr-0 sm:mr-2 h-4 w-4" /> 
+                        <span className='hidden sm:inline'>{t('preview')}</span>
                     </Button>
                     <AIFormulaSuggester />
                     <Button>
-                        <Save className="mr-2 h-4 w-4" />
-                        {t('save')}
+                        <Save className="mr-0 sm:mr-2 h-4 w-4" />
+                        <span className='hidden sm:inline'>{t('save')}</span>
                     </Button>
                 </div>
             </div>
         </header>
 
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden gap-6">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
           <div className="hidden lg:block lg:col-span-2 bg-card border-r h-full overflow-y-auto">
             <FormElementsPanel />
           </div>
 
           <main id="canvas-droppable" className="lg:col-span-7 py-4 md:py-8 overflow-y-auto">
              <SortableContext items={template.items.map(i => i.id)} strategy={verticalListSortingStrategy}>
-              <div className="space-y-6 max-w-3xl mx-auto">
+              <div className="space-y-6 max-w-3xl mx-auto px-4">
                 {template.items.map((item, index) => (
                   <SortableFormItem
                     key={item.id}
@@ -430,30 +430,30 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             <div className="fixed bottom-4 right-4 z-10 flex flex-col gap-2">
                  <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
                     <SheetTrigger asChild>
-                        <Button variant="outline" size="icon" className="shadow-lg rounded-full h-12 w-12">
+                        <Button variant="default" size="icon" className="shadow-lg rounded-full h-14 w-14">
                             <PanelLeft className="h-6 w-6" />
                             <span className="sr-only">{t('formElements')}</span>
                         </Button>
                     </SheetTrigger>
                     <SheetContent side="left" className="p-0 w-72">
-                        <SheetHeader>
-                            <SheetTitle className="sr-only">{t('formElements')}</SheetTitle>
-                        </SheetHeader>
-                        <FormElementsPanel />
+                      <SheetHeader className="p-4 border-b">
+                        <SheetTitle>{t('formElements')}</SheetTitle>
+                      </SheetHeader>
+                      <FormElementsPanel />
                     </SheetContent>
                 </Sheet>
                  <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
                     <SheetTrigger asChild>
-                        <Button variant="outline" size="icon" className="shadow-lg rounded-full h-12 w-12">
+                        <Button variant="default" size="icon" className="shadow-lg rounded-full h-14 w-14">
                             <Settings2 className="h-6 w-6" />
                             <span className="sr-only">{t('properties')}</span>
                         </Button>
                     </SheetTrigger>
                     <SheetContent side="right" className="p-0 w-80">
-                        <SheetHeader>
-                            <SheetTitle className="sr-only">{t('properties')}</SheetTitle>
-                        </SheetHeader>
-                        <PropertiesPanel />
+                      <SheetHeader className="p-4 border-b">
+                        <SheetTitle>{t('properties')}</SheetTitle>
+                      </SheetHeader>
+                      <PropertiesPanel />
                     </SheetContent>
                 </Sheet>
             </div>
