@@ -4,8 +4,10 @@
 // to pass children through for the locale segment.
 export default function LocaleLayout({
   children,
+  params: {locale}
 }: {
   children: React.ReactNode;
+  params: {locale: string};
 }) {
   return <>{children}</>;
 }
