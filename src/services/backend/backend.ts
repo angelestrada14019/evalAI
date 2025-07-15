@@ -25,10 +25,7 @@ export function backend(): BackendService {
   switch (provider) {
     case 'mock':
       const mockImpl = require('./impl.mock');
-      return {
-        getDashboardStats: mockImpl.getDashboardStats,
-        getEvaluations: mockImpl.getEvaluations,
-      };
+      return mockImpl;
     case 'supabase':
       const supabaseBackendService = require('./impl.supabase');
       return supabaseBackendService;
