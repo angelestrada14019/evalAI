@@ -30,7 +30,9 @@
     "myAccount": "My Account",
     "settings": "Settings",
     "support": "Support",
-    "logout": "Logout"
+    "logout": "Logout",
+    "workspaces": "Workspaces",
+    "createWorkspace": "Create Workspace"
   },
   "DashboardPage": {
     "title": "Dashboard",
@@ -47,6 +49,21 @@
     "title": "Recent Evaluations",
     "description": "You had {count} evaluations this month."
   },
+  "NewEvaluationPage": {
+    "title": "Create a New Evaluation",
+    "description": "Describe the evaluation you want to build, and our AI will generate a starting template for you.",
+    "evaluationDescriptionLabel": "Evaluation Description",
+    "evaluationDescriptionPlaceholder": "e.g., 'A quarterly performance review for software engineers, including sections on coding skills, teamwork, and project management...'",
+    "detailedResultsHint": "Be as detailed as possible for the best results.",
+    "generateButton": "Generate with AI",
+    "generatingButton": "Generating...",
+    "errorTitle": "Description is empty",
+    "errorDescription": "Please describe the evaluation you want to create.",
+    "successTitle": "Template Generated!",
+    "successDescription": "Your new evaluation is ready for editing.",
+    "failTitle": "Generation Failed",
+    "failDescription": "Could not generate the evaluation template. Please try again."
+  },
   "FormBuilderPage": {
     "preview": "Preview",
     "save": "Save",
@@ -59,7 +76,21 @@
     "options": "Options",
     "addOption": "Add Option",
     "required": "Required",
-    "selectQuestion": "Select a question to see its properties."
+    "selectQuestion": "Select a question to see its properties.",
+    "loading": "Loading..."
+  },
+  "AIFormulaSuggester": {
+    "buttonText": "AI Scoring Logic",
+    "dialogTitle": "AI Formula Suggester",
+    "dialogDescription": "Let AI suggest a scoring formula based on your evaluation form.",
+    "formContentTitle": "Form Content for Analysis:",
+    "suggestedFormulaTitle": "Suggested Formula:",
+    "reasoningTitle": "Reasoning:",
+    "suggestButton": "Suggest Formula",
+    "thinkingButton": "Thinking...",
+    "closeButton": "Close",
+    "errorTitle": "Suggestion Failed",
+    "errorDescription": "Could not get an AI suggestion. Please try again."
   },
   "ReportsPage": {
     "title": "Reports",

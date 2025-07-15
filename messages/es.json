@@ -30,7 +30,9 @@
     "myAccount": "Mi Cuenta",
     "settings": "Configuración",
     "support": "Soporte",
-    "logout": "Cerrar Sesión"
+    "logout": "Cerrar Sesión",
+    "workspaces": "Espacios de Trabajo",
+    "createWorkspace": "Crear Espacio de Trabajo"
   },
   "DashboardPage": {
     "title": "Panel de Control",
@@ -47,6 +49,21 @@
     "title": "Evaluaciones Recientes",
     "description": "Tuviste {count} evaluaciones este mes."
   },
+  "NewEvaluationPage": {
+    "title": "Crear una Nueva Evaluación",
+    "description": "Describe la evaluación que quieres construir y nuestra IA generará una plantilla inicial para ti.",
+    "evaluationDescriptionLabel": "Descripción de la Evaluación",
+    "evaluationDescriptionPlaceholder": "Ej: 'Una revisión de desempeño trimestral para ingenieros de software, incluyendo secciones sobre habilidades de codificación, trabajo en equipo y gestión de proyectos...'",
+    "detailedResultsHint": "Sé lo más detallado posible para obtener los mejores resultados.",
+    "generateButton": "Generar con IA",
+    "generatingButton": "Generando...",
+    "errorTitle": "La descripción está vacía",
+    "errorDescription": "Por favor, describe la evaluación que quieres crear.",
+    "successTitle": "¡Plantilla Generada!",
+    "successDescription": "Tu nueva evaluación está lista para ser editada.",
+    "failTitle": "Falló la Generación",
+    "failDescription": "No se pudo generar la plantilla de evaluación. Por favor, inténtalo de nuevo."
+  },
   "FormBuilderPage": {
     "preview": "Vista Previa",
     "save": "Guardar",
@@ -59,7 +76,21 @@
     "options": "Opciones",
     "addOption": "Añadir Opción",
     "required": "Obligatorio",
-    "selectQuestion": "Selecciona una pregunta para ver sus propiedades."
+    "selectQuestion": "Selecciona una pregunta para ver sus propiedades.",
+    "loading": "Cargando..."
+  },
+  "AIFormulaSuggester": {
+    "buttonText": "Lógica de Puntuación con IA",
+    "dialogTitle": "Sugeridor de Fórmulas con IA",
+    "dialogDescription": "Deja que la IA sugiera una fórmula de puntuación basada en tu formulario de evaluación.",
+    "formContentTitle": "Contenido del Formulario para Análisis:",
+    "suggestedFormulaTitle": "Fórmula Sugerida:",
+    "reasoningTitle": "Razonamiento:",
+    "suggestButton": "Sugerir Fórmula",
+    "thinkingButton": "Pensando...",
+    "closeButton": "Cerrar",
+    "errorTitle": "Falló la Sugerencia",
+    "errorDescription": "No se pudo obtener una sugerencia de la IA. Por favor, inténtalo de nuevo."
   },
   "ReportsPage": {
     "title": "Reportes",

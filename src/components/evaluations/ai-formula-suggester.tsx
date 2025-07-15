@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -24,6 +25,7 @@ const MOCK_FORM_CONTENT = `
 `
 
 export function AIFormulaSuggester() {
+  const t = useTranslations('AIFormulaSuggester');
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [suggestion, setSuggestion] = useState<{ suggestedFormula: string; reasoning: string } | null>(null)
@@ -38,8 +40,8 @@ export function AIFormulaSuggester() {
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Suggestion Failed",
-        description: "Could not get an AI suggestion. Please try again.",
+        title: t('errorTitle'),
+        description: t('errorDescription'),
       })
     } finally {
       setIsLoading(false)
@@ -51,20 +53,20 @@ export function AIFormulaSuggester() {
       <DialogTrigger asChild>
         <Button variant="outline">
           <BrainCircuit className="mr-2 h-4 w-4" />
-          AI Scoring Logic
+          {t('buttonText')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[625px]">
         <DialogHeader>
-          <DialogTitle>AI Formula Suggester</DialogTitle>
+          <DialogTitle>{t('dialogTitle')}</DialogTitle>
           <DialogDescription>
-            Let AI suggest a scoring formula based on your evaluation form.
+            {t('dialogDescription')}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <Card>
             <CardContent className="p-4">
-                <h4 className="font-semibold text-sm mb-2">Form Content for Analysis:</h4>
+                <h4 className="font-semibold text-sm mb-2">{t('formContentTitle')}</h4>
                 <pre className="text-xs p-3 bg-secondary rounded-md whitespace-pre-wrap font-mono">
                     {MOCK_FORM_CONTENT.trim()}
                 </pre>
@@ -81,7 +83,7 @@ export function AIFormulaSuggester() {
             <div className='space-y-4'>
                  <Card>
                     <CardContent className="p-4">
-                        <h4 className="font-semibold text-sm mb-2">Suggested Formula:</h4>
+                        <h4 className="font-semibold text-sm mb-2">{t('suggestedFormulaTitle')}</h4>
                         <pre className="text-xs p-3 bg-secondary rounded-md font-mono">
                             {suggestion.suggestedFormula}
                         </pre>
@@ -89,7 +91,7 @@ export function AIFormulaSuggester() {
                 </Card>
                  <Card>
                     <CardContent className="p-4">
-                        <h4 className="font-semibold text-sm mb-2">Reasoning:</h4>
+                        <h4 className="font-semibold text-sm mb-2">{t('reasoningTitle')}</h4>
                         <p className="text-sm text-muted-foreground">
                             {suggestion.reasoning}
                         </p>
@@ -100,9 +102,9 @@ export function AIFormulaSuggester() {
         </div>
         <DialogFooter>
           <Button onClick={handleSuggest} disabled={isLoading} className="bg-accent text-accent-foreground hover:bg-accent/90">
-            {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Thinking...</> : 'Suggest Formula'}
+            {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t('thinkingButton')}</> : t('suggestButton')}
           </Button>
-          <Button variant="secondary" onClick={() => setIsOpen(false)}>Close</Button>
+          <Button variant="secondary" onClick={() => setIsOpen(false)}>{t('closeButton')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
