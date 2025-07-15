@@ -94,14 +94,16 @@ export function AppSidebar({ isCollapsed, closeSidebar }: AppSidebarProps) {
         </Link>
       </div>
       
-      <div className="flex-1 overflow-y-auto overflow-x-hidden py-4">
+      <div className="flex-1 overflow-y-auto py-4">
         <nav className={cn("flex flex-col gap-1 px-2 lg:px-4", isCollapsed && "items-center")}>
           {navItems.map((item) => <SidebarLink key={item.href} item={item} />)}
         </nav>
       </div>
       
-      <div className={cn("mt-auto flex flex-col gap-1 border-t p-2 lg:p-4", isCollapsed && "items-center")}>
-        {bottomNavItems.map((item) => <SidebarLink key={item.href} item={item} />)}
+      <div className="mt-auto border-t">
+        <nav className={cn("flex flex-col gap-1 p-2 lg:p-4", isCollapsed && "items-center")}>
+            {bottomNavItems.map((item) => <SidebarLink key={item.href} item={item} />)}
+        </nav>
       </div>
     </aside>
   );
