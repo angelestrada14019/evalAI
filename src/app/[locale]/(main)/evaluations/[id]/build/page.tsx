@@ -20,6 +20,7 @@ import { AIFormulaSuggester } from "@/components/evaluations/ai-formula-suggeste
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { Slider } from '@/components/ui/slider'
 
 const iconMap: { [key: string]: React.ElementType } = {
   "Multiple Choice": ListChecks,
@@ -48,6 +49,7 @@ interface FormItem {
   options?: string[];
   required: boolean;
   imageUrl?: string | null;
+  sliderConfig?: { min: number; max: number; step: number };
 }
 
 interface FormTemplate {
@@ -114,9 +116,16 @@ function SortableFormItem({ item, index, selected, onSelect, onDelete }: { item:
           )}
           {item.type === 'Slider' && (
             <div className="flex items-center gap-4 mt-3">
-              <span className="text-sm text-muted-foreground">Min</span>
-              <div className="w-full h-2 bg-secondary rounded-full" />
-              <span className="text-sm text-muted-foreground">Max</span>
+              <span className="text-sm text-muted-foreground">{item.sliderConfig?.min ?? 0}</span>
+              <Slider 
+                defaultValue={[((item.sliderConfig?.max ?? 100) - (item.sliderConfig?.min ?? 0)) / 2]} 
+                min={item.sliderConfig?.min ?? 0} 
+                max={item.sliderConfig?.max ?? 100}
+                step={item.sliderConfig?.step ?? 1}
+                className="w-full" 
+                disabled 
+              />
+              <span className="text-sm text-muted-foreground">{item.sliderConfig?.max ?? 100}</span>
             </div>
           )}
         </div>
@@ -172,7 +181,8 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             label: t('newQuestionLabel', { type: tq(type as any) }),
             required: false,
             imageUrl: null,
-            ...(type === 'Multiple Choice' && { options: ['Option 1', 'Option 2'] })
+            ...(type === 'Multiple Choice' && { options: ['Option 1', 'Option 2'] }),
+            ...(type === 'Slider' && { sliderConfig: { min: 0, max: 100, step: 1 } })
         };
         const updatedItems = [...template.items, newItem];
         setTemplate({ ...template, items: updatedItems });
@@ -262,7 +272,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="question-text">{t('questionText')}</Label>
-                <Input id="question-text" value={selectedQuestion.label} onChange={(e) => updateQuestion(selectedQuestion.id, { label: e.target.value })} />
+                <Textarea id="question-text" value={selectedQuestion.label} onChange={(e) => updateQuestion(selectedQuestion.id, { label: e.target.value })} />
               </div>
                <div className="space-y-2">
                   <Label>Image</Label>
@@ -285,6 +295,25 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                     </div>
                   ))}
                   <Button variant="outline" size="sm" className="w-full" onClick={() => addOption(selectedQuestion.id)}><PlusCircle className="mr-2 h-4 w-4" />{t('addOption')}</Button>
+                </div>
+              )}
+              {selectedQuestion.type === 'Slider' && (
+                <div className="space-y-4">
+                  <Label>Slider Configuration</Label>
+                  <div className='flex items-center gap-2'>
+                    <div className='flex-1 space-y-1'>
+                      <Label htmlFor="slider-min" className='text-xs'>Min</Label>
+                      <Input id="slider-min" type="number" value={selectedQuestion.sliderConfig?.min} onChange={(e) => updateQuestion(selectedQuestion.id, { sliderConfig: { ...selectedQuestion.sliderConfig!, min: Number(e.target.value) } })} />
+                    </div>
+                    <div className='flex-1 space-y-1'>
+                      <Label htmlFor="slider-max" className='text-xs'>Max</Label>
+                      <Input id="slider-max" type="number" value={selectedQuestion.sliderConfig?.max} onChange={(e) => updateQuestion(selectedQuestion.id, { sliderConfig: { ...selectedQuestion.sliderConfig!, max: Number(e.target.value) } })} />
+                    </div>
+                     <div className='flex-1 space-y-1'>
+                      <Label htmlFor="slider-step" className='text-xs'>Step</Label>
+                      <Input id="slider-step" type="number" value={selectedQuestion.sliderConfig?.step} onChange={(e) => updateQuestion(selectedQuestion.id, { sliderConfig: { ...selectedQuestion.sliderConfig!, step: Number(e.target.value) } })} />
+                    </div>
+                  </div>
                 </div>
               )}
               <div className="flex items-center justify-between pt-4 border-t">
@@ -330,7 +359,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
 
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
           {/* Left Panel - Elements */}
-          <Sheet>
+           <Sheet>
               <SheetTrigger asChild>
                   <Button variant="outline" size="icon" className="lg:hidden fixed bottom-4 left-4 z-10 shadow-lg rounded-full h-12 w-12">
                       <PanelLeft className="h-6 w-6" />
@@ -407,6 +436,5 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     </DndContext>
   )
 }
-
 
     
