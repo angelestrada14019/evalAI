@@ -4,7 +4,6 @@
 import React, { useEffect, useState } from 'react'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { v4 as uuidv4 } from 'uuid'
 import { useTranslations } from 'next-intl'
 import { useIsMobile } from '@/hooks/use-mobile'
 import type { FormItem, FormTemplate } from '@/components/evaluations/builder/types'
@@ -39,7 +38,9 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         const parsedTemplate = JSON.parse(storedTemplate);
         setTemplate(parsedTemplate);
         if (parsedTemplate.items && parsedTemplate.items.length > 0) {
-          setSelectedQuestion(parsedTemplate.items[0]);
+          if (!isMobile) {
+            setSelectedQuestion(parsedTemplate.items[0]);
+          }
         }
       } catch (error) {
         console.error("Failed to parse template from localStorage", error);
@@ -48,7 +49,14 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     } else {
       setTemplate({ title: "New Evaluation", description: "Start building your form.", items: [] });
     }
-  }, []);
+  }, [isMobile]);
+
+  useEffect(() => {
+    if(isMobile) {
+      setIsElementsSheetOpen(false);
+      setIsPropertiesSheetOpen(false);
+    }
+  }, [isMobile]);
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
@@ -59,7 +67,6 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     setActiveId(null);
     if (!over || !template) return;
 
-    // Dropping a new element from the palette onto the canvas
     if (active.id.toString().startsWith('palette-') && over.id === 'canvas-droppable') {
         const type = active.id.toString().replace('palette-', '');
         const newItem = getNewFormItem(type, t, tq);
@@ -70,12 +77,11 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
 
         if (isMobile) {
             setIsElementsSheetOpen(false);
-            setIsPropertiesSheetOpen(true);
+            handleSelectQuestion(newItem);
         }
         return;
     }
 
-    // Reordering existing items on the canvas
     if (active.id !== over.id && !active.id.toString().startsWith('palette-')) {
         const oldIndex = template.items.findIndex(item => item.id === active.id);
         const newIndex = template.items.findIndex(item => item.id === over.id);
@@ -118,18 +124,18 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   const activePaletteItem = activeId && activeId.startsWith('palette-') ? questionTypes.find(q => `palette-${q.type}` === activeId) : null;
 
   return (
-    <div className='h-screen flex flex-col bg-muted/20'>
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <div className='flex flex-col bg-muted/20'>
         <BuilderHeader title={template.title} description={template.description} />
 
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
-          {/* Form Elements Panel (Desktop) */}
-          <aside className="hidden lg:block lg:col-span-2 bg-card border-r">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12">
+          
+          <aside className="hidden lg:block lg:col-span-2 bg-card border-r p-4">
             <FormElementsPanel />
           </aside>
 
-          {/* Form Canvas */}
-          <main id="canvas-droppable" className="lg:col-span-7 py-4 md:py-8 overflow-y-auto">
+          
+          <main id="canvas-droppable" className="lg:col-span-7 py-4 md:py-8">
             <FormCanvas 
               items={template.items}
               selectedQuestionId={selectedQuestion?.id}
@@ -138,8 +144,8 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             />
           </main>
           
-          {/* Properties Panel (Desktop) */}
-          <aside className="hidden lg:block lg:col-span-3 bg-card border-l">
+          
+          <aside className="hidden lg:block lg:col-span-3 bg-card border-l p-4">
             <PropertiesPanel 
               selectedQuestion={selectedQuestion}
               onUpdateQuestion={updateQuestion}
@@ -159,14 +165,20 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
               </div>
           ): null}
         </DragOverlay>
-      </DndContext>
+      </div>
       
-      {/* Mobile UI */}
+      
       {isMobile && (
           <>
             <MobileFAB 
               onElementsClick={() => setIsElementsSheetOpen(true)}
-              onPropertiesClick={() => setIsPropertiesSheetOpen(true)}
+              onPropertiesClick={() => {
+                if(selectedQuestion) {
+                  setIsPropertiesSheetOpen(true);
+                } else {
+                  // Optional: Show a toast message to select an item first
+                }
+              }}
             />
 
             <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
@@ -174,7 +186,9 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                   <SheetHeader className="p-4 border-b">
                     <SheetTitle>{t('formElements')}</SheetTitle>
                   </SheetHeader>
-                  <FormElementsPanel />
+                  <div className="p-4">
+                    <FormElementsPanel />
+                  </div>
                 </SheetContent>
             </Sheet>
 
@@ -183,15 +197,17 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                   <SheetHeader className="p-4 border-b">
                     <SheetTitle>{t('properties')}</SheetTitle>
                   </SheetHeader>
-                   <PropertiesPanel 
-                      selectedQuestion={selectedQuestion}
-                      onUpdateQuestion={updateQuestion}
-                    />
+                   <div className="p-4">
+                     <PropertiesPanel 
+                        selectedQuestion={selectedQuestion}
+                        onUpdateQuestion={updateQuestion}
+                      />
+                   </div>
                 </SheetContent>
             </Sheet>
           </>
       )}
-    </div>
+    </DndContext>
   )
 }
 
