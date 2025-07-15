@@ -87,12 +87,13 @@ function SortableFormItem({ item, index, selected, onSelect, onDelete }: { item:
 
   if (item.type === 'Section Header') {
     return (
-      <div ref={setNodeRef} style={style} className="flex items-center gap-4 py-2" onClick={onSelect}>
-         <div {...attributes} {...listeners} className="cursor-grab touch-none">
+      <div ref={setNodeRef} style={style} className="relative flex items-center gap-4 py-2" onClick={onSelect}>
+        <div className={cn("absolute inset-0 -mx-4 rounded-md", selected && "bg-primary/5")}></div>
+         <div {...attributes} {...listeners} className="cursor-grab touch-none relative z-10">
           <GripVertical className="h-5 w-5 text-muted-foreground" />
         </div>
-        <h3 className="text-xl font-bold flex-1">{item.label}</h3>
-        <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onDelete(item.id); }}><Trash2 className="h-4 w-4 text-muted-foreground" /></Button>
+        <h3 className="text-xl font-bold flex-1 relative z-10">{item.label}</h3>
+        <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="relative z-10"><Trash2 className="h-4 w-4 text-muted-foreground" /></Button>
       </div>
     )
   }
@@ -488,7 +489,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         {activePaletteItem ? (
           <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
             <activePaletteItem.icon className="mr-2 h-4 w-4" />
-            {tq(activePaletteeItem.type as any)}
+            {tq(activePaletteItem.type as any)}
           </Button>
         ) : activeId && template.items.find(i => i.id === activeId) ? (
             <Card className="p-4 shadow-xl opacity-90">
