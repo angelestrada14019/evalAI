@@ -27,7 +27,6 @@
     "signInLink": "Inicia sesión"
   },
   "AppHeader": {
-    "searchPlaceholder": "Buscar evaluaciones...",
     "myAccount": "Mi Cuenta",
     "settings": "Configuración",
     "support": "Soporte",
@@ -107,7 +106,9 @@
     "editAction": "Editar",
     "viewResponsesAction": "Ver Respuestas",
     "duplicateAction": "Duplicar",
-    "deleteAction": "Eliminar"
+    "deleteAction": "Eliminar",
+    "searchPlaceholder": "Buscar evaluaciones...",
+    "noResultsFound": "No se encontraron resultados."
   },
   "ReportsPage": {
     "title": "Reportes",

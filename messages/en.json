@@ -27,7 +27,6 @@
     "signInLink": "Sign in"
   },
   "AppHeader": {
-    "searchPlaceholder": "Search evaluations...",
     "myAccount": "My Account",
     "settings": "Settings",
     "support": "Support",
@@ -107,7 +106,9 @@
     "editAction": "Edit",
     "viewResponsesAction": "View Responses",
     "duplicateAction": "Duplicate",
-    "deleteAction": "Delete"
+    "deleteAction": "Delete",
+    "searchPlaceholder": "Search evaluations...",
+    "noResultsFound": "No results found."
   },
   "ReportsPage": {
     "title": "Reports",
