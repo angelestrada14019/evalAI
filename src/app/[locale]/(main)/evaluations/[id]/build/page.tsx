@@ -277,9 +277,14 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                         <span className="sr-only">Toggle Form Elements</span>
                     </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="p-0 w-72"><FormElementsPanel /></SheetContent>
+                <SheetContent side="left" className="p-0 w-72">
+                    <SheetHeader>
+                        <SheetTitle className="sr-only">{t('formElements')}</SheetTitle>
+                    </SheetHeader>
+                    <FormElementsPanel />
+                </SheetContent>
             </Sheet>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <h1 className="text-xl font-bold truncate">{template.title}</h1>
               <p className="text-sm text-muted-foreground truncate">{template.description}</p>
             </div>
@@ -296,7 +301,12 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                         <span className="sr-only">Toggle Properties</span>
                     </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="p-0 w-80"><PropertiesPanel /></SheetContent>
+                <SheetContent side="right" className="p-0 w-80">
+                    <SheetHeader>
+                        <SheetTitle className="sr-only">{t('properties')}</SheetTitle>
+                    </SheetHeader>
+                    <PropertiesPanel />
+                </SheetContent>
             </Sheet>
           </div>
         </header>
@@ -348,4 +358,3 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     </DndContext>
   )
 }
-
