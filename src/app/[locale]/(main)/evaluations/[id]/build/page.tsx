@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import { Eye, GripVertical, Save, Trash2, ListChecks, Pilcrow, SlidersHorizontal, Star, Image as ImageIcon, Table, Upload, PlusCircle, PanelLeft, Settings2, ImagePlus, Heading1, X } from "lucide-react"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { AIFormulaSuggester } from "@/components/evaluations/ai-formula-suggester"
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
@@ -26,22 +26,20 @@ const iconMap: { [key: string]: React.ElementType } = {
   "Multiple Choice": ListChecks,
   "Text Input": Pilcrow,
   "Slider": SlidersHorizontal,
-  "Rating Scale": Star,
+  "Section Header": Heading1,
   "Image Choice": ImageIcon,
   "Matrix Table": Table,
   "File Upload": Upload,
-  "Section Header": Heading1,
 }
 
 const questionTypes = [
   { type: "Multiple Choice", icon: ListChecks },
   { type: "Text Input", icon: Pilcrow },
   { type: "Slider", icon: SlidersHorizontal },
-  { type: "Rating Scale", icon: Star },
+  { type: "Section Header", icon: Heading1 },
   { type: "Image Choice", icon: ImageIcon },
   { type: "Matrix Table", icon: Table },
   { type: "File Upload", icon: Upload },
-  { type: "Section Header", icon: Heading1 },
 ]
 
 interface FormItem {
@@ -76,7 +74,6 @@ function DraggablePaletteItem({ type, icon: Icon }: { type: string, icon: React.
 
 function SortableFormItem({ item, index, selected, onSelect, onDelete }: { item: FormItem, index: number, selected: boolean, onSelect: () => void, onDelete: (id: string) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
-  const t = useTranslations('QuestionTypes');
   const tq = useTranslations('QuestionTypes');
 
 
@@ -126,11 +123,6 @@ function SortableFormItem({ item, index, selected, onSelect, onDelete }: { item:
                 <div key={i} className="flex items-center gap-2"><div className="w-4 h-4 rounded-full border"></div><span>{opt}</span></div>
               ))}
             </div>
-          )}
-           {item.type === 'Rating Scale' && (
-             <div className="flex gap-2 mt-2">
-                {[1,2,3,4,5].map(i => <Star key={i} className="text-muted-foreground/50"/>)}
-             </div>
           )}
           {item.type === 'Text Input' && (
             <Textarea placeholder="User will type their answer here..." className="mt-2" disabled />
@@ -188,13 +180,13 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
       setTemplate({ title: "New Evaluation", description: "Start building your form.", items: [] });
     }
   }, []);
-
+  
   useEffect(() => {
-    if (selectedQuestion && isMobile) {
-        setIsPropertiesSheetOpen(true);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedQuestion, isMobile]);
+    // Reset FAB and sheets on breakpoint change
+    setIsFabOpen(false);
+    setIsElementsSheetOpen(false);
+    setIsPropertiesSheetOpen(false);
+  }, [isMobile]);
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
@@ -215,7 +207,6 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             imageUrl: null,
             ...(type === 'Multiple Choice' && { options: ['Option 1', 'Option 2'] }),
             ...(type === 'Slider' && { sliderConfig: { min: 0, max: 100, step: 1 } }),
-            ...(type === 'Rating Scale' && { }),
         };
         const updatedItems = [...template.items, newItem];
         setTemplate({ ...template, items: updatedItems });
@@ -502,5 +493,3 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     </DndContext>
   )
 }
-
-    
