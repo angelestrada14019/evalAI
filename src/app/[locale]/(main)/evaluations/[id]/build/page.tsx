@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core'
-import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { arrayMove } from '@dnd-kit/sortable'
 import { useTranslations } from 'next-intl'
 import { useIsMobile } from '@/hooks/use-mobile'
 import type { FormItem, FormTemplate } from '@/components/evaluations/builder/types'
@@ -29,7 +29,12 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   const [isElementsSheetOpen, setIsElementsSheetOpen] = useState(false);
   const [isPropertiesSheetOpen, setIsPropertiesSheetOpen] = useState(false);
 
-  const sensors = useSensors(useSensor(PointerSensor));
+  const sensors = useSensors(useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }
+  ));
 
   useEffect(() => {
     const storedTemplate = localStorage.getItem('generatedTemplate');
@@ -53,13 +58,18 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
 
   useEffect(() => {
     if(isMobile) {
-      setIsElementsSheetOpen(false);
-      setIsPropertiesSheetOpen(false);
+        setSelectedQuestion(null);
     }
   }, [isMobile]);
 
   const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
+    const id = event.active.id as string;
+    setActiveId(id);
+    
+    // User's suggestion: close the elements sheet when dragging starts on mobile
+    if (isMobile && id.startsWith('palette-')) {
+      setIsElementsSheetOpen(false);
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -73,12 +83,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         
         const updatedItems = [...template.items, newItem];
         setTemplate({ ...template, items: updatedItems });
-        setSelectedQuestion(newItem);
-
-        if (isMobile) {
-            setIsElementsSheetOpen(false);
-            handleSelectQuestion(newItem);
-        }
+        handleSelectQuestion(newItem); // Select the new item
         return;
     }
 
@@ -125,90 +130,87 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className='flex flex-col bg-muted/20'>
-        <BuilderHeader title={template.title} description={template.description} />
+        <div className="flex flex-col min-h-[calc(100vh-theme(space.16))]">
+            <BuilderHeader title={template.title} description={template.description} />
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12">
+                
+                {/* Desktop: Form Elements Panel */}
+                <aside className="hidden lg:block lg:col-span-2 bg-card border-r">
+                    <FormElementsPanel />
+                </aside>
 
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12">
-          
-          <aside className="hidden lg:block lg:col-span-2 bg-card border-r p-4">
-            <FormElementsPanel />
-          </aside>
-
-          
-          <main id="canvas-droppable" className="lg:col-span-7 py-4 md:py-8">
-            <FormCanvas 
-              items={template.items}
-              selectedQuestionId={selectedQuestion?.id}
-              onSelectQuestion={handleSelectQuestion}
-              onDeleteQuestion={deleteQuestion}
-            />
-          </main>
-          
-          
-          <aside className="hidden lg:block lg:col-span-3 bg-card border-l p-4">
-            <PropertiesPanel 
-              selectedQuestion={selectedQuestion}
-              onUpdateQuestion={updateQuestion}
-            />
-          </aside>
+                {/* Canvas */}
+                <main id="canvas-droppable" className="lg:col-span-7 py-4 md:py-8 overflow-y-auto">
+                    <FormCanvas 
+                    items={template.items}
+                    selectedQuestionId={selectedQuestion?.id}
+                    onSelectQuestion={handleSelectQuestion}
+                    onDeleteQuestion={deleteQuestion}
+                    />
+                </main>
+                
+                {/* Desktop: Properties Panel */}
+                <aside className="hidden lg:block lg:col-span-3 bg-card border-l">
+                    <PropertiesPanel 
+                    selectedQuestion={selectedQuestion}
+                    onUpdateQuestion={updateQuestion}
+                    />
+                </aside>
+            </div>
         </div>
 
+        {/* Drag Overlay */}
         <DragOverlay>
-          {activePaletteItem ? (
-            <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
-              <activePaletteItem.icon className="mr-2 h-4 w-4" />
-              {tq(activePaletteItem.type as any)}
-            </Button>
-          ) : activeId && template.items.find(i => i.id === activeId) ? (
-              <div className="p-4 rounded-md shadow-xl opacity-90 bg-card">
-                   <p>{template.items.find(i => i.id === activeId)?.label}</p>
-              </div>
-          ): null}
+            {activePaletteItem ? (
+                <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
+                <activePaletteItem.icon className="mr-2 h-4 w-4" />
+                {tq(activePaletteItem.type as any)}
+                </Button>
+            ) : activeId && template.items.find(i => i.id === activeId) ? (
+                <div className="p-4 rounded-md shadow-xl opacity-90 bg-card">
+                    <p>{template.items.find(i => i.id === activeId)?.label}</p>
+                </div>
+            ): null}
         </DragOverlay>
-      </div>
-      
-      
-      {isMobile && (
-          <>
-            <MobileFAB 
-              onElementsClick={() => setIsElementsSheetOpen(true)}
-              onPropertiesClick={() => {
-                if(selectedQuestion) {
-                  setIsPropertiesSheetOpen(true);
-                } else {
-                  // Optional: Show a toast message to select an item first
-                }
-              }}
-            />
 
-            <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
-                <SheetContent side="left" className="p-0 w-[85vw] max-w-sm">
-                  <SheetHeader className="p-4 border-b">
-                    <SheetTitle>{t('formElements')}</SheetTitle>
-                  </SheetHeader>
-                  <div className="p-4">
-                    <FormElementsPanel />
-                  </div>
-                </SheetContent>
-            </Sheet>
+        {/* Mobile: FAB and Sheets */}
+        {isMobile && (
+            <>
+                <MobileFAB 
+                    onElementsClick={() => setIsElementsSheetOpen(true)}
+                    onPropertiesClick={() => {
+                        if(selectedQuestion) {
+                        setIsPropertiesSheetOpen(true);
+                        }
+                    }}
+                />
 
-            <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
-                <SheetContent side="right" className="p-0 w-[85vw] max-w-sm">
-                  <SheetHeader className="p-4 border-b">
-                    <SheetTitle>{t('properties')}</SheetTitle>
-                  </SheetHeader>
-                   <div className="p-4">
-                     <PropertiesPanel 
-                        selectedQuestion={selectedQuestion}
-                        onUpdateQuestion={updateQuestion}
-                      />
-                   </div>
-                </SheetContent>
-            </Sheet>
-          </>
-      )}
+                <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
+                    <SheetContent side="left" className="p-0 w-[85vw] max-w-sm flex flex-col">
+                        <SheetHeader className="p-4 border-b">
+                            <SheetTitle>{t('formElements')}</SheetTitle>
+                        </SheetHeader>
+                        <div className="flex-1 overflow-y-auto">
+                            <FormElementsPanel />
+                        </div>
+                    </SheetContent>
+                </Sheet>
+
+                <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
+                    <SheetContent side="right" className="p-0 w-[85vw] max-w-sm flex flex-col">
+                        <SheetHeader className="p-4 border-b">
+                            <SheetTitle>{t('properties')}</SheetTitle>
+                        </SheetHeader>
+                        <div className="flex-1 overflow-y-auto">
+                            <PropertiesPanel 
+                                selectedQuestion={selectedQuestion}
+                                onUpdateQuestion={updateQuestion}
+                            />
+                        </div>
+                    </SheetContent>
+                </Sheet>
+            </>
+        )}
     </DndContext>
   )
 }
-
-    
