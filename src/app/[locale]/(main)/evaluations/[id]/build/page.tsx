@@ -6,6 +6,7 @@ import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOv
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { v4 as uuidv4 } from 'uuid';
+import Image from 'next/image';
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import { Eye, GripVertical, Save, Trash2, ListChecks, Pilcrow, SlidersHorizontal, Star, Image as ImageIcon, Table, Upload, PlusCircle, PanelLeft, Settings2 } from "lucide-react"
+import { Eye, GripVertical, Save, Trash2, ListChecks, Pilcrow, SlidersHorizontal, Star, Image as ImageIcon, Table, Upload, PlusCircle, PanelLeft, Settings2, ImagePlus } from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { AIFormulaSuggester } from "@/components/evaluations/ai-formula-suggester"
 import { cn } from '@/lib/utils'
@@ -46,6 +47,7 @@ interface FormItem {
   label: string;
   options?: string[];
   required: boolean;
+  imageUrl?: string | null;
 }
 
 interface FormTemplate {
@@ -95,6 +97,11 @@ function SortableFormItem({ item, index, selected, onSelect, onDelete }: { item:
         <div className="flex-1">
           <p className="text-sm text-muted-foreground">{index + 1}. {t(item.type as any)}</p>
           <p className="font-semibold">{item.label}</p>
+          {item.imageUrl && (
+            <div className="mt-2 relative h-32 w-full rounded-md overflow-hidden">
+                <Image src={item.imageUrl} alt={item.label} layout="fill" objectFit="cover" data-ai-hint="question element" />
+            </div>
+          )}
           {item.type === 'Multiple Choice' && item.options && (
             <div className="space-y-2 mt-2 text-sm">
               {item.options.map((opt, i) => (
@@ -126,6 +133,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   const [activeId, setActiveId] = useState<string | null>(null);
   const t = useTranslations('FormBuilderPage');
   const tq = useTranslations('QuestionTypes');
+  const isMobile = useIsMobile();
 
   const sensors = useSensors(useSensor(PointerSensor));
 
@@ -163,6 +171,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             type: type,
             label: t('newQuestionLabel', { type: tq(type as any) }),
             required: false,
+            imageUrl: null,
             ...(type === 'Multiple Choice' && { options: ['Option 1', 'Option 2'] })
         };
         const updatedItems = [...template.items, newItem];
@@ -204,6 +213,25 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         setSelectedQuestion(prev => prev ? { ...prev, options: [...(prev.options || []), `Option ${(prev.options?.length || 0) + 1}`] } : null);
     }
   };
+  
+  const deleteOption = (questionId: string, optionIndex: number) => {
+    if (!template) return;
+    const newItems = template.items.map(item => {
+        if (item.id === questionId && item.type === 'Multiple Choice') {
+            const newOptions = item.options?.filter((_, i) => i !== optionIndex);
+            return { ...item, options: newOptions };
+        }
+        return item;
+    });
+    setTemplate({ ...template, items: newItems });
+     if (selectedQuestion?.id === questionId) {
+        setSelectedQuestion(prev => {
+            if (!prev || prev.type !== 'Multiple Choice') return prev;
+            const newOptions = prev.options?.filter((_, i) => i !== optionIndex);
+            return { ...prev, options: newOptions };
+        });
+    }
+  };
 
   const deleteQuestion = (id: string) => {
     if (!template) return;
@@ -236,11 +264,25 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                 <Label htmlFor="question-text">{t('questionText')}</Label>
                 <Input id="question-text" value={selectedQuestion.label} onChange={(e) => updateQuestion(selectedQuestion.id, { label: e.target.value })} />
               </div>
+               <div className="space-y-2">
+                  <Label>Image</Label>
+                   <Button variant="outline" size="sm" className="w-full" onClick={() => updateQuestion(selectedQuestion.id, {imageUrl: `https://placehold.co/600x400.png?text=${selectedQuestion.id.substring(0,4)}` })}>
+                      <ImagePlus className="mr-2 h-4 w-4" /> Add/Change Image
+                  </Button>
+                  {selectedQuestion.imageUrl && (
+                      <Button variant="link" size="sm" className="w-full text-destructive" onClick={() => updateQuestion(selectedQuestion.id, {imageUrl: null})}>
+                          Remove Image
+                      </Button>
+                  )}
+              </div>
               {selectedQuestion.type === 'Multiple Choice' && (
                 <div className="space-y-2">
                   <Label>{t('options')}</Label>
                   {selectedQuestion.options?.map((opt, i) => (
-                    <Input key={i} value={opt} onChange={(e) => updateQuestion(selectedQuestion.id, { options: selectedQuestion.options?.map((o, idx) => idx === i ? e.target.value : o) })} />
+                    <div key={i} className="flex items-center gap-2">
+                        <Input value={opt} onChange={(e) => updateQuestion(selectedQuestion.id, { options: selectedQuestion.options?.map((o, idx) => idx === i ? e.target.value : o) })} />
+                        <Button variant="ghost" size="icon" onClick={() => deleteOption(selectedQuestion.id, i)}><Trash2 className="h-4 w-4 text-muted-foreground"/></Button>
+                    </div>
                   ))}
                   <Button variant="outline" size="sm" className="w-full" onClick={() => addOption(selectedQuestion.id)}><PlusCircle className="mr-2 h-4 w-4" />{t('addOption')}</Button>
                 </div>
@@ -267,18 +309,22 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="h-full flex flex-col">
-        <header className="flex-shrink-0 flex items-center justify-between gap-2 md:gap-4 p-4 border-b bg-card">
+      <div className="h-dvh flex flex-col">
+        <header className="flex-shrink-0 flex items-center justify-between gap-2 md:gap-4 p-2 md:p-4 border-b bg-card">
             <div className="min-w-0 flex-1">
-              <h1 className="text-xl font-bold truncate">{template.title}</h1>
-              <p className="text-sm text-muted-foreground truncate">{template.description}</p>
+              <h1 className="text-lg md:text-xl font-bold truncate">{template.title}</h1>
+              <p className="text-xs md:text-sm text-muted-foreground truncate">{template.description}</p>
             </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            <Button variant="outline" size="sm" className="hidden sm:inline-flex"><Eye className="mr-2 h-4 w-4" /> {t('preview')}</Button>
-            <Button variant="outline" size="icon" className="sm:hidden"><Eye className="h-4 w-4" /></Button>
+            <Button variant="outline" size={isMobile ? "icon" : "default"}>
+                <Eye className={cn(!isMobile && "mr-2", "h-4 w-4")} /> 
+                <span className="hidden md:inline">{t('preview')}</span>
+            </Button>
             <AIFormulaSuggester />
-            <Button size="sm" className="hidden sm:inline-flex"><Save className="mr-2 h-4 w-4" /> {t('save')}</Button>
-            <Button size="icon" className="sm:hidden"><Save className="h-4 w-4" /></Button>
+            <Button size={isMobile ? "icon" : "default"}>
+                <Save className={cn(!isMobile && "mr-2", "h-4 w-4")} />
+                <span className="hidden md:inline">{t('save')}</span>
+            </Button>
           </div>
         </header>
 
@@ -350,7 +396,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         {activePaletteItem ? (
           <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
             <activePaletteItem.icon className="mr-2 h-4 w-4" />
-            {tq(activePalette-item.type as any)}
+            {tq(activePaletteItem.type as any)}
           </Button>
         ) : activeId && template.items.find(i => i.id === activeId) ? (
             <Card className="p-4 shadow-xl opacity-90">
@@ -361,3 +407,6 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     </DndContext>
   )
 }
+
+
+    
