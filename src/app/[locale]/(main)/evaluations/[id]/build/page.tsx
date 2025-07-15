@@ -268,26 +268,27 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="h-full flex flex-col">
-        <header className="flex items-center justify-between p-4 border-b bg-card">
-          <div className="flex items-center gap-2">
+        <header className="flex flex-wrap items-center justify-between gap-4 p-4 border-b bg-card">
+          <div className="flex items-center gap-2 min-w-0">
             <Sheet>
                 <SheetTrigger asChild>
-                    <Button variant="outline" size="icon" className="lg:hidden">
+                    <Button variant="outline" size="icon" className="lg:hidden flex-shrink-0">
                         <PanelLeft className="h-5 w-5" />
                         <span className="sr-only">Toggle Form Elements</span>
                     </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="p-0 w-72"><FormElementsPanel /></SheetContent>
             </Sheet>
-            <div>
-              <h1 className="text-xl font-bold">{template.title}</h1>
-              <p className="text-sm text-muted-foreground">{template.description}</p>
+            <div className="min-w-0">
+              <h1 className="text-xl font-bold truncate">{template.title}</h1>
+              <p className="text-sm text-muted-foreground truncate">{template.description}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline"><Eye className="mr-2 h-4 w-4" /> {t('preview')}</Button>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Button variant="outline" size="sm" className="hidden sm:inline-flex"><Eye className="mr-2 h-4 w-4" /> {t('preview')}</Button>
+             <Button variant="outline" size="icon" className="sm:hidden"><Eye className="h-4 w-4" /></Button>
             <AIFormulaSuggester />
-            <Button><Save className="mr-2 h-4 w-4" /> {t('save')}</Button>
+            <Button size="sm"><Save className="mr-2 h-4 w-4" /> {t('save')}</Button>
             <Sheet>
                 <SheetTrigger asChild>
                     <Button variant="outline" size="icon" className="lg:hidden">
@@ -348,4 +349,3 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   )
 }
 
-    
