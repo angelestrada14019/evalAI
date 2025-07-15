@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import { Eye, GripVertical, Save, Trash2, ListChecks, Pilcrow, SlidersHorizontal, Star, Image as ImageIcon, Table, Upload, PlusCircle, PanelLeft, Settings2, ImagePlus, Heading1 } from "lucide-react"
+import { Eye, GripVertical, Save, Trash2, ListChecks, Pilcrow, SlidersHorizontal, Star, Image as ImageIcon, Table, Upload, PlusCircle, PanelLeft, Settings2, ImagePlus, Heading1, X } from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { AIFormulaSuggester } from "@/components/evaluations/ai-formula-suggester"
 import { cn } from '@/lib/utils'
@@ -77,6 +77,8 @@ function DraggablePaletteItem({ type, icon: Icon }: { type: string, icon: React.
 function SortableFormItem({ item, index, selected, onSelect, onDelete }: { item: FormItem, index: number, selected: boolean, onSelect: () => void, onDelete: (id: string) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
   const t = useTranslations('QuestionTypes');
+  const tq = useTranslations('QuestionTypes');
+
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -111,7 +113,7 @@ function SortableFormItem({ item, index, selected, onSelect, onDelete }: { item:
           <GripVertical className="h-5 w-5 text-muted-foreground mt-1" />
         </div>
         <div className="flex-1">
-          <p className="text-sm text-muted-foreground">{index + 1}. {t(item.type as any)}</p>
+          <p className="text-sm text-muted-foreground">{index + 1}. {tq(item.type as any)}</p>
           <p className="font-semibold">{item.label}</p>
           {item.imageUrl && (
             <div className="mt-2 relative h-32 w-full rounded-md overflow-hidden">
@@ -164,6 +166,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   const isMobile = useIsMobile();
   const [isElementsSheetOpen, setIsElementsSheetOpen] = useState(false);
   const [isPropertiesSheetOpen, setIsPropertiesSheetOpen] = useState(false);
+  const [isFabOpen, setIsFabOpen] = useState(false);
 
 
   const sensors = useSensors(useSensor(PointerSensor));
@@ -187,11 +190,10 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   }, []);
 
   useEffect(() => {
-    if (selectedQuestion) {
-        if (isMobile) {
-            setIsPropertiesSheetOpen(true);
-        }
+    if (selectedQuestion && isMobile) {
+        setIsPropertiesSheetOpen(true);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedQuestion, isMobile]);
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -212,11 +214,13 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             required: false,
             imageUrl: null,
             ...(type === 'Multiple Choice' && { options: ['Option 1', 'Option 2'] }),
-            ...(type === 'Slider' && { sliderConfig: { min: 0, max: 100, step: 1 } })
+            ...(type === 'Slider' && { sliderConfig: { min: 0, max: 100, step: 1 } }),
+            ...(type === 'Rating Scale' && { }),
         };
         const updatedItems = [...template.items, newItem];
         setTemplate({ ...template, items: updatedItems });
         setSelectedQuestion(newItem);
+        setIsElementsSheetOpen(false); // Close sheet on mobile after dropping
         return;
     }
 
@@ -283,18 +287,18 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   };
 
   const FormElementsPanel = () => (
-    <aside className="p-4 bg-card h-full overflow-y-auto">
+    <div className="p-4 bg-card h-full overflow-y-auto">
       <h2 className="text-lg font-semibold mb-4">{t('formElements')}</h2>
       <SortableContext items={questionTypes.map(q => `palette-${q.type}`)} strategy={verticalListSortingStrategy}>
           <div className="space-y-2">
               {questionTypes.map((q) => <DraggablePaletteItem key={q.type} type={q.type} icon={q.icon} />)}
           </div>
       </SortableContext>
-    </aside>
+    </div>
   );
 
   const PropertiesPanel = () => (
-      <aside className="p-4 bg-card h-full overflow-y-auto">
+      <div className="p-4 bg-card h-full overflow-y-auto">
         <h2 className="text-lg font-semibold mb-4">{t('properties')}</h2>
         {selectedQuestion ? (
           <Card>
@@ -361,7 +365,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             <p>{t('selectQuestion')}</p>
           </div>
         )}
-      </aside>
+      </div>
   );
 
   if (!template) {
@@ -372,7 +376,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="h-dvh flex flex-col bg-muted/20">
+      <div className="flex flex-col min-h-screen bg-muted/20">
         <header className="flex-shrink-0 p-3 md:p-4 border-b bg-card">
             <div className='flex items-center justify-between flex-wrap gap-4'>
                 <div className="min-w-0 flex-1">
@@ -394,10 +398,12 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         </header>
 
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
-          <div className="hidden lg:block lg:col-span-2 bg-card border-r h-full overflow-y-auto">
+          {/* Panel de Elementos (Desktop) */}
+          <div className="hidden lg:block lg:col-span-2 bg-card border-r">
             <FormElementsPanel />
           </div>
 
+          {/* Lienzo Principal */}
           <main id="canvas-droppable" className="lg:col-span-7 py-4 md:py-8 overflow-y-auto">
              <SortableContext items={template.items.map(i => i.id)} strategy={verticalListSortingStrategy}>
               <div className="space-y-6 max-w-3xl mx-auto px-4">
@@ -420,36 +426,57 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
               </div>
             )}
           </main>
-
-          <div className="hidden lg:block lg:col-span-3 bg-card border-l h-full overflow-y-auto">
+          
+          {/* Panel de Propiedades (Desktop) */}
+          <div className="hidden lg:block lg:col-span-3 bg-card border-l">
             <PropertiesPanel />
           </div>
         </div>
 
+        {/* FAB y Paneles deslizables (Mobile) */}
         {isMobile && (
-            <div className="fixed bottom-4 right-4 z-10 flex flex-col gap-2">
-                 <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
-                    <SheetTrigger asChild>
-                        <Button variant="default" size="icon" className="shadow-lg rounded-full h-14 w-14">
+            <div className="fixed bottom-6 right-6 z-50">
+                 <div className="relative flex flex-col-reverse items-center gap-2">
+                    {/* Botones de acción del FAB */}
+                    <div className={cn(
+                        "transition-all duration-300 ease-in-out flex flex-col items-center gap-2",
+                        isFabOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
+                    )}>
+                        {/* Botón de Propiedades */}
+                        <Button variant="default" size="icon" className="shadow-lg rounded-full h-12 w-12" onClick={() => { setIsPropertiesSheetOpen(true); setIsFabOpen(false); }}>
+                            <Settings2 className="h-6 w-6" />
+                            <span className="sr-only">{t('properties')}</span>
+                        </Button>
+                        {/* Botón de Elementos */}
+                         <Button variant="default" size="icon" className="shadow-lg rounded-full h-12 w-12" onClick={() => { setIsElementsSheetOpen(true); setIsFabOpen(false); }}>
                             <PanelLeft className="h-6 w-6" />
                             <span className="sr-only">{t('formElements')}</span>
                         </Button>
-                    </SheetTrigger>
-                    <SheetContent side="left" className="p-0 w-72">
+                    </div>
+
+                    {/* Botón principal del FAB */}
+                    <Button 
+                        variant="default" 
+                        size="icon" 
+                        className="shadow-lg rounded-full h-16 w-16 z-10"
+                        onClick={() => setIsFabOpen(prev => !prev)}
+                    >
+                        {isFabOpen ? <X className="h-7 w-7" /> : <PlusCircle className="h-7 w-7" />}
+                    </Button>
+                </div>
+
+                {/* Sheet de Elementos */}
+                 <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
+                    <SheetContent side="left" className="p-0 w-[85vw] max-w-sm">
                       <SheetHeader className="p-4 border-b">
                         <SheetTitle>{t('formElements')}</SheetTitle>
                       </SheetHeader>
                       <FormElementsPanel />
                     </SheetContent>
                 </Sheet>
+                {/* Sheet de Propiedades */}
                  <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
-                    <SheetTrigger asChild>
-                        <Button variant="default" size="icon" className="shadow-lg rounded-full h-14 w-14">
-                            <Settings2 className="h-6 w-6" />
-                            <span className="sr-only">{t('properties')}</span>
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent side="right" className="p-0 w-80">
+                    <SheetContent side="right" className="p-0 w-[85vw] max-w-sm">
                       <SheetHeader className="p-4 border-b">
                         <SheetTitle>{t('properties')}</SheetTitle>
                       </SheetHeader>
@@ -459,6 +486,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             </div>
         )}
       </div>
+
       <DragOverlay>
         {activePaletteItem ? (
           <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
