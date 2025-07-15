@@ -27,6 +27,7 @@ import type { Evaluation } from '@/services/backend/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getTranslations } from 'next-intl/server';
 
 
 function EvaluationsClient({ initialEvaluations }: { initialEvaluations: Evaluation[] }) {
