@@ -1,35 +1,40 @@
 
-
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay, DragEndEvent, DragStartEvent } from '@dnd-kit/core'
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { v4 as uuidv4 } from 'uuid';
+
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import { Eye, GripVertical, Save, Settings, Trash2, ListChecks, Pilcrow, SlidersHorizontal, Star, Image as ImageIcon, Table, Upload } from "lucide-react"
+import { Eye, GripVertical, Save, Trash2, ListChecks, Pilcrow, SlidersHorizontal, Star, Image as ImageIcon, Table, Upload, PlusCircle } from "lucide-react"
 import { AIFormulaSuggester } from "@/components/evaluations/ai-formula-suggester"
+import { cn } from '@/lib/utils'
 
 const iconMap: { [key: string]: React.ElementType } = {
-    "Multiple Choice": ListChecks,
-    "Text Input": Pilcrow,
-    "Slider": SlidersHorizontal,
-    "Rating Scale": Star,
-    "Image Choice": ImageIcon,
-    "Matrix Table": Table,
-    "File Upload": Upload,
+  "Multiple Choice": ListChecks,
+  "Text Input": Pilcrow,
+  "Slider": SlidersHorizontal,
+  "Rating Scale": Star,
+  "Image Choice": ImageIcon,
+  "Matrix Table": Table,
+  "File Upload": Upload,
 }
 
 const questionTypes = [
-    { name: "Multiple Choice" },
-    { name: "Text Input" },
-    { name: "Slider" },
-    { name: "Rating Scale" },
-    { name: "Image Choice" },
-    { name: "Matrix Table" },
-    { name: "File Upload" },
+  { type: "Multiple Choice", icon: ListChecks },
+  { type: "Text Input", icon: Pilcrow },
+  { type: "Slider", icon: SlidersHorizontal },
+  { type: "Rating Scale", icon: Star },
+  { type: "Image Choice", icon: ImageIcon },
+  { type: "Matrix Table", icon: Table },
+  { type: "File Upload", icon: Upload },
 ]
 
 interface FormItem {
@@ -46,148 +51,282 @@ interface FormTemplate {
   items: FormItem[];
 }
 
+function DraggablePaletteItem({ type, icon: Icon }: { type: string, icon: React.ElementType }) {
+  const { attributes, listeners, setNodeRef, isDragging } = useSortable({ id: `palette-${type}` });
 
-export default function FormBuilderPage({ params }: { params: { id: string }}) {
-    const [template, setTemplate] = useState<FormTemplate | null>(null);
-    const [selectedQuestion, setSelectedQuestion] = useState<FormItem | null>(null);
+  return (
+    <div ref={setNodeRef} {...attributes} {...listeners}>
+      <Button variant="ghost" className={cn("w-full justify-start cursor-grab", isDragging && "opacity-50")}>
+        <Icon className="mr-2 h-4 w-4 text-muted-foreground" />
+        {type}
+      </Button>
+    </div>
+  )
+}
 
-    useEffect(() => {
-        const storedTemplate = localStorage.getItem('generatedTemplate');
-        if (storedTemplate) {
-            try {
-                const parsedTemplate = JSON.parse(storedTemplate);
-                setTemplate(parsedTemplate);
-                if (parsedTemplate.items && parsedTemplate.items.length > 0) {
-                    setSelectedQuestion(parsedTemplate.items[0]);
-                }
-                // localStorage.removeItem('generatedTemplate'); // Clean up after loading
-            } catch (error) {
-                console.error("Failed to parse template from localStorage", error);
-                setTemplate({ title: "Error Loading Template", description: "Could not load the evaluation template.", items: [] });
-            }
-        } else {
-             setTemplate({ title: "New Evaluation", description: "Start building your form.", items: [] });
+function SortableFormItem({ item, index, selected, onSelect, onDelete }: { item: FormItem, index: number, selected: boolean, onSelect: () => void, onDelete: (id: string) => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  if (isDragging) {
+    return <Card ref={setNodeRef} style={style} className="p-4 h-32 bg-primary/10 border-primary border-dashed" />;
+  }
+  
+  return (
+    <Card
+      ref={setNodeRef}
+      style={style}
+      className={cn("p-4 transition-shadow", selected ? 'border-2 border-primary shadow-lg' : 'hover:shadow-md')}
+      onClick={onSelect}
+    >
+      <div className="flex items-start gap-4">
+        <div {...attributes} {...listeners} className="cursor-grab touch-none">
+          <GripVertical className="h-5 w-5 text-muted-foreground mt-1" />
+        </div>
+        <div className="flex-1">
+          <p className="text-sm text-muted-foreground">{index + 1}. {item.type}</p>
+          <p className="font-semibold">{item.label || "New Question"}</p>
+          {item.type === 'Multiple Choice' && item.options && (
+            <div className="space-y-2 mt-2 text-sm">
+              {item.options.map((opt, i) => (
+                <div key={i} className="flex items-center gap-2"><div className="w-4 h-4 rounded-full border"></div><span>{opt}</span></div>
+              ))}
+            </div>
+          )}
+          {item.type === 'Text Input' && (
+            <Textarea placeholder="User will type their answer here..." className="mt-2" disabled />
+          )}
+          {item.type === 'Slider' && (
+            <div className="flex items-center gap-4 mt-3">
+              <span className="text-sm text-muted-foreground">Min</span>
+              <div className="w-full h-2 bg-secondary rounded-full" />
+              <span className="text-sm text-muted-foreground">Max</span>
+            </div>
+          )}
+        </div>
+        <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onDelete(item.id); }}><Trash2 className="h-4 w-4 text-muted-foreground" /></Button>
+      </div>
+    </Card>
+  )
+}
+
+
+export default function FormBuilderPage({ params }: { params: { id: string } }) {
+  const [template, setTemplate] = useState<FormTemplate | null>(null);
+  const [selectedQuestion, setSelectedQuestion] = useState<FormItem | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  useEffect(() => {
+    const storedTemplate = localStorage.getItem('generatedTemplate');
+    if (storedTemplate) {
+      try {
+        const parsedTemplate = JSON.parse(storedTemplate);
+        setTemplate(parsedTemplate);
+        if (parsedTemplate.items && parsedTemplate.items.length > 0) {
+          setSelectedQuestion(parsedTemplate.items[0]);
         }
-    }, []);
+      } catch (error) {
+        console.error("Failed to parse template from localStorage", error);
+        setTemplate({ title: "Error Loading Template", description: "Could not load the evaluation template.", items: [] });
+      }
+    } else {
+      setTemplate({ title: "New Evaluation", description: "Start building your form.", items: [] });
+    }
+  }, []);
 
-    const renderQuestion = (question: FormItem, index: number) => {
-        return (
-            <Card 
-                key={question.id} 
-                className={`p-4 ${selectedQuestion?.id === question.id ? 'border-2 border-primary shadow-lg' : ''}`}
-                onClick={() => setSelectedQuestion(question)}
-            >
-                <div className="flex items-start gap-4">
-                    <GripVertical className="h-5 w-5 text-muted-foreground mt-1 cursor-grab" />
-                    <div className="flex-1">
-                        <p className="text-sm text-muted-foreground">{index + 1}. {question.type}</p>
-                        <p className="font-semibold">{question.label}</p>
-                        {question.type === 'Multiple Choice' && question.options && (
-                             <div className="space-y-2 mt-2 text-sm">
-                                {question.options.map((opt, i) => (
-                                    <div key={i} className="flex items-center gap-2"><div className="w-4 h-4 rounded-full border"></div><span>{opt}</span></div>
-                                ))}
-                            </div>
-                        )}
-                        {question.type === 'Text Input' && (
-                             <Textarea placeholder="User will type their answer here..." className="mt-2" disabled />
-                        )}
-                        {question.type === 'Slider' && (
-                            <div className="flex items-center gap-4 mt-3">
-                                <span className="text-sm text-muted-foreground">Min</span>
-                                <div className="w-full h-2 bg-secondary rounded-full" />
-                                <span className="text-sm text-muted-foreground">Max</span>
-                            </div>
-                        )}
-                    </div>
-                    <Button variant="ghost" size="icon"><Trash2 className="h-4 w-4 text-muted-foreground" /></Button>
-                </div>
-            </Card>
-        )
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveId(null);
+    if (!over || !template) return;
+
+    // Handling adding new item from palette
+    if (active.id.toString().startsWith('palette-') && over.id === 'canvas-droppable') {
+        const type = active.id.toString().replace('palette-', '');
+        const newItem: FormItem = {
+            id: uuidv4(),
+            type: type,
+            label: `New ${type} Question`,
+            required: false,
+            ...(type === 'Multiple Choice' && { options: ['Option 1', 'Option 2'] })
+        };
+        const updatedItems = [...template.items, newItem];
+        setTemplate({ ...template, items: updatedItems });
+        setSelectedQuestion(newItem);
+        return;
     }
 
-    return (
-        <div className="h-full flex flex-col">
-            <header className="flex items-center justify-between p-4 border-b bg-card">
-                <div>
-                    <h1 className="text-xl font-bold">{template?.title || "Loading..."}</h1>
-                    <p className="text-sm text-muted-foreground">{template?.description || "Please wait"}</p>
+    // Handling reordering items on canvas
+    if (active.id !== over.id && !active.id.toString().startsWith('palette-')) {
+        const oldIndex = template.items.findIndex(item => item.id === active.id);
+        const newIndex = template.items.findIndex(item => item.id === over.id);
+        if (oldIndex !== -1 && newIndex !== -1) {
+            const updatedItems = arrayMove(template.items, oldIndex, newIndex);
+            setTemplate({ ...template, items: updatedItems });
+        }
+    }
+  };
+
+  const updateQuestion = (id: string, updates: Partial<FormItem>) => {
+    if (!template) return;
+    const newItems = template.items.map(item => item.id === id ? { ...item, ...updates } : item);
+    setTemplate({ ...template, items: newItems });
+    if (selectedQuestion?.id === id) {
+        setSelectedQuestion(prev => prev ? { ...prev, ...updates } : null);
+    }
+  };
+
+  const addOption = (questionId: string) => {
+    if (!template) return;
+    const newItems = template.items.map(item => {
+        if (item.id === questionId && item.type === 'Multiple Choice') {
+            const newOptions = [...(item.options || []), `Option ${(item.options?.length || 0) + 1}`];
+            return { ...item, options: newOptions };
+        }
+        return item;
+    });
+     setTemplate({ ...template, items: newItems });
+     if (selectedQuestion?.id === questionId) {
+        setSelectedQuestion(prev => prev ? { ...prev, options: [...(prev.options || []), `Option ${(prev.options?.length || 0) + 1}`] } : null);
+    }
+  };
+
+  const updateOption = (questionId: string, optionIndex: number, newValue: string) => {
+      if (!template) return;
+      const newItems = template.items.map(item => {
+          if (item.id === questionId && item.options) {
+              const newOptions = [...item.options];
+              newOptions[optionIndex] = newValue;
+              return { ...item, options: newOptions };
+          }
+          return item;
+      });
+      setTemplate({ ...template, items: newItems });
+      if (selectedQuestion?.id === questionId) {
+        const newSelOptions = [...(selectedQuestion.options || [])];
+        newSelOptions[optionIndex] = newValue;
+        setSelectedQuestion(prev => prev ? { ...prev, options: newSelOptions } : null);
+    }
+  };
+
+  const deleteQuestion = (id: string) => {
+    if (!template) return;
+    const newItems = template.items.filter(item => item.id !== id);
+    setTemplate({ ...template, items: newItems });
+    if (selectedQuestion?.id === id) {
+        setSelectedQuestion(newItems.length > 0 ? newItems[0] : null);
+    }
+  };
+
+  if (!template) {
+    return <div>Loading...</div>;
+  }
+  
+  const activePaletteItem = activeId && activeId.startsWith('palette-') ? questionTypes.find(q => `palette-${q.type}` === activeId) : null;
+
+  return (
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <div className="h-full flex flex-col">
+        <header className="flex items-center justify-between p-4 border-b bg-card">
+          <div>
+            <h1 className="text-xl font-bold">{template.title}</h1>
+            <p className="text-sm text-muted-foreground">{template.description}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline"><Eye className="mr-2 h-4 w-4" /> Preview</Button>
+            <AIFormulaSuggester />
+            <Button><Save className="mr-2 h-4 w-4" /> Save</Button>
+          </div>
+        </header>
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-12 overflow-hidden">
+          {/* Question Palette */}
+          <aside className="md:col-span-2 border-r p-4 bg-card">
+            <h2 className="text-lg font-semibold mb-4">Form Elements</h2>
+            <SortableContext items={questionTypes.map(q => `palette-${q.type}`)} strategy={verticalListSortingStrategy}>
+                <div className="space-y-2">
+                    {questionTypes.map((q) => <DraggablePaletteItem key={q.type} type={q.type} icon={q.icon} />)}
                 </div>
-                <div className="flex items-center gap-2">
-                    <Button variant="outline">
-                        <Eye className="mr-2 h-4 w-4" /> Preview
-                    </Button>
-                    <AIFormulaSuggester />
-                    <Button>
-                        <Save className="mr-2 h-4 w-4" /> Save
-                    </Button>
-                </div>
-            </header>
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-12 overflow-hidden">
-                {/* Question Palette */}
-                <aside className="md:col-span-2 border-r p-4 bg-card">
-                    <h2 className="text-lg font-semibold mb-4">Form Elements</h2>
+            </SortableContext>
+          </aside>
+
+          {/* Form Canvas */}
+          <main id="canvas-droppable" className="md:col-span-7 p-8 overflow-y-auto bg-secondary/50">
+             <SortableContext items={template.items.map(i => i.id)} strategy={verticalListSortingStrategy}>
+              <div className="space-y-6">
+                {template.items.map((item, index) => (
+                  <SortableFormItem
+                    key={item.id}
+                    item={item}
+                    index={index}
+                    selected={selectedQuestion?.id === item.id}
+                    onSelect={() => setSelectedQuestion(item)}
+                    onDelete={deleteQuestion}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+            {template.items.length === 0 && (
+              <div className="text-center py-20 border-2 border-dashed rounded-lg text-muted-foreground">
+                <p>Drag elements from the left panel to start building.</p>
+              </div>
+            )}
+          </main>
+
+          {/* Properties Panel */}
+          <aside className="md:col-span-3 border-l p-4 bg-card overflow-y-auto">
+            <h2 className="text-lg font-semibold mb-4">Properties</h2>
+            {selectedQuestion ? (
+              <Card>
+                <CardHeader><CardTitle className="text-base">{selectedQuestion.type}</CardTitle></CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="question-text">Question Text</Label>
+                    <Input id="question-text" value={selectedQuestion.label} onChange={(e) => updateQuestion(selectedQuestion.id, { label: e.target.value })} />
+                  </div>
+                  {selectedQuestion.type === 'Multiple Choice' && (
                     <div className="space-y-2">
-                        {questionTypes.map((q) => {
-                            const Icon = iconMap[q.name] || Pilcrow;
-                            return (
-                                <Button key={q.name} variant="ghost" className="w-full justify-start">
-                                    <Icon className="mr-2 h-4 w-4 text-muted-foreground" />
-                                    {q.name}
-                                </Button>
-                            )
-                        })}
+                      <Label>Options</Label>
+                      {selectedQuestion.options?.map((opt, i) => (
+                        <Input key={i} value={opt} onChange={(e) => updateQuestion(selectedQuestion.id, { options: selectedQuestion.options?.map((o, idx) => idx === i ? e.target.value : o) })} />
+                      ))}
+                      <Button variant="outline" size="sm" className="w-full" onClick={() => addOption(selectedQuestion.id)}><PlusCircle className="mr-2 h-4 w-4" />Add Option</Button>
                     </div>
-                </aside>
-
-                {/* Form Canvas */}
-                <main className="md:col-span-7 p-8 overflow-y-auto">
-                    <div className="space-y-6">
-                        {template?.items.map((item, index) => renderQuestion(item, index))}
-                        {(!template || template.items.length === 0) && (
-                            <div className="text-center py-12 text-muted-foreground">
-                                <p>No questions yet.</p>
-                                <p className="text-sm">Drag elements from the left panel to start building.</p>
-                            </div>
-                        )}
-                    </div>
-                </main>
-
-                {/* Properties Panel */}
-                <aside className="md:col-span-3 border-l p-4 bg-card">
-                    <h2 className="text-lg font-semibold mb-4">Properties</h2>
-                    {selectedQuestion ? (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="text-base">{selectedQuestion.type}</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="question-text">Question Text</Label>
-                                    <Input id="question-text" value={selectedQuestion.label} onChange={(e) => setSelectedQuestion({...selectedQuestion, label: e.target.value})} />
-                                </div>
-                                {selectedQuestion.type === 'Multiple Choice' && (
-                                    <div className="space-y-2">
-                                        <Label>Options</Label>
-                                        {selectedQuestion.options?.map((opt, i) => (
-                                            <Input key={i} value={opt} />
-                                        ))}
-                                        <Button variant="outline" size="sm" className="w-full">Add Option</Button>
-                                    </div>
-                                )}
-                                <div className="flex items-center justify-between">
-                                    <Label htmlFor="required-switch">Required</Label>
-                                    <Switch id="required-switch" checked={selectedQuestion.required} />
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ) : (
-                         <div className="text-center py-12 text-muted-foreground">
-                            <p>Select a question to see its properties.</p>
-                        </div>
-                    )}
-                </aside>
-            </div>
+                  )}
+                  <div className="flex items-center justify-between pt-4 border-t">
+                    <Label htmlFor="required-switch">Required</Label>
+                    <Switch id="required-switch" checked={selectedQuestion.required} onCheckedChange={(checked) => updateQuestion(selectedQuestion.id, { required: checked })} />
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="text-center py-12 text-muted-foreground">
+                <p>Select a question to see its properties.</p>
+              </div>
+            )}
+          </aside>
         </div>
-    )
+      </div>
+      <DragOverlay>
+        {activePaletteItem ? (
+          <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
+            <activePaletteItem.icon className="mr-2 h-4 w-4" />
+            {activePaletteItem.type}
+          </Button>
+        ) : activeId && template.items.find(i => i.id === activeId) ? (
+            <Card className="p-4 shadow-xl opacity-90">
+                 <p>{template.items.find(i => i.id === activeId)?.label}</p>
+            </Card>
+        ): null}
+      </DragOverlay>
+    </DndContext>
+  )
 }
