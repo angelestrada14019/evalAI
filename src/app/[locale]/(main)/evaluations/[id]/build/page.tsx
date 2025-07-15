@@ -13,10 +13,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import { Eye, GripVertical, Save, Trash2, ListChecks, Pilcrow, SlidersHorizontal, Star, Image as ImageIcon, Table, Upload, PlusCircle } from "lucide-react"
+import { Eye, GripVertical, Save, Trash2, ListChecks, Pilcrow, SlidersHorizontal, Star, Image as ImageIcon, Table, Upload, PlusCircle, PanelLeft, Settings2 } from "lucide-react"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { AIFormulaSuggester } from "@/components/evaluations/ai-formula-suggester"
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 const iconMap: { [key: string]: React.ElementType } = {
   "Multiple Choice": ListChecks,
@@ -212,8 +214,53 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     }
   };
 
+  const FormElementsPanel = () => (
+    <aside className="p-4 bg-card h-full overflow-y-auto">
+      <h2 className="text-lg font-semibold mb-4">{t('formElements')}</h2>
+      <SortableContext items={questionTypes.map(q => `palette-${q.type}`)} strategy={verticalListSortingStrategy}>
+          <div className="space-y-2">
+              {questionTypes.map((q) => <DraggablePaletteItem key={q.type} type={q.type} icon={q.icon} />)}
+          </div>
+      </SortableContext>
+    </aside>
+  );
+
+  const PropertiesPanel = () => (
+      <aside className="p-4 bg-card h-full overflow-y-auto">
+        <h2 className="text-lg font-semibold mb-4">{t('properties')}</h2>
+        {selectedQuestion ? (
+          <Card>
+            <CardHeader><CardTitle className="text-base">{tq(selectedQuestion.type as any)}</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="question-text">{t('questionText')}</Label>
+                <Input id="question-text" value={selectedQuestion.label} onChange={(e) => updateQuestion(selectedQuestion.id, { label: e.target.value })} />
+              </div>
+              {selectedQuestion.type === 'Multiple Choice' && (
+                <div className="space-y-2">
+                  <Label>{t('options')}</Label>
+                  {selectedQuestion.options?.map((opt, i) => (
+                    <Input key={i} value={opt} onChange={(e) => updateQuestion(selectedQuestion.id, { options: selectedQuestion.options?.map((o, idx) => idx === i ? e.target.value : o) })} />
+                  ))}
+                  <Button variant="outline" size="sm" className="w-full" onClick={() => addOption(selectedQuestion.id)}><PlusCircle className="mr-2 h-4 w-4" />{t('addOption')}</Button>
+                </div>
+              )}
+              <div className="flex items-center justify-between pt-4 border-t">
+                <Label htmlFor="required-switch">{t('required')}</Label>
+                <Switch id="required-switch" checked={selectedQuestion.required} onCheckedChange={(checked) => updateQuestion(selectedQuestion.id, { required: checked })} />
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="text-center py-12 text-muted-foreground">
+            <p>{t('selectQuestion')}</p>
+          </div>
+        )}
+      </aside>
+  );
+
   if (!template) {
-    return <div>Loading...</div>;
+    return <div className="flex h-full w-full items-center justify-center">{t('loading')}</div>;
   }
   
   const activePaletteItem = activeId && activeId.startsWith('palette-') ? questionTypes.find(q => `palette-${q.type}` === activeId) : null;
@@ -222,29 +269,44 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="h-full flex flex-col">
         <header className="flex items-center justify-between p-4 border-b bg-card">
-          <div>
-            <h1 className="text-xl font-bold">{template.title}</h1>
-            <p className="text-sm text-muted-foreground">{template.description}</p>
+          <div className="flex items-center gap-2">
+            <Sheet>
+                <SheetTrigger asChild>
+                    <Button variant="outline" size="icon" className="lg:hidden">
+                        <PanelLeft className="h-5 w-5" />
+                        <span className="sr-only">Toggle Form Elements</span>
+                    </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="p-0 w-72"><FormElementsPanel /></SheetContent>
+            </Sheet>
+            <div>
+              <h1 className="text-xl font-bold">{template.title}</h1>
+              <p className="text-sm text-muted-foreground">{template.description}</p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline"><Eye className="mr-2 h-4 w-4" /> {t('preview')}</Button>
             <AIFormulaSuggester />
             <Button><Save className="mr-2 h-4 w-4" /> {t('save')}</Button>
+            <Sheet>
+                <SheetTrigger asChild>
+                    <Button variant="outline" size="icon" className="lg:hidden">
+                        <Settings2 className="h-5 w-5" />
+                        <span className="sr-only">Toggle Properties</span>
+                    </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="p-0 w-80"><PropertiesPanel /></SheetContent>
+            </Sheet>
           </div>
         </header>
-        <div className="flex-1 grid grid-cols-1 md:grid-cols-12 overflow-hidden">
-          <aside className="md:col-span-2 border-r p-4 bg-card">
-            <h2 className="text-lg font-semibold mb-4">{t('formElements')}</h2>
-            <SortableContext items={questionTypes.map(q => `palette-${q.type}`)} strategy={verticalListSortingStrategy}>
-                <div className="space-y-2">
-                    {questionTypes.map((q) => <DraggablePaletteItem key={q.type} type={q.type} icon={q.icon} />)}
-                </div>
-            </SortableContext>
-          </aside>
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
+          <div className="hidden lg:block lg:col-span-2 border-r">
+            <FormElementsPanel />
+          </div>
 
-          <main id="canvas-droppable" className="md:col-span-7 p-8 overflow-y-auto bg-secondary/50">
+          <main id="canvas-droppable" className="lg:col-span-7 p-4 md:p-8 overflow-y-auto bg-secondary/50">
              <SortableContext items={template.items.map(i => i.id)} strategy={verticalListSortingStrategy}>
-              <div className="space-y-6">
+              <div className="space-y-6 max-w-3xl mx-auto">
                 {template.items.map((item, index) => (
                   <SortableFormItem
                     key={item.id}
@@ -258,44 +320,16 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
               </div>
             </SortableContext>
             {template.items.length === 0 && (
-              <div className="text-center py-20 border-2 border-dashed rounded-lg text-muted-foreground">
+              <div className="text-center py-20 border-2 border-dashed rounded-lg text-muted-foreground max-w-3xl mx-auto">
                 <p>{t('noQuestions')}</p>
                  <p className="text-sm">{t('noQuestionsHint')}</p>
               </div>
             )}
           </main>
 
-          <aside className="md:col-span-3 border-l p-4 bg-card overflow-y-auto">
-            <h2 className="text-lg font-semibold mb-4">{t('properties')}</h2>
-            {selectedQuestion ? (
-              <Card>
-                <CardHeader><CardTitle className="text-base">{tq(selectedQuestion.type as any)}</CardTitle></CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="question-text">{t('questionText')}</Label>
-                    <Input id="question-text" value={selectedQuestion.label} onChange={(e) => updateQuestion(selectedQuestion.id, { label: e.target.value })} />
-                  </div>
-                  {selectedQuestion.type === 'Multiple Choice' && (
-                    <div className="space-y-2">
-                      <Label>{t('options')}</Label>
-                      {selectedQuestion.options?.map((opt, i) => (
-                        <Input key={i} value={opt} onChange={(e) => updateQuestion(selectedQuestion.id, { options: selectedQuestion.options?.map((o, idx) => idx === i ? e.target.value : o) })} />
-                      ))}
-                      <Button variant="outline" size="sm" className="w-full" onClick={() => addOption(selectedQuestion.id)}><PlusCircle className="mr-2 h-4 w-4" />{t('addOption')}</Button>
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between pt-4 border-t">
-                    <Label htmlFor="required-switch">{t('required')}</Label>
-                    <Switch id="required-switch" checked={selectedQuestion.required} onCheckedChange={(checked) => updateQuestion(selectedQuestion.id, { required: checked })} />
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="text-center py-12 text-muted-foreground">
-                <p>{t('selectQuestion')}</p>
-              </div>
-            )}
-          </aside>
+          <div className="hidden lg:block lg:col-span-3 border-l">
+            <PropertiesPanel />
+          </div>
         </div>
       </div>
       <DragOverlay>
@@ -313,3 +347,5 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     </DndContext>
   )
 }
+
+    
