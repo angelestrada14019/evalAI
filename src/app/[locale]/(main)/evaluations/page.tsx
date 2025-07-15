@@ -145,9 +145,8 @@ async function EvaluationsContent() {
     return <EvaluationsClient initialEvaluations={initialEvaluations} />;
 }
 
-// This is a synchronous Server Component
+// This is a synchronous Server Component that renders a loading state
 function EvaluationsSkeleton() {
-    // We can use useTranslations here because it will be rendered within the main layout's provider
     const t = useTranslations('EvaluationsPage');
     return (
          <div className="container mx-auto py-8">
@@ -202,6 +201,7 @@ function EvaluationsSkeleton() {
     );
 }
 
+// The main page is a Server Component that uses Suspense to handle loading
 export default function EvaluationsPage() {
   return (
     <Suspense fallback={<EvaluationsSkeleton />}>
