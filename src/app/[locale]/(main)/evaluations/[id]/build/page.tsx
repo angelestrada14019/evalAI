@@ -25,9 +25,19 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   const t = useTranslations('FormBuilderPage');
   const tq = useTranslations('QuestionTypes');
   
-  const isMobile = useIsMobile();
+  const [isLargeScreen, setIsLargeScreen] = useState(true);
   const [isElementsSheetOpen, setIsElementsSheetOpen] = useState(false);
   const [isPropertiesSheetOpen, setIsPropertiesSheetOpen] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= 1024);
+    };
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
 
   const sensors = useSensors(useSensor(PointerSensor, {
       activationConstraint: {
@@ -43,7 +53,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         const parsedTemplate = JSON.parse(storedTemplate);
         setTemplate(parsedTemplate);
         if (parsedTemplate.items && parsedTemplate.items.length > 0) {
-          if (!isMobile) {
+          if (isLargeScreen) {
             setSelectedQuestion(parsedTemplate.items[0]);
           }
         }
@@ -54,20 +64,19 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     } else {
       setTemplate({ title: "New Evaluation", description: "Start building your form.", items: [] });
     }
-  }, [isMobile]);
+  }, [isLargeScreen]);
 
   useEffect(() => {
-    if(isMobile) {
+    if(!isLargeScreen) {
         setSelectedQuestion(null);
     }
-  }, [isMobile]);
+  }, [isLargeScreen]);
 
   const handleDragStart = (event: DragStartEvent) => {
     const id = event.active.id as string;
     setActiveId(id);
     
-    // User's suggestion: close the elements sheet when dragging starts on mobile
-    if (isMobile && id.startsWith('palette-')) {
+    if (!isLargeScreen && id.startsWith('palette-')) {
       setIsElementsSheetOpen(false);
     }
   };
@@ -83,7 +92,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         
         const updatedItems = [...template.items, newItem];
         setTemplate({ ...template, items: updatedItems });
-        handleSelectQuestion(newItem); // Select the new item
+        handleSelectQuestion(newItem);
         return;
     }
 
@@ -117,7 +126,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   
   const handleSelectQuestion = (item: FormItem) => {
     setSelectedQuestion(item);
-    if (isMobile) {
+    if (!isLargeScreen) {
       setIsPropertiesSheetOpen(true);
     }
   }
@@ -129,37 +138,38 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   const activePaletteItem = activeId && activeId.startsWith('palette-') ? questionTypes.find(q => `palette-${q.type}` === activeId) : null;
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="flex flex-col min-h-[calc(100vh-theme(space.16))]">
-            <BuilderHeader title={template.title} description={template.description} />
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12">
-                
-                {/* Desktop: Form Elements Panel */}
-                <aside className="hidden lg:block lg:col-span-2 bg-card border-r">
-                    <FormElementsPanel />
-                </aside>
+    <>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <div className="flex flex-col">
+          <BuilderHeader title={template.title} description={template.description} />
+          <div className="flex-1 grid grid-cols-1 lg:grid-cols-12">
+            
+            {isLargeScreen && (
+              <aside className="lg:col-span-2 bg-card border-r">
+                <FormElementsPanel />
+              </aside>
+            )}
 
-                {/* Canvas */}
-                <main id="canvas-droppable" className="lg:col-span-7 py-4 md:py-8 overflow-y-auto">
-                    <FormCanvas 
-                    items={template.items}
-                    selectedQuestionId={selectedQuestion?.id}
-                    onSelectQuestion={handleSelectQuestion}
-                    onDeleteQuestion={deleteQuestion}
-                    />
-                </main>
-                
-                {/* Desktop: Properties Panel */}
-                <aside className="hidden lg:block lg:col-span-3 bg-card border-l">
-                    <PropertiesPanel 
-                    selectedQuestion={selectedQuestion}
-                    onUpdateQuestion={updateQuestion}
-                    />
-                </aside>
-            </div>
+            <main id="canvas-droppable" className="lg:col-span-7 py-4 md:py-8">
+              <FormCanvas 
+                items={template.items}
+                selectedQuestionId={selectedQuestion?.id}
+                onSelectQuestion={handleSelectQuestion}
+                onDeleteQuestion={deleteQuestion}
+              />
+            </main>
+            
+            {isLargeScreen && (
+              <aside className="lg:col-span-3 bg-card border-l">
+                <PropertiesPanel 
+                  selectedQuestion={selectedQuestion}
+                  onUpdateQuestion={updateQuestion}
+                />
+              </aside>
+            )}
+          </div>
         </div>
 
-        {/* Drag Overlay */}
         <DragOverlay>
             {activePaletteItem ? (
                 <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
@@ -172,45 +182,45 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                 </div>
             ): null}
         </DragOverlay>
+      </DndContext>
+      
+      {!isLargeScreen && (
+        <>
+          <MobileFAB 
+            onElementsClick={() => setIsElementsSheetOpen(true)}
+            onPropertiesClick={() => {
+              if(selectedQuestion) {
+                setIsPropertiesSheetOpen(true);
+              }
+            }}
+          />
 
-        {/* Mobile: FAB and Sheets */}
-        {isMobile && (
-            <>
-                <MobileFAB 
-                    onElementsClick={() => setIsElementsSheetOpen(true)}
-                    onPropertiesClick={() => {
-                        if(selectedQuestion) {
-                        setIsPropertiesSheetOpen(true);
-                        }
-                    }}
+          <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
+            <SheetContent side="left" className="p-0 w-[85vw] max-w-sm flex flex-col">
+              <SheetHeader className="p-4 border-b">
+                <SheetTitle>{t('formElements')}</SheetTitle>
+              </SheetHeader>
+              <div className="flex-1 overflow-y-auto">
+                <FormElementsPanel />
+              </div>
+            </SheetContent>
+          </Sheet>
+
+          <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
+            <SheetContent side="right" className="p-0 w-[85vw] max-w-sm flex flex-col">
+              <SheetHeader className="p-4 border-b">
+                <SheetTitle>{t('properties')}</SheetTitle>
+              </SheetHeader>
+              <div className="flex-1 overflow-y-auto">
+                <PropertiesPanel 
+                  selectedQuestion={selectedQuestion}
+                  onUpdateQuestion={updateQuestion}
                 />
-
-                <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
-                    <SheetContent side="left" className="p-0 w-[85vw] max-w-sm flex flex-col">
-                        <SheetHeader className="p-4 border-b">
-                            <SheetTitle>{t('formElements')}</SheetTitle>
-                        </SheetHeader>
-                        <div className="flex-1 overflow-y-auto">
-                            <FormElementsPanel />
-                        </div>
-                    </SheetContent>
-                </Sheet>
-
-                <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
-                    <SheetContent side="right" className="p-0 w-[85vw] max-w-sm flex flex-col">
-                        <SheetHeader className="p-4 border-b">
-                            <SheetTitle>{t('properties')}</SheetTitle>
-                        </SheetHeader>
-                        <div className="flex-1 overflow-y-auto">
-                            <PropertiesPanel 
-                                selectedQuestion={selectedQuestion}
-                                onUpdateQuestion={updateQuestion}
-                            />
-                        </div>
-                    </SheetContent>
-                </Sheet>
-            </>
-        )}
-    </DndContext>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </>
+      )}
+    </>
   )
 }
