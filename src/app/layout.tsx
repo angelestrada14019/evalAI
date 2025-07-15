@@ -1,7 +1,36 @@
+
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getLocale } from 'next-intl/server';
+import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 
-// Since we have a `not-found.tsx` page on the root, a layout file
-// is required, even if it's just passing children through.
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return children;
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+
+export const metadata: Metadata = {
+  title: 'EvalAI',
+  description: 'AI-Powered Evaluation Platform',
+};
+
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  // Providing all messages to the client
+  // side is the easiest way to get started
+  const messages = await getMessages();
+  const locale = await getLocale();
+
+  return (
+    <html lang={locale} className="h-full">
+      <body className={`${inter.variable} font-sans antialiased h-full`}>
+        <NextIntlClientProvider messages={messages}>
+          {children}
+          <Toaster />
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
 }

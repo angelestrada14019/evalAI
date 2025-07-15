@@ -1,36 +1,11 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
-import '../globals.css';
-import { Toaster } from "@/components/ui/toaster";
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-
-export const metadata: Metadata = {
-  title: 'EvalAI',
-  description: 'AI-Powered Evaluation Platform',
-};
-
-export default async function LocaleLayout({
+// Since the root layout `src/app/layout.tsx` is now handling
+// i18n and the main html structure, this file is only needed
+// to pass children through for the locale segment.
+export default function LocaleLayout({
   children,
-  params: {locale}
-}: Readonly<{
+}: {
   children: React.ReactNode;
-  params: {locale: string};
-}>) {
-  // Providing all messages to the client
-  // side is the easiest way to get started
-  const messages = await getMessages();
-
-  return (
-    <html lang={locale} className="h-full">
-      <body className={`${inter.variable} font-sans antialiased h-full`}>
-        <NextIntlClientProvider messages={messages}>
-          {children}
-          <Toaster />
-        </NextIntlClientProvider>
-      </body>
-    </html>
-  );
+}) {
+  return <>{children}</>;
 }
