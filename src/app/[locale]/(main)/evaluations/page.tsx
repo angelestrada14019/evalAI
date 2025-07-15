@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, Suspense, use } from 'react';
 import { Link } from '@/navigation';
 import {
   Table,
@@ -26,7 +26,7 @@ import { backend } from '@/services/backend/backend';
 import type { Evaluation } from '@/services/backend/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { format } from 'date-fns';
-import { use } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Fetch data once and pass to client component
 const evaluationsPromise = backend().getEvaluations();
@@ -35,7 +35,7 @@ function EvaluationsClient({ initialEvaluations }: { initialEvaluations: Evaluat
   const t = useTranslations('EvaluationsPage');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const statusVariant = (status: string) => {
+  const statusVariant = (status: string): 'secondary' | 'default' | 'outline' => {
     switch (status) {
       case 'Draft': return 'secondary';
       case 'Active': return 'default';
@@ -45,6 +45,7 @@ function EvaluationsClient({ initialEvaluations }: { initialEvaluations: Evaluat
   };
 
   const filteredEvaluations = useMemo(() => {
+    if (!initialEvaluations) return [];
     if (!searchTerm) return initialEvaluations;
     return initialEvaluations.filter(evaluation =>
       evaluation.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -140,9 +141,70 @@ function EvaluationsClient({ initialEvaluations }: { initialEvaluations: Evaluat
   );
 }
 
-
-export default function EvaluationsPage() {
-  const initialEvaluations = use(evaluationsPromise);
-  return <EvaluationsClient initialEvaluations={initialEvaluations} />;
+function EvaluationsContent() {
+    const initialEvaluations = use(evaluationsPromise);
+    return <EvaluationsClient initialEvaluations={initialEvaluations} />;
 }
 
+function EvaluationsSkeleton() {
+    const t = useTranslations('EvaluationsPage');
+    return (
+         <div className="container mx-auto py-8">
+            <div className="flex items-center justify-between mb-6 gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold">{t('title')}</h1>
+                    <p className="text-muted-foreground">{t('description')}</p>
+                </div>
+                <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90">
+                    <Link href="/evaluations/new">
+                        <PackagePlus className="mr-2 h-4 w-4" />
+                        {t('newEvaluationButton')}
+                    </Link>
+                </Button>
+            </div>
+            <Card>
+                <CardHeader>
+                    <Skeleton className="h-8 w-48" />
+                    <Skeleton className="h-4 w-72 mt-2" />
+                     <div className="relative pt-2">
+                        <Skeleton className="h-10 w-full md:w-1/3" />
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <div className="rounded-lg border">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead><Skeleton className="h-5 w-24" /></TableHead>
+                                    <TableHead><Skeleton className="h-5 w-16" /></TableHead>
+                                    <TableHead><Skeleton className="h-5 w-20" /></TableHead>
+                                    <TableHead><Skeleton className="h-5 w-32" /></TableHead>
+                                    <TableHead className="text-right"><Skeleton className="h-5 w-16 ml-auto" /></TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {[...Array(3)].map((_, i) => (
+                                    <TableRow key={i}>
+                                        <TableCell><Skeleton className="h-5 w-full" /></TableCell>
+                                        <TableCell><Skeleton className="h-5 w-full" /></TableCell>
+                                        <TableCell><Skeleton className="h-5 w-full" /></TableCell>
+                                        <TableCell><Skeleton className="h-5 w-full" /></TableCell>
+                                        <TableCell><Skeleton className="h-5 w-10 ml-auto" /></TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}
+
+export default function EvaluationsPage() {
+  return (
+    <Suspense fallback={<EvaluationsSkeleton />}>
+      <EvaluationsContent />
+    </Suspense>
+  );
+}
