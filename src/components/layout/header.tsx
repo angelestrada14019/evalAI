@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link'
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   Bell,
@@ -30,6 +31,7 @@ import type { User } from '@/services/auth/types';
 import { Skeleton } from '../ui/skeleton';
 
 export function AppHeader() {
+  const t = useTranslations('AppHeader');
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -106,7 +108,7 @@ export function AppHeader() {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search evaluations..."
+              placeholder={t('searchPlaceholder')}
               className="w-full appearance-none bg-background pl-8 md:w-2/3 lg:w-1/3"
             />
           </div>
@@ -132,15 +134,15 @@ export function AppHeader() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{user?.name || 'My Account'}</DropdownMenuLabel>
+            <DropdownMenuLabel>{user?.name || t('myAccount')}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href="/settings">Settings</Link>
+              <Link href="/settings">{t('settings')}</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuItem>{t('support')}</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
-              Logout
+              {t('logout')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -1,11 +1,10 @@
-export default function AuthLayout({
+// This file is obsolete.
+// The layout is now handled by /src/app/[locale]/(auth)/layout.tsx
+// It can be deleted, but we'll keep it empty for now to avoid breaking references.
+export default function ObsoleteAuthLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return (
-    <main className="flex min-h-full items-center justify-center p-4">
-      {children}
-    </main>
-  )
+  return <>{children}</>;
 }

@@ -1,0 +1,35 @@
+{
+  "LoginPage": {
+    "title": "Welcome back",
+    "description": "Enter your credentials to access your account.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••",
+    "signInButton": "Sign In",
+    "signingInButton": "Signing In...",
+    "noAccount": "Don't have an account?",
+    "signUpLink": "Sign up"
+  },
+  "SignUpPage": {
+    "title": "Create an account",
+    "description": "Enter your details below to get started.",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your Name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••",
+    "createAccountButton": "Create Account",
+    "creatingAccountButton": "Creating Account...",
+    "hasAccount": "Already have an account?",
+    "signInLink": "Sign in"
+  },
+  "AppHeader": {
+    "searchPlaceholder": "Search evaluations...",
+    "myAccount": "My Account",
+    "settings": "Settings",
+    "support": "Support",
+    "logout": "Logout"
+  }
+}

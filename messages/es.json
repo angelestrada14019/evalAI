@@ -1,0 +1,35 @@
+{
+  "LoginPage": {
+    "title": "Bienvenido de nuevo",
+    "description": "Ingresa tus credenciales para acceder a tu cuenta.",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "nombre@ejemplo.com",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "••••••••",
+    "signInButton": "Iniciar Sesión",
+    "signingInButton": "Iniciando Sesión...",
+    "noAccount": "¿No tienes una cuenta?",
+    "signUpLink": "Regístrate"
+  },
+  "SignUpPage": {
+    "title": "Crear una cuenta",
+    "description": "Ingresa tus detalles a continuación para comenzar.",
+    "nameLabel": "Nombre",
+    "namePlaceholder": "Tu Nombre",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "nombre@ejemplo.com",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "••••••••",
+    "createAccountButton": "Crear Cuenta",
+    "creatingAccountButton": "Creando Cuenta...",
+    "hasAccount": "¿Ya tienes una cuenta?",
+    "signInLink": "Inicia sesión"
+  },
+  "AppHeader": {
+    "searchPlaceholder": "Buscar evaluaciones...",
+    "myAccount": "Mi Cuenta",
+    "settings": "Configuración",
+    "support": "Soporte",
+    "logout": "Cerrar Sesión"
+  }
+}

@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -23,6 +24,7 @@ import { SignUpInputSchema } from '@/services/auth/types'
 
 
 export function SignUpForm() {
+  const t = useTranslations('SignUpPage');
   const router = useRouter()
   const { toast } = useToast()
   
@@ -58,8 +60,8 @@ export function SignUpForm() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Create an account</CardTitle>
-        <CardDescription>Enter your details below to get started.</CardDescription>
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -69,9 +71,9 @@ export function SignUpForm() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t('nameLabel')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Your Name" {...field} />
+                    <Input placeholder={t('namePlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -82,9 +84,9 @@ export function SignUpForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t('emailLabel')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="name@example.com" {...field} />
+                    <Input placeholder={t('emailPlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -95,23 +97,23 @@ export function SignUpForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{t('passwordLabel')}</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input type="password" placeholder={t('passwordPlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Creating Account...' : 'Create Account'}
+              {form.formState.isSubmitting ? t('creatingAccountButton') : t('createAccountButton')}
             </Button>
           </form>
         </Form>
         <div className="mt-4 text-center text-sm">
-          Already have an account?{' '}
+          {t('hasAccount')}{' '}
           <Link href="/login" className="underline text-primary">
-            Sign in
+            {t('signInLink')}
           </Link>
         </div>
       </CardContent>
