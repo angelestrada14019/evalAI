@@ -1,3 +1,4 @@
+
 // src/services/ai/impl.gemini.ts
 'use server';
 /**
@@ -14,7 +15,7 @@ const GenerateTemplateInputSchema = z.object({
 export type GenerateTemplateInput = z.infer<typeof GenerateTemplateInputSchema>;
 
 const GenerateTemplateOutputSchema = z.object({
-  template: z.string().describe('The generated evaluation form template in JSON format.'),
+  template: z.string().describe('A valid JSON string representing the evaluation form. The JSON should have keys: "title" (string), "description" (string), and "items" (an array of question objects). Each question object must have "id" (string), "type" (string, e.g., "Multiple Choice", "Text Input", "Slider"), "label" (string), and "required" (boolean). "Multiple Choice" questions must also have an "options" (array of strings) key.'),
 });
 export type GenerateTemplateOutput = z.infer<typeof GenerateTemplateOutputSchema>;
 
@@ -42,13 +43,14 @@ const generateTemplatePrompt = genkitAi.definePrompt({
   input: { schema: GenerateTemplateInputSchema },
   output: { schema: GenerateTemplateOutputSchema },
   prompt: `You are an AI assistant specialized in generating evaluation form templates based on user descriptions.
-  Your goal is to create a valid JSON template that can be used in a form builder application.
-  The template should be comprehensive and include various form elements like text fields, multiple choice questions, sliders, etc., as appropriate for the described evaluation.
-  Consider conditional logic and scoring mechanisms where applicable.
+  Your goal is to create a valid JSON string that can be parsed directly.
+  The JSON object must have a "title", a "description", and an "items" array.
+  Each item in the array is a question and must have a unique "id", a "type" (e.g., "Multiple Choice", "Text Input", "Slider", "Rating Scale"), a "label", and a "required" boolean.
+  For "Multiple Choice" questions, you must also include an "options" array of strings.
 
   Description: {{{description}}}
-
-  Template:`,
+  
+  Generate the JSON string now.`,
 });
 
 const suggestFormulaPrompt = genkitAi.definePrompt({
@@ -94,3 +96,5 @@ export async function generateTemplate(input: GenerateTemplateInput): Promise<Ge
 export async function suggestFormula(input: SuggestFormulaInput): Promise<SuggestFormulaOutput> {
   return suggestFormulaFlow(input);
 }
+
+    

@@ -1,4 +1,3 @@
-'use server';
 /**
  * @fileOverview This file defines the abstract interface for the Backend service.
  * It uses the system configuration to dynamically load and export the

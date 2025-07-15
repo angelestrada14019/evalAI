@@ -1,4 +1,3 @@
-'use server';
 /**
  * @fileOverview This file defines the abstract interface for the Authentication service.
  * It uses the system configuration to dynamically load and export the

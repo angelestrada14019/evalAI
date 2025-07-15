@@ -1,3 +1,4 @@
+
 'use client'
 
 import React, { useState } from 'react'
@@ -28,14 +29,15 @@ export default function NewEvaluationPage() {
     setIsLoading(true)
     try {
       const result = await generateEvaluationTemplate(description)
-      console.log('Generated Template:', result.template)
+
+      // Store the generated template in localStorage to pass it to the builder page
+      localStorage.setItem('generatedTemplate', result.template);
+      
       toast({
         title: 'Template Generated!',
         description: 'Your new evaluation is ready for editing.',
       })
-      // In a real app, you would parse the result.template and use it
-      // to populate the form builder. For now, we just navigate to a
-      // new builder page.
+
       const newEvaluationId = Date.now()
       router.push(`/evaluations/${newEvaluationId}/build`)
     } catch (error) {
@@ -89,3 +91,5 @@ export default function NewEvaluationPage() {
     </div>
   )
 }
+
+    
