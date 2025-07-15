@@ -22,17 +22,22 @@ export function auth(): AuthService {
 
   switch (provider) {
     case 'mock':
-      const mockAuthService = require('./impl.mock');
-      return mockAuthService;
+      const mockImpl = require('./impl.mock');
+      return {
+        login: mockImpl.login,
+        signup: mockImpl.signup,
+        logout: mockImpl.logout,
+        getCurrentUser: mockImpl.getCurrentUser,
+      };
     case 'supabase':
-      const supabaseAuthService = require('./impl.supabase');
-      return supabaseAuthService;
+      const supabaseImpl = require('./impl.supabase');
+      return supabaseImpl; // Assuming it will be structured similarly
     case 'keycloak':
-      const keycloakAuthService = require('./impl.keycloak');
-      return keycloakAuthService;
+      const keycloakImpl = require('./impl.keycloak');
+      return keycloakImpl;
     case 'b2c':
-      const b2cAuthService = require('./impl.b2c');
-      return b2cAuthService;
+       const b2cImpl = require('./impl.b2c');
+       return b2cImpl;
     default:
       throw new Error(`Unknown auth provider: ${provider}`);
   }

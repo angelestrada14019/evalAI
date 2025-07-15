@@ -2,10 +2,9 @@
 /**
  * @fileOverview Mock implementation of the BackendService for development and testing.
  */
-import type { BackendService } from './backend';
 import type { DashboardStats } from './types';
 
-async function getDashboardStats(): Promise<DashboardStats> {
+export async function getDashboardStats(): Promise<DashboardStats> {
     console.log('[Backend Mock] Fetching dashboard stats');
     // Simulate a network delay
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -17,10 +16,3 @@ async function getDashboardStats(): Promise<DashboardStats> {
         responseRate: { value: "94%", change: "-1.2% from last month" },
     };
 }
-
-export const mockBackendService: BackendService = {
-  getDashboardStats,
-};
-
-// Default export for module resolution
-module.exports = mockBackendService;

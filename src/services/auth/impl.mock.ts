@@ -2,7 +2,6 @@
 /**
  * @fileOverview Mock implementation of the AuthService for development and testing.
  */
-import type { AuthService } from './auth';
 import type { LoginInput, LoginOutput, SignUpInput, SignUpOutput, GetCurrentUserOutput, User } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -20,7 +19,7 @@ const MOCK_USERS: User[] = [
 ];
 
 
-async function login(input: LoginInput): Promise<LoginOutput> {
+export async function login(input: LoginInput): Promise<LoginOutput> {
     console.log('[Auth Mock] Logging in with:', input.email);
     const user = MOCK_USERS.find(u => u.email === input.email);
     
@@ -36,7 +35,7 @@ async function login(input: LoginInput): Promise<LoginOutput> {
     };
 }
 
-async function signup(input: SignUpInput): Promise<SignUpOutput> {
+export async function signup(input: SignUpInput): Promise<SignUpOutput> {
     console.log('[Auth Mock] Signing up with:', input.email);
 
     if (MOCK_USERS.some(u => u.email === input.email)) {
@@ -59,26 +58,21 @@ async function signup(input: SignUpInput): Promise<SignUpOutput> {
     };
 }
 
-async function logout(): Promise<void> {
+export async function logout(): Promise<void> {
     console.log('[Auth Mock] Logging out');
     MOCK_CURRENT_USER = null;
     return Promise.resolve();
 }
 
-async function getCurrentUser(): Promise<GetCurrentUserOutput> {
+export async function getCurrentUser(): Promise<GetCurrentUserOutput> {
     console.log('[Auth Mock] Getting current user:', MOCK_CURRENT_USER?.email || 'None');
+    if (!MOCK_CURRENT_USER) {
+      // To avoid breaking the UI that expects a user, let's sign in a default one if none exists.
+      // This is for mock development purposes.
+      MOCK_CURRENT_USER = MOCK_USERS[0];
+       console.log('[Auth Mock] No user found, auto-signing-in default user:', MOCK_CURRENT_USER.email);
+    }
     return {
         user: MOCK_CURRENT_USER,
     };
 }
-
-
-export const mockAuthService: AuthService = {
-    login,
-    signup,
-    logout,
-    getCurrentUser,
-};
-
-// Default export for module resolution
-module.exports = mockAuthService;
