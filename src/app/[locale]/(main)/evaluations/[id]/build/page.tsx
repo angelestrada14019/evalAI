@@ -268,53 +268,41 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="h-full flex flex-col">
-        <header className="flex flex-wrap items-center justify-between gap-4 p-4 border-b bg-card">
-          <div className="flex items-center gap-2 min-w-0">
-            <Sheet>
-                <SheetTrigger asChild>
-                    <Button variant="outline" size="icon" className="lg:hidden flex-shrink-0">
-                        <PanelLeft className="h-5 w-5" />
-                        <span className="sr-only">Toggle Form Elements</span>
-                    </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="p-0 w-72">
-                    <SheetHeader>
-                        <SheetTitle className="sr-only">{t('formElements')}</SheetTitle>
-                    </SheetHeader>
-                    <FormElementsPanel />
-                </SheetContent>
-            </Sheet>
+        <header className="flex-shrink-0 flex items-center justify-between gap-2 md:gap-4 p-4 border-b bg-card">
             <div className="min-w-0 flex-1">
               <h1 className="text-xl font-bold truncate">{template.title}</h1>
               <p className="text-sm text-muted-foreground truncate">{template.description}</p>
             </div>
-          </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             <Button variant="outline" size="sm" className="hidden sm:inline-flex"><Eye className="mr-2 h-4 w-4" /> {t('preview')}</Button>
-             <Button variant="outline" size="icon" className="sm:hidden"><Eye className="h-4 w-4" /></Button>
+            <Button variant="outline" size="icon" className="sm:hidden"><Eye className="h-4 w-4" /></Button>
             <AIFormulaSuggester />
-            <Button size="sm"><Save className="mr-2 h-4 w-4" /> {t('save')}</Button>
-            <Sheet>
-                <SheetTrigger asChild>
-                    <Button variant="outline" size="icon" className="lg:hidden">
-                        <Settings2 className="h-5 w-5" />
-                        <span className="sr-only">Toggle Properties</span>
-                    </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="p-0 w-80">
-                    <SheetHeader>
-                        <SheetTitle className="sr-only">{t('properties')}</SheetTitle>
-                    </SheetHeader>
-                    <PropertiesPanel />
-                </SheetContent>
-            </Sheet>
+            <Button size="sm" className="hidden sm:inline-flex"><Save className="mr-2 h-4 w-4" /> {t('save')}</Button>
+            <Button size="icon" className="sm:hidden"><Save className="h-4 w-4" /></Button>
           </div>
         </header>
+
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
+          {/* Left Panel - Elements */}
+          <Sheet>
+              <SheetTrigger asChild>
+                  <Button variant="outline" size="icon" className="lg:hidden fixed bottom-4 left-4 z-10 shadow-lg rounded-full h-12 w-12">
+                      <PanelLeft className="h-6 w-6" />
+                      <span className="sr-only">Toggle Form Elements</span>
+                  </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="p-0 w-72">
+                  <SheetHeader>
+                      <SheetTitle className="sr-only">{t('formElements')}</SheetTitle>
+                  </SheetHeader>
+                  <FormElementsPanel />
+              </SheetContent>
+          </Sheet>
           <div className="hidden lg:block lg:col-span-2 border-r">
             <FormElementsPanel />
           </div>
 
+          {/* Center Panel - Canvas */}
           <main id="canvas-droppable" className="lg:col-span-7 p-4 md:p-8 overflow-y-auto bg-secondary/50">
              <SortableContext items={template.items.map(i => i.id)} strategy={verticalListSortingStrategy}>
               <div className="space-y-6 max-w-3xl mx-auto">
@@ -338,6 +326,21 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             )}
           </main>
 
+          {/* Right Panel - Properties */}
+          <Sheet>
+                <SheetTrigger asChild>
+                    <Button variant="outline" size="icon" className="lg:hidden fixed bottom-4 right-4 z-10 shadow-lg rounded-full h-12 w-12">
+                        <Settings2 className="h-6 w-6" />
+                        <span className="sr-only">Toggle Properties</span>
+                    </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="p-0 w-80">
+                    <SheetHeader>
+                        <SheetTitle className="sr-only">{t('properties')}</SheetTitle>
+                    </SheetHeader>
+                    <PropertiesPanel />
+                </SheetContent>
+            </Sheet>
           <div className="hidden lg:block lg:col-span-3 border-l">
             <PropertiesPanel />
           </div>
@@ -347,7 +350,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         {activePaletteItem ? (
           <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
             <activePaletteItem.icon className="mr-2 h-4 w-4" />
-            {tq(activePaletteItem.type as any)}
+            {tq(activePalette-item.type as any)}
           </Button>
         ) : activeId && template.items.find(i => i.id === activeId) ? (
             <Card className="p-4 shadow-xl opacity-90">
