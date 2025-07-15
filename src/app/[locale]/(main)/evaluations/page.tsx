@@ -1,34 +1,15 @@
 
-'use client';
-
 import { Suspense } from 'react';
-import { getTranslations, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import { backend } from '@/services/backend/backend';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/navigation';
 import { PackagePlus } from 'lucide-react';
-import { DataTable } from '@/components/ui/data-table';
-import { useEvaluationColumns } from '@/components/evaluations/columns';
+import { EvaluationsClient } from '@/components/evaluations/evaluations-client';
 import type { Evaluation } from '@/services/backend/types';
-
-function EvaluationsClient({ evaluations }: { evaluations: Evaluation[] }) {
-    const t = useTranslations('EvaluationsPage');
-    const columns = useEvaluationColumns();
-
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>{t('listTitle')}</CardTitle>
-                <CardDescription>{t('listDescription')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <DataTable columns={columns} data={evaluations} />
-            </CardContent>
-        </Card>
-    );
-}
 
 function EvaluationsSkeleton() {
     return (
@@ -55,7 +36,7 @@ function EvaluationsSkeleton() {
 
 async function EvaluationsContent() {
     const evaluations = await backend().getEvaluations();
-    return <EvaluationsClient evaluations={evaluations} />;
+    return <EvaluationsClient initialEvaluations={evaluations} />;
 }
 
 
