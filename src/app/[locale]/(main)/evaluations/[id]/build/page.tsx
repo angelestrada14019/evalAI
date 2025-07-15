@@ -363,7 +363,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
               <SheetTrigger asChild>
                   <Button variant="outline" size="icon" className="lg:hidden fixed bottom-4 left-4 z-10 shadow-lg rounded-full h-12 w-12">
                       <PanelLeft className="h-6 w-6" />
-                      <span className="sr-only">Toggle Form Elements</span>
+                      <span className="sr-only">{t('formElements')}</span>
                   </Button>
               </SheetTrigger>
               <SheetContent side="left" className="p-0 w-72">
@@ -406,7 +406,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                 <SheetTrigger asChild>
                     <Button variant="outline" size="icon" className="lg:hidden fixed bottom-4 right-4 z-10 shadow-lg rounded-full h-12 w-12">
                         <Settings2 className="h-6 w-6" />
-                        <span className="sr-only">Toggle Properties</span>
+                        <span className="sr-only">{t('properties')}</span>
                     </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="p-0 w-80">
@@ -425,7 +425,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         {activePaletteItem ? (
           <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
             <activePaletteItem.icon className="mr-2 h-4 w-4" />
-            {tq(activePaletteItem.type as any)}
+            {tq(activePalette-item.type as any)}
           </Button>
         ) : activeId && template.items.find(i => i.id === activeId) ? (
             <Card className="p-4 shadow-xl opacity-90">
@@ -436,5 +436,3 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     </DndContext>
   )
 }
-
-    
