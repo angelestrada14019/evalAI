@@ -500,5 +500,3 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     </DndContext>
   )
 }
-
-    
