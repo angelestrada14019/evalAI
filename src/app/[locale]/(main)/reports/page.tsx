@@ -1,13 +1,15 @@
 
+'use client';
+
 import { Link } from '@/navigation'
 import { Button } from '@/components/ui/button'
 import { FileDown } from 'lucide-react'
-import { getTranslations } from 'next-intl/server'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DataTable } from '@/components/ui/data-table'
-import { columns } from '@/components/reports/columns'
+import { useReportColumns, type Report } from '@/components/reports/columns'
 
-const reports = [
+const reports: Report[] = [
   { id: 'REP-001', title: 'Q1 2024 Engineering Performance', date: '2024-04-05', type: 'Aggregate', status: 'Completed' },
   { id: 'REP-002', title: 'John Doe - Performance Review', date: '2024-04-03', type: 'Individual', status: 'Completed' },
   { id: 'REP-003', title: 'Sales Team Skills Assessment', date: '2024-03-28', type: 'Aggregate', status: 'Completed' },
@@ -15,8 +17,9 @@ const reports = [
   { id: 'REP-005', title: 'Jane Smith - Onboarding Evaluation', date: '2024-03-12', type: 'Individual', status: 'Completed' },
 ]
 
-export default async function ReportsPage() {
-  const t = await getTranslations('ReportsPage');
+export default function ReportsPage() {
+  const t = useTranslations('ReportsPage');
+  const columns = useReportColumns();
 
   return (
     <div className="container mx-auto py-8">

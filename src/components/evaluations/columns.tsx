@@ -1,6 +1,7 @@
 
 "use client"
 
+import { useMemo } from "react"
 import { ColumnDef } from "@tanstack/react-table"
 import { Evaluation } from "@/services/backend/types"
 import { Link } from "@/navigation"
@@ -18,7 +19,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "../ui/data-table-column-header"
 
-
 const statusVariant = (status: string): 'secondary' | 'default' | 'outline' => {
     switch (status) {
         case 'Draft': return 'secondary';
@@ -28,71 +28,75 @@ const statusVariant = (status: string): 'secondary' | 'default' | 'outline' => {
     }
 };
 
-export const columns: ColumnDef<Evaluation>[] = [
-    {
-        accessorKey: "title",
-        header: ({ column }) => {
-            return <DataTableColumnHeader column={column} title="Title" />
+export const useEvaluationColumns = (): ColumnDef<Evaluation>[] => {
+    const t = useTranslations('EvaluationsPage');
+
+    return useMemo(() => [
+        {
+            accessorKey: "title",
+            header: ({ column }) => {
+                return <DataTableColumnHeader column={column} title={t('tableTitle')} />
+            },
+            cell: ({ row }) => {
+                const evaluation = row.original
+                return (
+                    <Link href={`/evaluations/${evaluation.id}/build`} className="hover:underline font-medium">
+                        {evaluation.title}
+                    </Link>
+                )
+            }
         },
-        cell: ({ row }) => {
-            const evaluation = row.original
-            return (
-                <Link href={`/evaluations/${evaluation.id}/build`} className="hover:underline font-medium">
-                    {evaluation.title}
-                </Link>
-            )
-        }
-    },
-    {
-        accessorKey: "status",
-        header: ({ column }) => {
-            return <DataTableColumnHeader column={column} title="Status" />
+        {
+            accessorKey: "status",
+            header: ({ column }) => {
+                return <DataTableColumnHeader column={column} title={t('tableStatus')} />
+            },
+            cell: ({ row }) => (
+                <Badge variant={statusVariant(row.getValue("status"))}>
+                    {row.getValue("status")}
+                </Badge>
+            ),
+            filterFn: (row, id, value) => {
+                return value.includes(row.getValue(id))
+            },
         },
-        cell: ({ row }) => (
-            <Badge variant={statusVariant(row.getValue("status"))}>
-                {row.getValue("status")}
-            </Badge>
-        ),
-        filterFn: (row, id, value) => {
-            return value.includes(row.getValue(id))
+        {
+            accessorKey: "responses",
+            header: ({ column }) => {
+                return <DataTableColumnHeader column={column} title={t('tableResponses')} />
+            },
+            cell: ({ row }) => <div className="text-center">{row.getValue("responses")}</div>
         },
-    },
-    {
-        accessorKey: "responses",
-        header: ({ column }) => {
-            return <DataTableColumnHeader column={column} title="Responses" />
+        {
+            accessorKey: "lastModified",
+            header: ({ column }) => {
+                return <DataTableColumnHeader column={column} title={t('tableModified')} />
+            },
+            cell: ({ row }) => format(new Date(row.getValue("lastModified")), "PP")
         },
-        cell: ({ row }) => <div className="text-center">{row.getValue("responses")}</div>
-    },
-    {
-        accessorKey: "lastModified",
-        header: ({ column }) => {
-            return <DataTableColumnHeader column={column} title="Last Modified" />
+        {
+            id: "actions",
+            header: () => <div className="text-right">{t('tableActions')}</div>,
+            cell: function Actions({ row }) {
+                const evaluation = row.original
+                return (
+                    <div className="text-right">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem asChild><Link href={`/evaluations/${evaluation.id}/build`}>{t('editAction')}</Link></DropdownMenuItem>
+                                <DropdownMenuItem>{t('viewResponsesAction')}</DropdownMenuItem>
+                                <DropdownMenuItem>{t('duplicateAction')}</DropdownMenuItem>
+                                <DropdownMenuItem className="text-destructive">{t('deleteAction')}</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                )
+            },
         },
-        cell: ({ row }) => format(new Date(row.getValue("lastModified")), "PP")
-    },
-    {
-        id: "actions",
-        cell: function Actions({ row }) {
-            const t = useTranslations('EvaluationsPage');
-            const evaluation = row.original
-            return (
-                <div className="text-right">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem asChild><Link href={`/evaluations/${evaluation.id}/build`}>{t('editAction')}</Link></DropdownMenuItem>
-                            <DropdownMenuItem>{t('viewResponsesAction')}</DropdownMenuItem>
-                            <DropdownMenuItem>{t('duplicateAction')}</DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive">{t('deleteAction')}</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            )
-        },
-    },
-]
+    ], [t]);
+}

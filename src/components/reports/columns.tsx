@@ -1,6 +1,7 @@
 
 "use client"
 
+import { useMemo } from "react"
 import { ColumnDef } from "@tanstack/react-table"
 import { Link } from "@/navigation"
 import { MoreHorizontal } from "lucide-react"
@@ -28,69 +29,73 @@ const statusVariant = (type: string): 'default' | 'secondary' => {
   return type === 'Aggregate' ? 'default' : 'secondary';
 };
 
-export const columns: ColumnDef<Report>[] = [
-  {
-    accessorKey: "title",
-    header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Report Title" />
+export const useReportColumns = (): ColumnDef<Report>[] => {
+  const t = useTranslations('ReportsPage');
+
+  return useMemo(() => [
+    {
+      accessorKey: "title",
+      header: ({ column }) => {
+        return <DataTableColumnHeader column={column} title={t('tableTitle')} />
+      },
+      cell: ({ row }) => {
+        const report = row.original;
+        return (
+          <Link href={`/reports/${report.id}`} className="hover:underline font-medium">
+            {report.title}
+          </Link>
+        );
+      },
     },
-    cell: ({ row }) => {
-      const report = row.original;
-      return (
-        <Link href={`/reports/${report.id}`} className="hover:underline font-medium">
-          {report.title}
-        </Link>
-      );
+    {
+      accessorKey: "type",
+      header: ({ column }) => {
+        return <DataTableColumnHeader column={column} title={t('tableType')} />
+      },
+      cell: ({ row }) => (
+        <Badge variant={statusVariant(row.getValue("type"))}>
+          {row.getValue("type")}
+        </Badge>
+      ),
+      filterFn: (row, id, value) => {
+          return value.includes(row.getValue(id))
+      },
     },
-  },
-  {
-    accessorKey: "type",
-    header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Type" />
+    {
+      accessorKey: "date",
+       header: ({ column }) => {
+        return <DataTableColumnHeader column={column} title={t('tableDate')} />
+      },
     },
-    cell: ({ row }) => (
-      <Badge variant={statusVariant(row.getValue("type"))}>
-        {row.getValue("type")}
-      </Badge>
-    ),
-    filterFn: (row, id, value) => {
-        return value.includes(row.getValue(id))
+    {
+      accessorKey: "status",
+       header: ({ column }) => {
+        return <DataTableColumnHeader column={column} title={t('tableStatus')} />
+      },
+      cell: ({ row }) => <Badge variant="outline">{row.getValue("status")}</Badge>,
     },
-  },
-  {
-    accessorKey: "date",
-     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Date" />
+    {
+      id: "actions",
+      header: () => <div className="text-right">{t('tableActions')}</div>,
+      cell: function Actions({ row }) {
+        const report = row.original
+        return (
+          <div className="text-right">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild><Link href={`/reports/${report.id}`}>{t('viewAction')}</Link></DropdownMenuItem>
+                <DropdownMenuItem>{t('downloadAction')}</DropdownMenuItem>
+                <DropdownMenuItem className="text-destructive">{t('deleteAction')}</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )
+      },
     },
-  },
-  {
-    accessorKey: "status",
-     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Status" />
-    },
-    cell: ({ row }) => <Badge variant="outline">{row.getValue("status")}</Badge>,
-  },
-  {
-    id: "actions",
-    cell: function Actions({ row }) {
-      const t = useTranslations('ReportsPage');
-      const report = row.original
-      return (
-        <div className="text-right">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild><Link href={`/reports/${report.id}`}>{t('viewAction')}</Link></DropdownMenuItem>
-              <DropdownMenuItem>{t('downloadAction')}</DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive">{t('deleteAction')}</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      )
-    },
-  },
-]
+  ], [t]);
+}

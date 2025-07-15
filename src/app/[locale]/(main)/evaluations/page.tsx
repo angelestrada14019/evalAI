@@ -1,6 +1,8 @@
 
+'use client';
+
 import { Suspense } from 'react';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, useTranslations } from 'next-intl';
 import { backend } from '@/services/backend/backend';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -8,12 +10,12 @@ import { Button } from '@/components/ui/button';
 import { Link } from '@/navigation';
 import { PackagePlus } from 'lucide-react';
 import { DataTable } from '@/components/ui/data-table';
-import { columns } from '@/components/evaluations/columns';
-import { Evaluation } from '@/services/backend/types';
+import { useEvaluationColumns } from '@/components/evaluations/columns';
+import type { Evaluation } from '@/services/backend/types';
 
-async function EvaluationsContent() {
-    const data: Evaluation[] = await backend().getEvaluations();
-    const t = await getTranslations('EvaluationsPage');
+function EvaluationsClient({ evaluations }: { evaluations: Evaluation[] }) {
+    const t = useTranslations('EvaluationsPage');
+    const columns = useEvaluationColumns();
 
     return (
         <Card>
@@ -22,7 +24,7 @@ async function EvaluationsContent() {
                 <CardDescription>{t('listDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
-                <DataTable columns={columns} data={data} />
+                <DataTable columns={columns} data={evaluations} />
             </CardContent>
         </Card>
     );
@@ -51,8 +53,14 @@ function EvaluationsSkeleton() {
     );
 }
 
-export default async function EvaluationsPage() {
-    const t = await getTranslations('EvaluationsPage');
+async function EvaluationsContent() {
+    const evaluations = await backend().getEvaluations();
+    return <EvaluationsClient evaluations={evaluations} />;
+}
+
+
+export default function EvaluationsPage() {
+    const t = useTranslations('EvaluationsPage');
 
     return (
         <div className="container mx-auto py-8 space-y-6">
