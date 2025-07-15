@@ -5,9 +5,8 @@ import * as React from 'react';
 import { AppHeader } from '@/components/layout/header';
 import { AppSidebar } from '@/components/layout/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { PanelLeft } from 'lucide-react';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { cn } from '@/lib/utils';
 
 export default function MainLayout({
   children,
@@ -25,10 +24,17 @@ export default function MainLayout({
       setIsSidebarCollapsed(prev => !prev);
     }
   };
+  
+  // Close sidebar on mobile when switching from mobile to desktop view
+  React.useEffect(() => {
+    if (!isMobile && isSidebarOpen) {
+      setIsSidebarOpen(false);
+    }
+  }, [isMobile, isSidebarOpen]);
 
   const SidebarContent = () => (
     <AppSidebar 
-      isCollapsed={isSidebarCollapsed} 
+      isCollapsed={isSidebarCollapsed && !isMobile}
       closeSidebar={() => setIsSidebarOpen(false)} 
     />
   );
@@ -36,27 +42,31 @@ export default function MainLayout({
   if (isMobile) {
     return (
       <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
-        <div className="flex min-h-screen w-full flex-col">
+        <div className="flex min-h-screen w-full flex-col bg-background">
           <AppHeader onToggleSidebar={toggleSidebar} />
-          <main className="flex-1 p-4 md:p-6 lg:p-8 bg-background">
-            {children}
-          </main>
-          <SheetContent side="left" className="p-0 w-64">
-            <SidebarContent />
-          </SheetContent>
+          <main className="flex-1 p-4 sm:p-6">{children}</main>
         </div>
+        <SheetContent side="left" className="p-0 w-64" aria-describedby={undefined}>
+          <SidebarContent />
+        </SheetContent>
       </Sheet>
     );
   }
 
   return (
-    <div className={`flex min-h-screen w-full ${isSidebarCollapsed ? 'md:grid-cols-[80px_1fr]' : 'md:grid-cols-[256px_1fr]'} transition-all duration-300`}>
-      <div className={`${isSidebarCollapsed ? 'w-20' : 'w-64'} transition-all duration-300`}>
+    <div
+      className={cn(
+        'grid min-h-screen w-full md:grid-cols-[256px_1fr]',
+        isSidebarCollapsed && 'md:grid-cols-[80px_1fr]',
+        'transition-all duration-300 ease-in-out'
+      )}
+    >
+      <div className="hidden md:block">
         <SidebarContent />
       </div>
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-col">
         <AppHeader onToggleSidebar={toggleSidebar} isSidebarCollapsed={isSidebarCollapsed} />
-        <main className="flex-1 p-4 md:p-6 lg:p-8 bg-background overflow-y-auto">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-secondary/50 p-4 sm:p-6">
           {children}
         </main>
       </div>

@@ -24,7 +24,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { auth } from '@/services/auth/auth';
 import type { User } from '@/services/auth/types';
 import { Skeleton } from '../ui/skeleton';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { AppLogo } from '../icons';
 import { cn } from '@/lib/utils';
 
 interface AppHeaderProps {
@@ -37,7 +37,6 @@ export function AppHeader({ onToggleSidebar, isSidebarCollapsed }: AppHeaderProp
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -69,51 +68,56 @@ export function AppHeader({ onToggleSidebar, isSidebarCollapsed }: AppHeaderProp
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-card px-4 md:px-6">
-      {isMobile ? (
-        <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
-          <PanelLeft className="h-6 w-6" />
-          <span className="sr-only">Toggle Sidebar</span>
-        </Button>
-      ) : (
-        <div className="flex items-center gap-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-52 justify-between">
-                <div className="flex items-center gap-2">
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src="https://placehold.co/32x32.png" alt="Tenant logo" data-ai-hint="logo" />
-                    <AvatarFallback>AC</AvatarFallback>
-                  </Avatar>
-                  <span className="font-semibold">Acme Inc.</span>
-                </div>
-                <ChevronsUpDown className="h-4 w-4 opacity-50" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-52">
-              <DropdownMenuLabel>{t('workspaces')}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Avatar className="mr-2 h-5 w-5">
-                  <AvatarImage src="https://placehold.co/32x32.png" alt="Tenant logo" data-ai-hint="logo" />
-                  <AvatarFallback>AC</AvatarFallback>
-                </Avatar>
-                Acme Inc.
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Avatar className="mr-2 h-5 w-5">
-                  <AvatarImage src="https://placehold.co/32x32.png" alt="Tenant logo" data-ai-hint="logo" />
-                  <AvatarFallback>MO</AvatarFallback>
-                </Avatar>
-                Monolith Corp.
-              </DropdownMenuItem>
-              <DropdownMenuItem>{t('createWorkspace')}</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+       <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={onToggleSidebar} className="md:hidden">
+            <PanelLeft className="h-6 w-6" />
+            <span className="sr-only">Toggle Sidebar</span>
+          </Button>
+           <div className="hidden md:flex items-center gap-2">
+            {!isSidebarCollapsed && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="w-52 justify-between">
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <Avatar className="h-6 w-6">
+                        <AvatarImage src="https://placehold.co/32x32.png" alt="Tenant logo" data-ai-hint="logo" />
+                        <AvatarFallback>AC</AvatarFallback>
+                      </Avatar>
+                      <span className="font-semibold truncate">Acme Inc.</span>
+                    </div>
+                    <ChevronsUpDown className="h-4 w-4 opacity-50 flex-shrink-0" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-52">
+                  <DropdownMenuLabel>{t('workspaces')}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Avatar className="mr-2 h-5 w-5">
+                      <AvatarImage src="https://placehold.co/32x32.png" alt="Tenant logo" data-ai-hint="logo" />
+                      <AvatarFallback>AC</AvatarFallback>
+                    </Avatar>
+                    Acme Inc.
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Avatar className="mr-2 h-5 w-5">
+                      <AvatarImage src="https://placehold.co/32x32.png" alt="Tenant logo" data-ai-hint="logo" />
+                      <AvatarFallback>MO</AvatarFallback>
+                    </Avatar>
+                    Monolith Corp.
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>{t('createWorkspace')}</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+            <Button variant="ghost" size="icon" onClick={onToggleSidebar}>
+                <PanelLeft className="h-6 w-6" />
+                <span className="sr-only">Toggle Sidebar</span>
+            </Button>
+          </div>
         </div>
-      )}
-
-      <div className="flex-1">
-        <form>
+      
+      <div className="flex w-full flex-1 items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+        <form className="ml-auto flex-1 sm:flex-initial">
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -123,9 +127,6 @@ export function AppHeader({ onToggleSidebar, isSidebarCollapsed }: AppHeaderProp
             />
           </div>
         </form>
-      </div>
-
-      <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" className="rounded-full">
           <Bell className="h-5 w-5" />
           <span className="sr-only">Toggle notifications</span>
@@ -137,7 +138,7 @@ export function AppHeader({ onToggleSidebar, isSidebarCollapsed }: AppHeaderProp
                 <Skeleton className="h-9 w-9 rounded-full" />
               ) : (
                 <Avatar className="h-9 w-9">
-                  <AvatarImage src={user?.avatarUrl} alt={user?.name} data-ai-hint="person" />
+                  <AvatarImage src={user?.avatarUrl} alt={user?.name || ''} data-ai-hint="person" />
                   <AvatarFallback>{getFallback(user?.name)}</AvatarFallback>
                 </Avatar>
               )}
@@ -156,12 +157,6 @@ export function AppHeader({ onToggleSidebar, isSidebarCollapsed }: AppHeaderProp
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-         {!isMobile && (
-          <Button variant="ghost" size="icon" onClick={onToggleSidebar} className="ml-2">
-            <PanelLeft className="h-6 w-6" />
-            <span className="sr-only">Toggle Sidebar</span>
-          </Button>
-        )}
       </div>
     </header>
   );
