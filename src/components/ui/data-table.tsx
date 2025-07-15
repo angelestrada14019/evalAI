@@ -57,24 +57,22 @@ export function DataTable<TData, TValue>({
     },
   })
   
-  const getFilterPlaceholder = (columnId: string) => {
-    switch (columnId) {
-        case "title":
-            return t_evals('filterPlaceholder', { column: 'title' });
-        case "status":
-            return t_evals('filterPlaceholder', { column: 'status' });
-        case "type":
-             return t_reports('filterPlaceholder', { column: 'type' });
-        default:
-            return `Filter...`;
+  const getFilterPlaceholder = () => {
+    // This component is used on Evaluations and Reports page.
+    // Both have a "title" column that we can filter by.
+    // The main difference is the translation key namespace.
+    const isReports = table.getColumn("type") !== undefined;
+    if (isReports) {
+      return t_reports('filterPlaceholder', { column: t_reports('tableTitle') });
     }
+    return t_evals('filterPlaceholder', { column: t_evals('tableTitle') });
   }
 
   return (
     <div>
       <div className="flex items-center py-4">
         <Input
-          placeholder={getFilterPlaceholder('title')}
+          placeholder={getFilterPlaceholder()}
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("title")?.setFilterValue(event.target.value)

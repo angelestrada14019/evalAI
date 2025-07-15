@@ -111,6 +111,7 @@
   },
   "ReportsPage": {
     "title": "Reports",
+    "description": "A list of all generated reports.",
     "generateReportButton": "Generate New Report",
     "tableTitle": "Report Title",
     "tableType": "Type",

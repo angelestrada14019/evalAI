@@ -32,7 +32,7 @@ export default function ReportsPage() {
       <Card>
         <CardHeader>
             <CardTitle>{t('title')}</CardTitle>
-            <CardDescription>A list of all generated reports.</CardDescription>
+            <CardDescription>{t('description')}</CardDescription>
         </CardHeader>
         <CardContent>
             <DataTable columns={columns} data={reports} />
