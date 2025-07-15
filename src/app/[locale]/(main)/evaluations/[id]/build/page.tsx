@@ -364,15 +364,15 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   );
 
   if (!template) {
-    return <div className="flex h-full w-full items-center justify-center">{t('loading')}</div>;
+    return <div className="flex h-screen w-full items-center justify-center">{t('loading')}</div>;
   }
   
   const activePaletteItem = activeId && activeId.startsWith('palette-') ? questionTypes.find(q => `palette-${q.type}` === activeId) : null;
 
   return (
-    <div className='h-screen'>
+    <div className='h-screen bg-muted/20 relative'>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="flex flex-col h-full bg-muted/20">
+        <div className="flex flex-col h-full">
           <header className="flex-shrink-0 p-3 md:p-4 border-b bg-card">
               <div className='flex items-center justify-between flex-wrap gap-4'>
                   <div className="min-w-0 flex-1">
@@ -394,9 +394,9 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
           </header>
 
           <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
-            <div className="hidden lg:block lg:col-span-2 bg-card border-r">
+            <aside className="hidden lg:block lg:col-span-2 bg-card border-r">
               <FormElementsPanel />
-            </div>
+            </aside>
 
             <main id="canvas-droppable" className="lg:col-span-7 py-4 md:py-8 overflow-y-auto">
                <SortableContext items={template.items.map(i => i.id)} strategy={verticalListSortingStrategy}>
@@ -409,7 +409,10 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                       selected={selectedQuestion?.id === item.id}
                       onSelect={() => {
                         setSelectedQuestion(item);
-                        if (isMobile) setIsPropertiesSheetOpen(true);
+                        if (isMobile) {
+                            setIsFabOpen(false);
+                            setIsPropertiesSheetOpen(true);
+                        };
                       }}
                       onDelete={deleteQuestion}
                     />
@@ -424,9 +427,9 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
               )}
             </main>
             
-            <div className="hidden lg:block lg:col-span-3 bg-card border-l">
+            <aside className="hidden lg:block lg:col-span-3 bg-card border-l">
               <PropertiesPanel />
-            </div>
+            </aside>
           </div>
         </div>
 
@@ -434,7 +437,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
           {activePaletteItem ? (
             <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
               <activePaletteItem.icon className="mr-2 h-4 w-4" />
-              {tq(activePaletteeItem.type as any)}
+              {tq(activePaletteItem.type as any)}
             </Button>
           ) : activeId && template.items.find(i => i.id === activeId) ? (
               <Card className="p-4 shadow-xl opacity-90">
