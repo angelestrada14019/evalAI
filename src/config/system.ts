@@ -24,6 +24,13 @@ export const systemConfig = {
      */
     provider: 'n8n',
   },
+  backend: {
+    /**
+     * The active data backend provider.
+     * @type {'supabase' | 'rest'}
+     */
+    provider: 'supabase',
+  }
 };
 
 export type SystemConfig = typeof systemConfig;

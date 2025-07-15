@@ -1,11 +1,10 @@
 'use server'
 
-import { generateTemplate } from '@/ai/flows/generate-template'
-import { suggestFormula } from '@/ai/flows/suggest-formula'
+import { ai } from '@/services/ai/ai'
 
 export async function generateEvaluationTemplate(description: string) {
   try {
-    const result = await generateTemplate({ description })
+    const result = await ai().generateTemplate({ description })
     return result
   } catch (error) {
     console.error('Error generating template:', error)
@@ -15,7 +14,7 @@ export async function generateEvaluationTemplate(description: string) {
 
 export async function suggestScoreFormula(formContent: string) {
   try {
-    const result = await suggestFormula({ formContent })
+    const result = await ai().suggestFormula({ formContent })
     return result
   } catch (error) {
     console.error('Error suggesting formula:', error)
