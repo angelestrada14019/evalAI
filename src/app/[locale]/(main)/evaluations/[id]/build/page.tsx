@@ -76,7 +76,6 @@ function SortableFormItem({ item, index, selected, onSelect, onDelete }: { item:
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
   const tq = useTranslations('QuestionTypes');
 
-
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -213,7 +212,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         setTemplate({ ...template, items: updatedItems });
         setSelectedQuestion(newItem);
         if (isMobile) {
-            setIsElementsSheetOpen(false); // Close sheet on mobile after dropping
+            setIsElementsSheetOpen(false);
             setIsPropertiesSheetOpen(true);
         }
         return;
@@ -393,7 +392,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         </header>
 
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
-          {/* Panel de Elementos (Desktop) */}
+          {/* Panel de Elementos (Desktop y Sheet en mobile) */}
           <div className="hidden lg:block lg:col-span-2 bg-card border-r">
             <FormElementsPanel />
           </div>
@@ -425,7 +424,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             )}
           </main>
           
-          {/* Panel de Propiedades (Desktop) */}
+          {/* Panel de Propiedades (Desktop y Sheet en mobile) */}
           <div className="hidden lg:block lg:col-span-3 bg-card border-l">
             <PropertiesPanel />
           </div>
@@ -438,7 +437,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                     {/* Botones de acción del FAB */}
                     <div className={cn(
                         "transition-all duration-300 ease-in-out flex flex-col-reverse items-center gap-2",
-                        isFabOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
+                        isFabOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
                     )}>
                         {/* Botón de Propiedades */}
                         <Button variant="default" size="icon" className="shadow-lg rounded-full h-12 w-12" onClick={() => { setIsPropertiesSheetOpen(true); setIsFabOpen(false); }}>
@@ -489,7 +488,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         {activePaletteItem ? (
           <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
             <activePaletteItem.icon className="mr-2 h-4 w-4" />
-            {tq(activePaletteItem.type as any)}
+            {tq(activePaletteeItem.type as any)}
           </Button>
         ) : activeId && template.items.find(i => i.id === activeId) ? (
             <Card className="p-4 shadow-xl opacity-90">
@@ -500,3 +499,5 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     </DndContext>
   )
 }
+
+    
