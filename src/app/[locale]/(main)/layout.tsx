@@ -25,7 +25,6 @@ export default function MainLayout({
     }
   };
   
-  // Close sidebar on mobile when switching from mobile to desktop view
   React.useEffect(() => {
     if (!isMobile && isSidebarOpen) {
       setIsSidebarOpen(false);
@@ -54,19 +53,20 @@ export default function MainLayout({
   }
 
   return (
-    <div
-      className={cn(
-        'grid min-h-screen w-full md:grid-cols-[256px_1fr]',
-        isSidebarCollapsed && 'md:grid-cols-[80px_1fr]',
-        'transition-all duration-300 ease-in-out'
-      )}
-    >
-      <div className="hidden md:block">
+    <div className="min-h-screen w-full">
+      <div className={cn(
+          "hidden md:block fixed inset-y-0 left-0 z-40 w-64 transition-all duration-300 ease-in-out",
+          isSidebarCollapsed && "w-20"
+      )}>
         <SidebarContent />
       </div>
-      <div className="flex flex-col">
+      <div className={cn(
+          "flex flex-col transition-all duration-300 ease-in-out",
+          "md:ml-64",
+          isSidebarCollapsed && "md:ml-20"
+        )}>
         <AppHeader onToggleSidebar={toggleSidebar} isSidebarCollapsed={isSidebarCollapsed} />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-secondary/50 p-4 sm:p-6">
+        <main className="flex-1 overflow-x-hidden bg-secondary/50 p-4 sm:p-6">
           {children}
         </main>
       </div>

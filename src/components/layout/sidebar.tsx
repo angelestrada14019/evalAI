@@ -86,21 +86,21 @@ export function AppSidebar({ isCollapsed, closeSidebar }: AppSidebarProps) {
   };
 
   return (
-    <aside className="flex h-full max-h-screen flex-col border-r bg-card">
-      <div className={cn("flex h-16 items-center border-b px-4 lg:px-6", isCollapsed ? "justify-center" : "justify-start")}>
+    <aside className="flex h-full flex-col border-r bg-card">
+      <div className={cn("flex h-16 shrink-0 items-center border-b px-4 lg:px-6", isCollapsed ? "justify-center" : "justify-start")}>
         <Link href="/dashboard" className="flex items-center gap-2 font-bold" onClick={handleLinkClick}>
           <AppLogo className="h-7 w-7 text-primary" />
           <span className={cn(isCollapsed && "sr-only")}>EvalAI</span>
         </Link>
       </div>
       
-      <div className="flex-1 overflow-y-auto py-4">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden py-4">
         <nav className={cn("flex flex-col gap-1 px-2 lg:px-4", isCollapsed && "items-center")}>
           {navItems.map((item) => <SidebarLink key={item.href} item={item} />)}
         </nav>
       </div>
       
-      <div className="mt-auto border-t">
+      <div className="mt-auto shrink-0 border-t">
         <nav className={cn("flex flex-col gap-1 p-2 lg:p-4", isCollapsed && "items-center")}>
             {bottomNavItems.map((item) => <SidebarLink key={item.href} item={item} />)}
         </nav>
