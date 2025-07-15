@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview Mock implementation of the AuthService for development and testing.
@@ -21,17 +22,26 @@ const MOCK_USERS: User[] = [
 
 export async function login(input: LoginInput): Promise<LoginOutput> {
     console.log('[Auth Mock] Logging in with:', input.email);
-    const user = MOCK_USERS.find(u => u.email === input.email);
+    let user = MOCK_USERS.find(u => u.email === input.email);
     
+    // If user doesn't exist, create one on the fly for easy testing.
     if (!user) {
-        throw new Error('Invalid credentials');
+        console.log('[Auth Mock] User not found, creating a new mock user for testing.');
+        const name = input.email.split('@')[0];
+        user = {
+            id: uuidv4(),
+            name: name.charAt(0).toUpperCase() + name.slice(1),
+            email: input.email,
+            avatarUrl: `https://placehold.co/100x100.png?text=${name.charAt(0).toUpperCase()}`
+        };
+        MOCK_USERS.push(user);
     }
 
     MOCK_CURRENT_USER = user;
 
     return {
         user,
-        token: 'mock-jwt-token-for-alice',
+        token: `mock-jwt-token-for-${user.name.toLowerCase()}`,
     };
 }
 
@@ -39,6 +49,7 @@ export async function signup(input: SignUpInput): Promise<SignUpOutput> {
     console.log('[Auth Mock] Signing up with:', input.email);
 
     if (MOCK_USERS.some(u => u.email === input.email)) {
+        // For signup, it's better to simulate the real behavior of failing if user exists.
         throw new Error('User with this email already exists');
     }
     
