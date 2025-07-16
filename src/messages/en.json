@@ -69,8 +69,6 @@
     "save": "Save",
     "formElements": "Elements",
     "properties": "Properties",
-    "variables": "Variables",
-    "panelTitle": "Panel",
     "newQuestionLabel": "New {type} Question",
     "noQuestions": "No questions yet.",
     "noQuestionsHint": "Click an element from the left panel to start building.",
@@ -98,9 +96,11 @@
     "min": "Min",
     "max": "Max",
     "step": "Step",
-    "variableIdLabel": "Variable ID (for scoring)",
-    "variableIdHint": "Unique ID used in formulas. No spaces or special characters.",
-    "titlePlaceholder": "Evaluation Title"
+    "variableIdLabel": "ID Variable (for reference)",
+    "variableIdHint": "Unique ID variable.",
+    "titlePlaceholder": "Evaluation Title",
+    "panelTitle": "Panel",
+    "variables": "Variables"
   },
   "AIFormulaSuggester": {
     "buttonText": "AI Scoring Logic",

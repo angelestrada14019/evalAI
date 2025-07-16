@@ -69,8 +69,6 @@
     "save": "Guardar",
     "formElements": "Elementos",
     "properties": "Propiedades",
-    "variables": "Variables",
-    "panelTitle": "Panel",
     "newQuestionLabel": "Nueva Pregunta de {type}",
     "noQuestions": "Aún no hay preguntas.",
     "noQuestionsHint": "Haz clic en un elemento del panel izquierdo para empezar a construir.",
@@ -98,9 +96,11 @@
     "min": "Mín",
     "max": "Máx",
     "step": "Paso",
-    "variableIdLabel": "ID de Variable (para puntuación)",
+    "variableIdLabel": "ID de Variable (para referencia)",
     "variableIdHint": "Un ID único usado en las fórmulas. Sin espacios ni caracteres especiales.",
-    "titlePlaceholder": "Título de la Evaluación"
+    "titlePlaceholder": "Título de la Evaluación",
+    "panelTitle": "Panel",
+    "variables": "Variables"
   },
   "AIFormulaSuggester": {
     "buttonText": "Lógica de Puntuación con IA",
@@ -190,7 +190,7 @@
     "of": "de",
     "filterPlaceholder": "Filtrar elementos..."
   },
-   "Breadcrumbs": {
+  "Breadcrumbs": {
     "home": "Dashboard",
     "evaluations": "Evaluaciones",
     "reports": "Reportes",
