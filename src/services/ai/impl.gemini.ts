@@ -14,8 +14,36 @@ const GenerateTemplateInputSchema = z.object({
 });
 export type GenerateTemplateInput = z.infer<typeof GenerateTemplateInputSchema>;
 
+const FormItemSchema = z.object({
+    type: z.string().describe('e.g., "Multiple Choice", "Text Input", "Slider", "Rating Scale", "Matrix Table", "Section Header"'),
+    label: z.string().describe('The question text.'),
+    required: z.boolean().describe('A boolean value.'),
+    variableId: z.string().describe('A unique, descriptive, snake_case ID for the question (e.g., "coding_skills"). Section Headers do not need a variableId.'),
+    options: z.array(z.object({
+        label: z.string(),
+        value: z.number()
+    })).optional().describe('For "Multiple Choice"'),
+    sliderConfig: z.object({
+        min: z.number(),
+        max: z.number(),
+        step: z.number()
+    }).optional().describe('For "Slider"'),
+    ratingConfig: z.object({
+        max: z.number()
+    }).optional().describe('For "Rating Scale"'),
+    matrixConfig: z.object({
+        rows: z.array(z.string()),
+        columns: z.array(z.object({
+            label: z.string(),
+            value: z.number()
+        }))
+    }).optional().describe('For "Matrix Table"'),
+});
+
 const GenerateTemplateOutputSchema = z.object({
-  template: z.string().describe('A valid JSON string representing the evaluation form. The JSON should have keys: "title" (string), "description" (string), and "items" (an array of question objects). Each question object must have "type", "label", "required", and a unique "variableId". Specific types have extra fields: "options" for Multiple Choice (array of {label, value}), "sliderConfig" for Slider ({min, max, step}), "ratingConfig" for Rating Scale ({max}), and "matrixConfig" for Matrix Table ({rows: string[], columns: {label, value}[]}).'),
+  title: z.string().describe('The title of the evaluation form.'),
+  description: z.string().describe('A brief description of the evaluation form.'),
+  items: z.array(FormItemSchema).describe('An array of question objects for the form.'),
 });
 export type GenerateTemplateOutput = z.infer<typeof GenerateTemplateOutputSchema>;
 
@@ -43,8 +71,8 @@ const generateTemplatePrompt = genkitAi.definePrompt({
   input: { schema: GenerateTemplateInputSchema },
   output: { schema: GenerateTemplateOutputSchema },
   prompt: `You are an AI assistant specialized in generating evaluation form templates based on user descriptions.
-  Your goal is to create a valid JSON string that can be parsed directly.
-  The JSON object must have a "title", a "description", and an "items" array.
+  Your goal is to create a valid JSON object that matches the requested schema.
+  The object must have a "title", a "description", and an "items" array.
   Each item in the array is a question and must have:
   - "type": (e.g., "Multiple Choice", "Text Input", "Slider", "Rating Scale", "Matrix Table", "Section Header").
   - "label": The question text.
@@ -61,7 +89,7 @@ const generateTemplatePrompt = genkitAi.definePrompt({
 
   Description: {{{description}}}
   
-  Generate the JSON string now.`,
+  Generate the JSON object now.`,
 });
 
 const suggestFormulaPrompt = genkitAi.definePrompt({

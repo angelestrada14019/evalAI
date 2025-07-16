@@ -12,8 +12,8 @@ import { useToast } from '@/hooks/use-toast'
 import { generateEvaluationTemplate } from '@/actions/evaluation-actions'
 import { Wand2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { createDefaultTemplate } from '@/components/evaluations/builder/question-types'
-import type { FormTemplate } from '@/components/evaluations/builder/types'
+import { createDefaultTemplate, getNewFormItem } from '@/components/evaluations/builder/question-types'
+import type { FormTemplate, FormItem } from '@/components/evaluations/builder/types'
 import { FormBuilderContext } from '@/context/form-builder-context'
 
 export default function NewEvaluationPage() {
@@ -39,12 +39,13 @@ export default function NewEvaluationPage() {
     try {
       const result = await generateEvaluationTemplate(description)
 
-      const aiTemplate = JSON.parse(result.template) as FormTemplate;
+      const aiTemplate = result as FormTemplate;
       const defaultFields = createDefaultTemplate(t, tq).items;
       
       const processedAiItems = aiTemplate.items.map(item => ({
-        ...item,
-        id: uuidv4(),
+        ...getNewFormItem(item.type, t, tq, [], item.label), // Creates a full item with defaults
+        ...item, // Overwrites with AI-generated specifics
+        id: uuidv4(), // Ensures a unique ID
       }));
 
       const finalTemplate: FormTemplate = {
@@ -66,7 +67,7 @@ export default function NewEvaluationPage() {
       toast({
         variant: 'destructive',
         title: t('failTitle'),
-        description: t('failDescription'),
+        description: `Generation Failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       })
     } finally {
       setIsLoading(false)
