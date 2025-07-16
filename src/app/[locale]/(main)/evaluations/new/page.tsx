@@ -54,8 +54,8 @@ export default function NewEvaluationPage() {
     try {
       const result = await generateEvaluationTemplate(description)
 
-      const defaultItems = createDefaultTemplate(tFormBuilder, tQuestionTypes).items;
-
+      // The AI-generated template is now complete on its own.
+      // We just need to ensure all items and options have unique client-side IDs.
       const processedItems = result.items.map(item => ({
         ...item,
         id: uuidv4(),
@@ -64,7 +64,7 @@ export default function NewEvaluationPage() {
       
       const finalTemplate: FormTemplate = {
         ...result,
-        items: [...defaultItems, ...processedItems],
+        items: processedItems,
       }
       
       toast({
@@ -72,9 +72,10 @@ export default function NewEvaluationPage() {
         description: t('successDescription'),
       })
 
+      // Store the generated template in session storage for the builder page to pick up.
       sessionStorage.setItem('new_evaluation_template', JSON.stringify(finalTemplate));
 
-
+      // Navigate to the builder page with a temporary ID.
       const newEvaluationId = `new_${Date.now()}`;
       router.push(`/evaluations/${newEvaluationId}/build`);
 
