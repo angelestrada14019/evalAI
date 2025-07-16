@@ -37,8 +37,8 @@ function DraggablePaletteItem({
 
 export function FormElementsPanel({ onAddItem }: { onAddItem?: (type: string) => void }) {
     return (
-        <div className="p-4 bg-card h-full overflow-y-auto">
-            <div className="space-y-2">
+        <div className="h-full overflow-y-auto">
+            <div className="space-y-2 pt-4">
                 {questionTypes.map((q) => (
                   <DraggablePaletteItem 
                     key={q.type} 
