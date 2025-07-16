@@ -172,7 +172,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
 
                     {showVariableIdField && (
                          <div className="space-y-2">
-                            <Label htmlFor="variable-id">{type === 'Text Input' ? t('variableIdReportLabel') : t('variableIdLabel')}</Label>
+                            <Label htmlFor="variable-id">{t('variableIdLabel')}</Label>
                             <Input 
                                 id="variable-id" 
                                 value={variableId || ''} 

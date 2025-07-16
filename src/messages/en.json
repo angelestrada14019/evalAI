@@ -96,8 +96,7 @@
     "min": "Min",
     "max": "Max",
     "step": "Step",
-    "variableIdLabel": "Variable ID (for scoring)",
-    "variableIdReportLabel": "Variable ID (for report reference)",
+    "variableIdLabel": "Variable ID",
     "variableIdHint": "Unique ID used in formulas. No spaces or special characters."
   },
   "AIFormulaSuggester": {
