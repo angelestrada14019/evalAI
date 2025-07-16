@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { useTranslations } from 'next-intl'
-import { useIsMobile } from '@/hooks/use-mobile'
 import type { FormItem, FormTemplate } from '@/components/evaluations/builder/types'
 import { BuilderHeader } from '@/components/evaluations/builder/builder-header'
 import { FormElementsPanel } from '@/components/evaluations/builder/form-elements-panel'
@@ -160,9 +159,9 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   return (
     <>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="flex h-screen flex-col">
+        <div className="flex flex-col">
           <BuilderHeader title={template.title} description={template.description} />
-          <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
+          <div className="flex-1 grid grid-cols-1 lg:grid-cols-12">
             
             {isLargeScreen && (
               <aside className="lg:col-span-2 bg-card border-r">
@@ -170,7 +169,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
               </aside>
             )}
 
-            <main className="lg:col-span-7 py-4 md:py-8 overflow-y-auto">
+            <main className="lg:col-span-7 py-4 md:py-8">
               <FormCanvas 
                 items={template.items}
                 selectedQuestionId={selectedQuestion?.id}
@@ -180,7 +179,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             </main>
             
             {isLargeScreen && (
-              <aside className="lg:col-span-3 bg-card border-l">
+              <aside className="lg:col-span-3 bg-card border-l min-h-screen">
                 <PropertiesPanel 
                   selectedQuestion={selectedQuestion}
                   onUpdateQuestion={updateQuestion}
@@ -244,5 +243,3 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     </>
   )
 }
-
-    
