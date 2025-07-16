@@ -15,7 +15,7 @@ const GenerateTemplateInputSchema = z.object({
 export type GenerateTemplateInput = z.infer<typeof GenerateTemplateInputSchema>;
 
 const GenerateTemplateOutputSchema = z.object({
-  template: z.string().describe('A valid JSON string representing the evaluation form. The JSON should have keys: "title" (string), "description" (string), and "items" (an array of question objects). Each question object must have "id" (string), "type" (string, e.g., "Multiple Choice", "Text Input", "Slider"), "label" (string), and "required" (boolean). "Multiple Choice" questions must also have an "options" (array of strings) key.'),
+  template: z.string().describe('A valid JSON string representing the evaluation form. The JSON should have keys: "title" (string), "description" (string), and "items" (an array of question objects). Each question object must have "type", "label", "required", and a unique "variableId". Specific types have extra fields: "options" for Multiple Choice (array of {label, value}), "sliderConfig" for Slider ({min, max, step}), "ratingConfig" for Rating Scale ({max}), and "matrixConfig" for Matrix Table ({rows: string[], columns: {label, value}[]}).'),
 });
 export type GenerateTemplateOutput = z.infer<typeof GenerateTemplateOutputSchema>;
 
@@ -45,8 +45,19 @@ const generateTemplatePrompt = genkitAi.definePrompt({
   prompt: `You are an AI assistant specialized in generating evaluation form templates based on user descriptions.
   Your goal is to create a valid JSON string that can be parsed directly.
   The JSON object must have a "title", a "description", and an "items" array.
-  Each item in the array is a question and must have a unique "id", a "type" (e.g., "Multiple Choice", "Text Input", "Slider", "Rating Scale"), a "label", and a "required" boolean.
-  For "Multiple Choice" questions, you must also include an "options" array of strings.
+  Each item in the array is a question and must have:
+  - "type": (e.g., "Multiple Choice", "Text Input", "Slider", "Rating Scale", "Matrix Table", "Section Header").
+  - "label": The question text.
+  - "required": A boolean value.
+  - "variableId": A unique, descriptive, snake_case ID for the question (e.g., "coding_skills"). Section Headers do not need a variableId.
+
+  For specific types, you MUST include these extra properties:
+  - "Multiple Choice": Include "options", an array of objects, each with "label" (string) and "value" (number).
+  - "Slider": Include "sliderConfig" with "min", "max", and "step" numbers.
+  - "Rating Scale": Include "ratingConfig" with a "max" number.
+  - "Matrix Table": Include "matrixConfig" with "rows" (array of strings) and "columns" (array of objects with "label" and "value").
+
+  Generate a comprehensive form based on this description. Do NOT include fields for user's name or email, those are added automatically.
 
   Description: {{{description}}}
   

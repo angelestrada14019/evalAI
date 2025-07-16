@@ -2,6 +2,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
@@ -12,6 +13,7 @@ import { generateEvaluationTemplate } from '@/actions/evaluation-actions'
 import { Wand2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { createDefaultTemplate } from '@/components/evaluations/builder/question-types'
+import type { FormTemplate } from '@/components/evaluations/builder/types'
 
 export default function NewEvaluationPage() {
   const t = useTranslations('NewEvaluationPage');
@@ -34,7 +36,25 @@ export default function NewEvaluationPage() {
     try {
       const result = await generateEvaluationTemplate(description)
 
-      localStorage.setItem('generatedTemplate', result.template);
+      // Parse the AI-generated template
+      const aiTemplate = JSON.parse(result.template) as FormTemplate;
+
+      // Create the default user info fields
+      const defaultFields = createDefaultTemplate(t, tq).items;
+      
+      // Ensure all AI-generated items have unique IDs
+      const processedAiItems = aiTemplate.items.map(item => ({
+        ...item,
+        id: uuidv4(), // Assign a new internal UUID
+      }));
+
+      // Combine default fields with processed AI items
+      const finalTemplate: FormTemplate = {
+        ...aiTemplate,
+        items: [...defaultFields, ...processedAiItems],
+      };
+
+      localStorage.setItem('generatedTemplate', JSON.stringify(finalTemplate));
       
       toast({
         title: t('successTitle'),
