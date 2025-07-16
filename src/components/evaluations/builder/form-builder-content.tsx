@@ -46,25 +46,13 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
             setIsContextLoading(true);
             const isNewEvaluation = evaluationId.startsWith('new_');
 
-            if (isNewEvaluation) {
-                // For new evaluations, we rely on the context being set by the 'new' page.
-                // If context is empty (e.g., direct navigation), create a default.
-                if (!template) {
-                     console.log("Creating default template for new evaluation.");
-                     setTemplate(createDefaultTemplate(t, tq));
-                } else {
-                     console.log("Using template from context for new evaluation.");
-                }
-            } else {
-                // For existing evaluations, always fetch from the backend.
+            if (!isNewEvaluation) {
+                // Always fetch existing evaluations from backend to ensure data is fresh
                 try {
-                    console.log(`Fetching evaluation with ID: ${evaluationId}`);
+                    console.log(`Fetching existing evaluation with ID: ${evaluationId}`);
                     const existingEvaluation = await backend().getEvaluationById(evaluationId);
                     if (existingEvaluation) {
                         setTemplate(existingEvaluation);
-                        if (existingEvaluation.items.length > 0 && !selectedQuestion) {
-                            setSelectedQuestion(existingEvaluation.items[0]);
-                        }
                     } else {
                         console.error(`No evaluation found for ID ${evaluationId}, redirecting.`);
                         router.push('/evaluations');
@@ -75,16 +63,20 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
                     router.push('/evaluations');
                     return;
                 }
+            } else if (isNewEvaluation && !template) {
+                // It's a new evaluation but context is empty (e.g. direct navigation), create a default.
+                 console.log("Creating default template for new evaluation.");
+                 setTemplate(createDefaultTemplate(t, tq));
             }
             setIsContextLoading(false);
         };
 
         loadEvaluation();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [evaluationId, router, setTemplate, t, tq]);
+    }, [evaluationId]); // Only re-run if the ID changes.
 
     useEffect(() => {
-      // Logic to select the first question if none is selected
+      // Logic to select the first question if none is selected and template is loaded
       if(template && !selectedQuestion && template.items.length > 0) {
         setSelectedQuestion(template.items[0]);
       }
