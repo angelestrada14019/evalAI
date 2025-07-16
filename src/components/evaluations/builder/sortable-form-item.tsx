@@ -5,13 +5,14 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useTranslations } from "next-intl";
 import Image from 'next/image';
+import { v4 as uuidv4 } from 'uuid';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { GripVertical, Trash2, Star, Upload } from "lucide-react";
-import type { FormItem } from "./types";
+import type { FormItem, Option } from "./types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
@@ -60,14 +61,17 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                     </div>
                 )}
                 {item.type === 'Multiple Choice' && item.options && (
-                    <div className="space-y-2 mt-2 text-sm">
+                    <RadioGroup className="space-y-2 mt-2 text-sm">
                         {item.options.map((opt, i) => (
-                            <div key={i} className="flex items-center gap-2"><div className="w-4 h-4 rounded-full border"></div><span>{opt}</span></div>
+                            <div key={opt.id} className="flex items-center gap-2">
+                                <RadioGroupItem value={opt.id} id={opt.id} disabled />
+                                <label htmlFor={opt.id}>{opt.label}</label>
+                            </div>
                         ))}
-                    </div>
+                    </RadioGroup>
                 )}
                 {item.type === 'Text Input' && (
-                    <Textarea placeholder="User will type their answer here..." className="mt-2" disabled />
+                    <Textarea placeholder="User will type their answer here..." className="mt-2" disabled={item.readOnly} />
                 )}
                 {item.type === 'Slider' && (
                     <div className="flex items-center gap-4 mt-3">
@@ -86,7 +90,9 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                 {item.type === 'Rating Scale' && (
                     <div className="flex items-center gap-1 mt-2">
                        {Array.from({ length: item.ratingConfig?.max ?? 5 }).map((_, i) => (
-                           <Star key={i} className="h-6 w-6 text-yellow-400" />
+                           <Button key={i} variant="ghost" size="icon" disabled className="text-yellow-400 hover:text-yellow-500">
+                             <Star className="h-6 w-6" />
+                           </Button>
                        ))}
                     </div>
                 )}
@@ -95,11 +101,14 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                         <Upload className="h-8 w-8 mb-2" />
                         <p>{t('fileUploadArea')}</p>
                         {item.fileUploadConfig &&
-                            <p className="text-xs mt-1">
-                                {t('accepts')}{' '}
-                                {item.fileUploadConfig.allowedTypes.map(t => t.split('/')[1]).join(', ')} | {t('maxSize')}{' '}
+                            <div className="text-xs text-center mt-1">
+                                <div>{t('accepts')}{' '}
+                                {item.fileUploadConfig.allowedTypes.map(t => t.split('/')[1]).join(', ')}
+                                </div>
+                                <div>{t('maxSize')}{' '}
                                 {item.fileUploadConfig.maxSizeMB}MB
-                            </p>
+                                </div>
+                            </div>
                         }
                     </div>
                 )}
@@ -110,7 +119,7 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                                 <TableRow>
                                     <TableHead></TableHead>
                                     {item.matrixConfig?.columns.map((col, i) => (
-                                        <TableHead key={i} className="text-center">{col}</TableHead>
+                                        <TableHead key={col.id} className="text-center">{col.label}</TableHead>
                                     ))}
                                 </TableRow>
                             </TableHeader>
@@ -118,8 +127,8 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                                 {item.matrixConfig?.rows.map((row, i) => (
                                     <TableRow key={i}>
                                         <TableCell className="font-medium">{row}</TableCell>
-                                        {item.matrixConfig?.columns.map((_, j) => (
-                                             <TableCell key={j}><RadioGroup className="mx-auto w-min"><RadioGroupItem value={`${i}-${j}`} disabled/></RadioGroup></TableCell>
+                                        {item.matrixConfig?.columns.map((col, j) => (
+                                             <TableCell key={col.id}><RadioGroup className="mx-auto w-min"><RadioGroupItem value={`${i}-${j}`} disabled/></RadioGroup></TableCell>
                                         ))}
                                     </TableRow>
                                 ))}

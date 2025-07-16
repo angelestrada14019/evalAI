@@ -2,6 +2,7 @@
 'use client';
 
 import { useTranslations } from "next-intl";
+import { v4 as uuidv4 } from 'uuid';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ImagePlus, PlusCircle, Trash2 } from "lucide-react";
-import type { FormItem } from "./types";
+import type { FormItem, Option } from "./types";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 
@@ -33,73 +34,122 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
         );
     }
     
-    const { id, type, label, required, options, sliderConfig, matrixConfig, fileUploadConfig } = selectedQuestion;
+    const { id, type, label, required, readOnly, variableId, options, sliderConfig, matrixConfig, fileUploadConfig, ratingConfig } = selectedQuestion;
     
     const update = (updates: Partial<FormItem>) => {
         onUpdateQuestion(id, updates);
     };
-    
-    const handleListChange = (listType: 'options' | 'matrixRows' | 'matrixCols', index: number, value: string) => {
-        let newList: string[] | undefined;
-        if (listType === 'options') {
-            newList = [...(options || [])];
-        } else if (listType === 'matrixRows') {
-            newList = [...(matrixConfig?.rows || [])];
-        } else if (listType === 'matrixCols') {
-            newList = [...(matrixConfig?.columns || [])];
+
+    const handleOptionChange = (index: number, field: 'label' | 'value', value: string | number) => {
+        if (!options) return;
+        const newOptions = [...options];
+        const optionToUpdate = { ...newOptions[index] };
+        if (field === 'label') {
+            optionToUpdate.label = value as string;
+        } else {
+            optionToUpdate.value = typeof value === 'string' ? parseFloat(value) : value;
         }
-        
-        if (newList) {
-            newList[index] = value;
-            if (listType === 'options') update({ options: newList });
-            if (listType === 'matrixRows') update({ matrixConfig: { ...matrixConfig!, rows: newList }});
-            if (listType === 'matrixCols') update({ matrixConfig: { ...matrixConfig!, columns: newList }});
-        }
+        newOptions[index] = optionToUpdate;
+        update({ options: newOptions });
+    };
+
+    const addOption = () => {
+        const newOption: Option = {
+            id: uuidv4(),
+            label: `Option ${(options?.length || 0) + 1}`,
+            value: (options?.length || 0) + 1
+        };
+        update({ options: [...(options || []), newOption] });
+    };
+
+    const deleteOption = (index: number) => {
+        update({ options: options?.filter((_, i) => i !== index) });
     };
     
-    const addToList = (listType: 'options' | 'matrixRows' | 'matrixCols') => {
-        if (listType === 'options') {
-            const newOptions = [...(options || []), `Option ${(options?.length || 0) + 1}`];
-            update({ options: newOptions });
-        } else if (listType === 'matrixRows') {
-            const newRows = [...(matrixConfig?.rows || []), `New Row`];
-            update({ matrixConfig: { ...matrixConfig!, rows: newRows }});
-        } else if (listType === 'matrixCols') {
-            const newCols = [...(matrixConfig?.columns || []), `New Col`];
-            update({ matrixConfig: { ...matrixConfig!, columns: newCols }});
+    const handleMatrixListChange = (listType: 'rows' | 'columns', index: number, field: 'label' | 'value', value: string | number) => {
+        if (!matrixConfig) return;
+        if (listType === 'rows') {
+            const newRows = [...matrixConfig.rows];
+            newRows[index] = value as string;
+            update({ matrixConfig: { ...matrixConfig, rows: newRows } });
+        } else {
+            const newCols = [...matrixConfig.columns];
+            const colToUpdate = { ...newCols[index] };
+             if (field === 'label') {
+                colToUpdate.label = value as string;
+            } else {
+                colToUpdate.value = typeof value === 'string' ? parseFloat(value) : value;
+            }
+            newCols[index] = colToUpdate;
+            update({ matrixConfig: { ...matrixConfig, columns: newCols } });
+        }
+    };
+    
+    const addMatrixToList = (listType: 'rows' | 'columns') => {
+        if (!matrixConfig) return;
+        if (listType === 'rows') {
+            const newRows = [...matrixConfig.rows, `New Row`];
+            update({ matrixConfig: { ...matrixConfig, rows: newRows } });
+        } else {
+             const newCol: Option = {
+                id: uuidv4(),
+                label: `New Col`,
+                value: (matrixConfig.columns.length || 0) + 1
+            };
+            const newCols = [...matrixConfig.columns, newCol];
+            update({ matrixConfig: { ...matrixConfig, columns: newCols } });
         }
     };
 
-    const deleteFromList = (listType: 'options' | 'matrixRows' | 'matrixCols', index: number) => {
-        let newList: string[] | undefined;
-        if (listType === 'options') {
-            newList = options?.filter((_, i) => i !== index);
-            update({ options: newList });
-        } else if (listType === 'matrixRows') {
-            newList = matrixConfig?.rows.filter((_, i) => i !== index);
-            update({ matrixConfig: { ...matrixConfig!, rows: newList || [] }});
-        } else if (listType === 'matrixCols') {
-            newList = matrixConfig?.columns.filter((_, i) => i !== index);
-            update({ matrixConfig: { ...matrixConfig!, columns: newList || [] }});
+    const deleteMatrixFromList = (listType: 'rows' | 'columns', index: number) => {
+        if (!matrixConfig) return;
+        if (listType === 'rows') {
+            const newRows = matrixConfig.rows.filter((_, i) => i !== index);
+            update({ matrixConfig: { ...matrixConfig, rows: newRows } });
+        } else {
+            const newCols = matrixConfig.columns.filter((_, i) => i !== index);
+            update({ matrixConfig: { ...matrixConfig, columns: newCols } });
         }
     };
 
-    const getButtonText = (listType: 'options' | 'matrixRows' | 'matrixCols') => {
-        if (listType === 'options') return t('addOption');
-        if (listType === 'matrixRows') return t('addRow');
-        if (listType === 'matrixCols') return t('addCol');
-    }
 
-    const renderListEditor = (title: string, list: string[] | undefined, listType: 'options' | 'matrixRows' | 'matrixCols') => (
+    const renderOptionsEditor = () => (
         <div className="space-y-2">
-            <Label>{title}</Label>
-            {list?.map((item, i) => (
-                <div key={i} className="flex items-center gap-2">
-                    <Input value={item} onChange={(e) => handleListChange(listType, i, e.target.value)} />
-                    <Button variant="ghost" size="icon" onClick={() => deleteFromList(listType, i)}><Trash2 className="h-4 w-4 text-muted-foreground"/></Button>
+            <Label>{t('options')}</Label>
+            {options?.map((opt, i) => (
+                <div key={opt.id} className="flex items-center gap-2">
+                    <Input className="flex-1" value={opt.label} onChange={(e) => handleOptionChange(i, 'label', e.target.value)} />
+                    <Input type="number" className="w-20" value={opt.value} onChange={(e) => handleOptionChange(i, 'value', e.target.value)} />
+                    <Button variant="ghost" size="icon" onClick={() => deleteOption(i)}><Trash2 className="h-4 w-4 text-muted-foreground"/></Button>
                 </div>
             ))}
-            <Button variant="outline" size="sm" className="w-full" onClick={() => addToList(listType)}><PlusCircle className="mr-2 h-4 w-4" /> {getButtonText(listType)}</Button>
+            <Button variant="outline" size="sm" className="w-full" onClick={addOption}><PlusCircle className="mr-2 h-4 w-4" /> {t('addOption')}</Button>
+        </div>
+    );
+
+    const renderMatrixEditor = () => (
+         <div className="space-y-4">
+            <div>
+                <Label>{t('matrixRows')}</Label>
+                {matrixConfig?.rows.map((row, i) => (
+                    <div key={i} className="flex items-center gap-2 mt-1">
+                        <Input value={row} onChange={(e) => handleMatrixListChange('rows', i, 'label', e.target.value)} />
+                        <Button variant="ghost" size="icon" onClick={() => deleteMatrixFromList('rows', i)}><Trash2 className="h-4 w-4 text-muted-foreground"/></Button>
+                    </div>
+                ))}
+                <Button variant="outline" size="sm" className="w-full mt-2" onClick={() => addMatrixToList('rows')}><PlusCircle className="mr-2 h-4 w-4" /> {t('addRow')}</Button>
+            </div>
+            <div>
+                <Label>{t('matrixCols')}</Label>
+                {matrixConfig?.columns.map((col, i) => (
+                    <div key={col.id} className="flex items-center gap-2 mt-1">
+                        <Input className="flex-1" value={col.label} onChange={(e) => handleMatrixListChange('columns', i, 'label', e.target.value)} />
+                        <Input type="number" className="w-20" value={col.value} onChange={(e) => handleMatrixListChange('columns', i, 'value', e.target.value)} />
+                        <Button variant="ghost" size="icon" onClick={() => deleteMatrixFromList('columns', i)}><Trash2 className="h-4 w-4 text-muted-foreground"/></Button>
+                    </div>
+                ))}
+                <Button variant="outline" size="sm" className="w-full mt-2" onClick={() => addMatrixToList('columns')}><PlusCircle className="mr-2 h-4 w-4" /> {t('addCol')}</Button>
+            </div>
         </div>
     );
 
@@ -111,7 +161,11 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="question-text">{type === 'Section Header' ? t('sectionHeaderTitle') : t('questionText')}</Label>
-                        <Textarea id="question-text" value={label} onChange={(e) => update({ label: e.target.value })} />
+                        <Textarea id="question-text" value={label} onChange={(e) => update({ label: e.target.value })} disabled={readOnly} />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="variable-id">ID de Variable (para puntuación)</Label>
+                        <Input id="variable-id" value={variableId} readOnly disabled />
                     </div>
                     {type !== 'Section Header' && (
                         <>
@@ -130,14 +184,8 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                         </>
                     )}
                     
-                    {type === 'Multiple Choice' && renderListEditor(t('options'), options, 'options')}
-
-                    {type === 'Matrix Table' && matrixConfig && (
-                        <div className="space-y-4">
-                            {renderListEditor(t('matrixRows'), matrixConfig.rows, 'matrixRows')}
-                            {renderListEditor(t('matrixCols'), matrixConfig.columns, 'matrixCols')}
-                        </div>
-                    )}
+                    {(type === 'Multiple Choice' || type === 'Rating Scale') && renderOptionsEditor()}
+                    {type === 'Matrix Table' && renderMatrixEditor()}
 
                     {type === 'File Upload' && fileUploadConfig && (
                         <div className="space-y-2">
@@ -179,7 +227,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                     {type !== 'Section Header' && (
                     <div className="flex items-center justify-between pt-4 border-t">
                         <Label htmlFor="required-switch">{t('required')}</Label>
-                        <Switch id="required-switch" checked={required} onCheckedChange={(checked) => update({ required: checked })} />
+                        <Switch id="required-switch" checked={required} onCheckedChange={(checked) => update({ required: checked })} disabled={readOnly}/>
                     </div>
                     )}
                 </CardContent>

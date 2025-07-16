@@ -1,0 +1,188 @@
+
+{
+  "LoginPage": {
+    "title": "Welcome back",
+    "description": "Enter your credentials to access your account.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••",
+    "signInButton": "Sign In",
+    "signingInButton": "Signing In...",
+    "noAccount": "Don't have an account?",
+    "signUpLink": "Sign up"
+  },
+  "SignUpPage": {
+    "title": "Create an account",
+    "description": "Enter your details below to get started.",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your Name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••",
+    "createAccountButton": "Create Account",
+    "creatingAccountButton": "Creating Account...",
+    "hasAccount": "Already have an account?",
+    "signInLink": "Sign in"
+  },
+  "AppHeader": {
+    "myAccount": "My Account",
+    "settings": "Settings",
+    "support": "Support",
+    "logout": "Logout",
+    "workspaces": "Workspaces",
+    "createWorkspace": "Create Workspace"
+  },
+  "DashboardPage": {
+    "title": "Dashboard",
+    "newEvaluationButton": "New Evaluation",
+    "totalEvaluations": "Total Evaluations",
+    "avgScore": "Avg. Score",
+    "activeForms": "Active Forms",
+    "responseRate": "Response Rate",
+    "overview": "Overview",
+    "recentEvaluations": "Recent Evaluations",
+    "recentEvaluationsDescription": "You had {count} evaluations this month."
+  },
+  "RecentEvaluations": {
+    "title": "Recent Evaluations",
+    "description": "You had {count} evaluations this month."
+  },
+  "NewEvaluationPage": {
+    "title": "Create a New Evaluation",
+    "description": "Describe the evaluation you want to build, and our AI will generate a starting template for you.",
+    "evaluationDescriptionLabel": "Evaluation Description",
+    "evaluationDescriptionPlaceholder": "e.g., 'A quarterly performance review for software engineers, including sections on coding skills, teamwork, and project management...'",
+    "detailedResultsHint": "Be as detailed as possible for the best results.",
+    "generateButton": "Generate with AI",
+    "generatingButton": "Generating...",
+    "errorTitle": "Description is empty",
+    "errorDescription": "Please describe the evaluation you want to create.",
+    "successTitle": "Template Generated!",
+    "successDescription": "Your new evaluation is ready for editing.",
+    "failTitle": "Generation Failed",
+    "failDescription": "Could not generate the evaluation template. Please try again."
+  },
+  "FormBuilderPage": {
+    "preview": "Preview",
+    "save": "Save",
+    "formElements": "Elements",
+    "properties": "Properties",
+    "newQuestionLabel": "New {type} Question",
+    "noQuestions": "No questions yet.",
+    "noQuestionsHint": "Click an element from the left panel to start building.",
+    "questionText": "Question Text",
+    "options": "Options",
+    "addOption": "Add Option",
+    "required": "Required",
+    "selectQuestion": "Select a question to see its properties.",
+    "loading": "Loading...",
+    "fileUploadArea": "File upload area",
+    "accepts": "Accepts:",
+    "maxSize": "Max size:",
+    "fileUploadConfigTitle": "File Upload Configuration",
+    "allowedTypes": "Allowed types:",
+    "configReadOnlyHint": "Configuration is currently view-only.",
+    "matrixRows": "Rows",
+    "matrixCols": "Columns",
+    "addRow": "Add Row",
+    "addCol": "Add Column",
+    "image": "Image",
+    "addImage": "Add/Change Image",
+    "removeImage": "Remove Image",
+    "sectionHeaderTitle": "Section Title",
+    "sliderConfigTitle": "Slider Configuration",
+    "min": "Min",
+    "max": "Max",
+    "step": "Step"
+  },
+  "AIFormulaSuggester": {
+    "buttonText": "AI Scoring Logic",
+    "dialogTitle": "AI Formula Suggester",
+    "dialogDescription": "Let AI suggest a scoring formula based on your evaluation form.",
+    "formContentTitle": "Form Content for Analysis:",
+    "suggestedFormulaTitle": "Suggested Formula:",
+    "reasoningTitle": "Reasoning:",
+    "suggestButton": "Suggest Formula",
+    "thinkingButton": "Thinking...",
+    "closeButton": "Close",
+    "errorTitle": "Suggestion Failed",
+    "errorDescription": "Could not get an AI suggestion. Please try again."
+  },
+  "EvaluationsPage": {
+    "title": "Evaluations",
+    "description": "Manage all your evaluation forms here.",
+    "newEvaluationButton": "New Evaluation",
+    "listTitle": "All Forms",
+    "listDescription": "Here is a list of all your created forms.",
+    "tableTitle": "Title",
+    "tableStatus": "Status",
+    "tableResponses": "Responses",
+    "tableModified": "Last Modified",
+    "tableActions": "Actions",
+    "editAction": "Edit",
+    "viewResponsesAction": "View Responses",
+    "duplicateAction": "Duplicate",
+    "deleteAction": "Delete"
+  },
+  "ReportsPage": {
+    "title": "Reports",
+    "description": "A list of all generated reports.",
+    "generateReportButton": "Generate New Report",
+    "tableTitle": "Report Title",
+    "tableType": "Type",
+    "tableDate": "Date",
+    "tableStatus": "Status",
+    "tableActions": "Actions",
+    "viewAction": "View",
+    "downloadAction": "Download PDF",
+    "deleteAction": "Delete"
+  },
+  "SettingsNav": {
+    "profile": "Profile",
+    "team": "Team",
+    "workspace": "Workspace",
+    "billing": "Billing"
+  },
+  "SettingsPage": {
+    "title": "Settings",
+    "description": "Manage your account and workspace settings.",
+    "comingSoonTitle": "Coming Soon",
+    "comingSoonDescription": "This settings page is under construction."
+  },
+  "TeamSettingsPage": {
+    "title": "Team Members",
+    "description": "Invite and manage your team members.",
+    "inviteButton": "Invite Member",
+    "tableMember": "Member",
+    "tableRole": "Role",
+    "tableActions": "Actions",
+    "editRoleAction": "Edit role",
+    "removeAction": "Remove from team"
+  },
+  "Sidebar": {
+    "dashboard": "Dashboard",
+    "evaluations": "Evaluations",
+    "reports": "Reports",
+    "settings": "Settings",
+    "newEvaluation": "New Evaluation"
+  },
+  "QuestionTypes": {
+    "Multiple Choice": "Multiple Choice",
+    "Text Input": "Text Input",
+    "Slider": "Slider",
+    "Rating Scale": "Rating Scale",
+    "Matrix Table": "Matrix Table",
+    "File Upload": "File Upload",
+    "Section Header": "Section Header"
+  },
+  "DataTable": {
+    "previous": "Previous",
+    "next": "Next",
+    "noResultsFound": "No results found.",
+    "page": "Page",
+    "of": "of",
+    "filterPlaceholder": "Filter items..."
+  }
+}

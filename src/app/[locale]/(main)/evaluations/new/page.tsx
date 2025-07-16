@@ -11,9 +11,11 @@ import { useToast } from '@/hooks/use-toast'
 import { generateEvaluationTemplate } from '@/actions/evaluation-actions'
 import { Wand2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { createDefaultTemplate } from '@/components/evaluations/builder/question-types'
 
 export default function NewEvaluationPage() {
   const t = useTranslations('NewEvaluationPage');
+  const tq = useTranslations('QuestionTypes');
   const [description, setDescription] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
@@ -53,6 +55,13 @@ export default function NewEvaluationPage() {
     }
   }
 
+  const handleCreateManually = () => {
+    const defaultTemplate = createDefaultTemplate(t, tq);
+    localStorage.setItem('generatedTemplate', JSON.stringify(defaultTemplate));
+    const newEvaluationId = Date.now();
+    router.push(`/evaluations/${newEvaluationId}/build`);
+  };
+
   return (
     <div className="container mx-auto max-w-3xl py-8">
       <Card>
@@ -78,7 +87,10 @@ export default function NewEvaluationPage() {
             </p>
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex justify-between">
+           <Button variant="outline" onClick={handleCreateManually}>
+              Crear Manualmente
+            </Button>
           <Button
             onClick={handleGenerate}
             disabled={isLoading}

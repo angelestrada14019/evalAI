@@ -12,8 +12,10 @@ import { PropertiesPanel } from '@/components/evaluations/builder/properties-pan
 import { FormCanvas } from '@/components/evaluations/builder/form-canvas'
 import { MobileFAB } from '@/components/evaluations/builder/mobile-fab'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { getNewFormItem, questionTypes } from '@/components/evaluations/builder/question-types'
+import { getNewFormItem, questionTypes, createDefaultTemplate } from '@/components/evaluations/builder/question-types'
 import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { VariablesPanel } from '@/components/evaluations/builder/variables-panel'
 
 
 export default function FormBuilderPage({ params }: { params: { id: string } }) {
@@ -61,12 +63,12 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         }
       } catch (error) {
         console.error("Failed to parse template from localStorage", error);
-        setTemplate({ title: "Error Loading Template", description: "Could not load the evaluation template.", items: [] });
+        setTemplate(createDefaultTemplate(t,tq));
       }
     } else {
-      setTemplate({ title: "New Evaluation", description: "Start building your form.", items: [] });
+      setTemplate(createDefaultTemplate(t,tq));
     }
-  }, [isLargeScreen]);
+  }, [isLargeScreen, t, tq]);
   
   const handleSelectQuestion = (item: FormItem) => {
     setSelectedQuestion(item);
@@ -90,7 +92,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
 
     if (isDroppingFromPalette && (isDroppingOnCanvas || isDroppingOnItem)) {
       const type = active.id.toString().replace('palette-', '');
-      const newItem = getNewFormItem(type, t, tq);
+      const newItem = getNewFormItem(type, t, tq, template.items);
       
       let newIndex = template.items.length;
       if (isDroppingOnItem) {
@@ -140,7 +142,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
 
   const addItemFromPalette = (type: string) => {
     if (!template) return;
-    const newItem = getNewFormItem(type, t, tq);
+    const newItem = getNewFormItem(type, t, tq, template.items);
     const updatedItems = [...template.items, newItem];
     setTemplate({ ...template, items: updatedItems });
     setIsElementsSheetOpen(false);
@@ -180,9 +182,20 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             
             {isLargeScreen && (
               <aside className="lg:col-span-2 bg-card border-r">
-                <SortableContext items={questionTypes.map(q => `palette-${q.type}`)} strategy={verticalListSortingStrategy}>
-                    <FormElementsPanel />
-                </SortableContext>
+                 <Tabs defaultValue="elements" className="h-full flex flex-col">
+                    <TabsList className="m-2">
+                        <TabsTrigger value="elements">Elements</TabsTrigger>
+                        <TabsTrigger value="variables">Variables</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="elements" className="flex-1 overflow-y-auto">
+                        <SortableContext items={questionTypes.map(q => `palette-${q.type}`)} strategy={verticalListSortingStrategy}>
+                            <FormElementsPanel />
+                        </SortableContext>
+                    </TabsContent>
+                    <TabsContent value="variables" className="flex-1 overflow-y-auto">
+                        <VariablesPanel items={template.items} />
+                    </TabsContent>
+                </Tabs>
               </aside>
             )}
 
@@ -237,7 +250,18 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                 <SheetTitle>{t('formElements')}</SheetTitle>
               </SheetHeader>
               <div className="flex-1 overflow-y-auto">
-                <FormElementsPanel onAddItem={addItemFromPalette} />
+                 <Tabs defaultValue="elements" className="h-full flex flex-col">
+                    <TabsList className="m-2">
+                        <TabsTrigger value="elements">Elements</TabsTrigger>
+                        <TabsTrigger value="variables">Variables</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="elements" className="flex-1 overflow-y-auto">
+                        <FormElementsPanel onAddItem={addItemFromPalette} />
+                    </TabsContent>
+                    <TabsContent value="variables" className="flex-1 overflow-y-auto">
+                        <VariablesPanel items={template.items} />
+                    </TabsContent>
+                </Tabs>
               </div>
             </SheetContent>
           </Sheet>
