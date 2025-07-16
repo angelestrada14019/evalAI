@@ -153,7 +153,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                                     </div>
                                 </div>
                             </div>
-                            <p className="text-xs text-muted-foreground">{t('configReadOnlyHint')}</p>
+                            <div className="text-xs text-muted-foreground">{t('configReadOnlyHint')}</div>
                         </div>
                     )}
 
