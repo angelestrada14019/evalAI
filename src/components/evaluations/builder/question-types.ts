@@ -3,7 +3,7 @@
 
 import { ListChecks, Pilcrow, SlidersHorizontal, Star, Table, Upload, Heading1 } from "lucide-react"
 import { v4 as uuidv4 } from 'uuid';
-import type { FormItem, Option } from "./types"
+import type { FormItem, Option, FormTemplate } from "./types"
 
 export const questionTypes = [
   { type: "Multiple Choice", icon: ListChecks },
@@ -103,14 +103,17 @@ export const createDefaultTemplate = (t: any, tq: any): FormTemplate => {
     
     const firstName = getNewFormItem('Text Input', t, tq, items, 'Nombre');
     firstName.required = true;
+    firstName.readOnly = true;
     items.push(firstName);
 
     const lastName = getNewFormItem('Text Input', t, tq, items, 'Apellido');
     lastName.required = true;
+    lastName.readOnly = true;
     items.push(lastName);
 
     const email = getNewFormItem('Text Input', t, tq, items, 'Correo Electrónico');
     email.required = true;
+    email.readOnly = true;
     items.push(email);
 
     return {
