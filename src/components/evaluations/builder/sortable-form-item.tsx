@@ -63,7 +63,7 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                 {item.type === 'Multiple Choice' && item.options && (
                     <RadioGroup className="space-y-2 mt-2 text-sm">
                         {item.options.map((opt, i) => (
-                            <div key={opt.id} className="flex items-center gap-2">
+                            <div className="flex items-center gap-2" key={opt.id}>
                                 <RadioGroupItem value={opt.id} id={opt.id} disabled />
                                 <label htmlFor={opt.id}>{opt.label}</label>
                             </div>
