@@ -67,7 +67,7 @@
   "FormBuilderPage": {
     "preview": "Vista Previa",
     "save": "Guardar",
-    "formElements": "Elementos de Formulario",
+    "formElements": "Elementos",
     "properties": "Propiedades",
     "newQuestionLabel": "Nueva Pregunta de {type}",
     "noQuestions": "Aún no hay preguntas.",
@@ -95,7 +95,9 @@
     "sliderConfigTitle": "Configuración del Deslizador",
     "min": "Mín",
     "max": "Máx",
-    "step": "Paso"
+    "step": "Paso",
+    "variableIdLabel": "ID de Variable (para puntuación)",
+    "variableIdHint": "Un ID único usado en las fórmulas. Sin espacios ni caracteres especiales."
   },
   "AIFormulaSuggester": {
     "buttonText": "Lógica de Puntuación con IA",

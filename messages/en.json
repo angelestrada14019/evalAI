@@ -95,7 +95,9 @@
     "sliderConfigTitle": "Slider Configuration",
     "min": "Min",
     "max": "Max",
-    "step": "Step"
+    "step": "Step",
+    "variableIdLabel": "ID Variable (para puntuación)",
+    "variableIdHint": "Unique ID variable."
   },
   "AIFormulaSuggester": {
     "buttonText": "AI Scoring Logic",
