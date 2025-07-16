@@ -127,7 +127,11 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                                     <TableRow key={i}>
                                         <TableCell className="font-medium">{row}</TableCell>
                                         {item.matrixConfig?.columns.map((col) => (
-                                             <TableCell key={col.id}><RadioGroup key={`${i}-${col.id}`} className="mx-auto w-min"><RadioGroupItem value={`${i}-${col.id}`} disabled/></RadioGroup></TableCell>
+                                             <TableCell key={col.id} className="text-center">
+                                                <RadioGroup key={`${i}-${col.id}`} className="mx-auto w-min">
+                                                    <RadioGroupItem value={`${i}-${col.id}`} disabled/>
+                                                </RadioGroup>
+                                            </TableCell>
                                         ))}
                                     </TableRow>
                                 ))}
