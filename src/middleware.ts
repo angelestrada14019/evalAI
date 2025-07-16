@@ -8,12 +8,7 @@ export default createMiddleware({
   localePrefix,
  
   // Used when no locale matches
-  defaultLocale: 'es',
-
-  // Redirect the root path to the login page
-  pathnames: {
-    '/': '/login'
-  }
+  defaultLocale: 'es'
 });
  
 export const config = {
