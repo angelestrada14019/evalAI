@@ -44,6 +44,7 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
     
      useEffect(() => {
         const loadEvaluation = async () => {
+            if (!evaluationId) return;
             setIsLoading(true);
             try {
                 let loadedTemplate;
@@ -73,10 +74,8 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
                 setIsLoading(false);
             }
         };
-
-        if (evaluationId) {
-            loadEvaluation();
-        }
+        
+        loadEvaluation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [evaluationId, setTemplate]); 
 
@@ -159,7 +158,7 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
 
         alert(`Evaluation "${savedEvaluation.title}" saved!`);
 
-        if (template.id !== savedEvaluation.id) {
+        if (!template.id || template.id !== savedEvaluation.id) {
             router.replace(`/evaluations/${savedEvaluation.id}/build`);
         }
     }
@@ -198,13 +197,13 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
                     <div className="p-2 shrink-0">
                         <TabsList className="grid w-full grid-cols-2">
                             <TabsTrigger value="elements">{t('formElements')}</TabsTrigger>
-                            <TabsTrigger value="variables">Variables</TabsTrigger>
+                            <TabsTrigger value="variables">{t('variables')}</TabsTrigger>
                         </TabsList>
                     </div>
-                    <TabsContent value="elements" className="flex-1 overflow-y-auto p-4">
+                    <TabsContent value="elements" className="flex-1 overflow-y-auto">
                        <FormElementsPanel />
                     </TabsContent>
-                    <TabsContent value="variables" className="flex-1 overflow-y-auto p-4">
+                    <TabsContent value="variables" className="flex-1 overflow-y-auto">
                         <VariablesPanel items={template.items} />
                     </TabsContent>
                 </Tabs>
@@ -248,21 +247,32 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
                 }}
             />
             <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
-                <SheetContent className="p-0 flex flex-col">
-                    <SheetHeader className="p-6 pb-2 shrink-0">
-                        <SheetTitle>{t('formElements')}</SheetTitle>
+                <SheetContent side="left" className="p-0 flex flex-col">
+                     <SheetHeader className="p-6 pb-2 shrink-0">
+                        <SheetTitle>{t('panelTitle')}</SheetTitle>
                     </SheetHeader>
-                    <div className="overflow-y-auto p-4">
-                       <FormElementsPanel onAddItem={addQuestion} />
-                    </div>
+                    <Tabs defaultValue="elements" className="flex-1 flex flex-col overflow-y-hidden">
+                        <div className="px-6">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="elements">{t('formElements')}</TabsTrigger>
+                                <TabsTrigger value="variables">{t('variables')}</TabsTrigger>
+                            </TabsList>
+                        </div>
+                        <TabsContent value="elements" className="flex-1 overflow-y-auto">
+                            <FormElementsPanel onAddItem={addQuestion} />
+                        </TabsContent>
+                        <TabsContent value="variables" className="flex-1 overflow-y-auto">
+                            <VariablesPanel items={template.items} />
+                        </TabsContent>
+                    </Tabs>
                 </SheetContent>
             </Sheet>
             <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
-                <SheetContent className="flex flex-col">
+                 <SheetContent className="flex flex-col p-0">
                     <SheetHeader className="shrink-0 p-6 pb-2">
                         <SheetTitle>{t('properties')}</SheetTitle>
                     </SheetHeader>
-                    <div className="overflow-y-auto flex-1">
+                     <div className="overflow-y-auto">
                        <PropertiesPanel
                           selectedQuestion={selectedQuestion}
                           onUpdateQuestion={updateQuestion}

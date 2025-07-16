@@ -21,7 +21,7 @@ export function VariablesPanel({ items }: VariablesPanelProps) {
     const variables = items.filter(item => item.variableId);
 
     return (
-        <div className="space-y-2">
+        <div className="space-y-2 p-6">
              {variables.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                     <p>No variables yet.</p>

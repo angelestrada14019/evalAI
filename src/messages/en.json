@@ -69,6 +69,8 @@
     "save": "Save",
     "formElements": "Elements",
     "properties": "Properties",
+    "variables": "Variables",
+    "panelTitle": "Panel",
     "newQuestionLabel": "New {type} Question",
     "noQuestions": "No questions yet.",
     "noQuestionsHint": "Click an element from the left panel to start building.",

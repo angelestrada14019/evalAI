@@ -69,6 +69,8 @@
     "save": "Guardar",
     "formElements": "Elementos",
     "properties": "Propiedades",
+    "variables": "Variables",
+    "panelTitle": "Panel",
     "newQuestionLabel": "Nueva Pregunta de {type}",
     "noQuestions": "Aún no hay preguntas.",
     "noQuestionsHint": "Haz clic en un elemento del panel izquierdo para empezar a construir.",
