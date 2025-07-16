@@ -19,6 +19,8 @@ interface PropertiesPanelProps {
     onUpdateQuestion: (id: string, updates: Partial<FormItem>) => void;
 }
 
+const NON_SCORABLE_TYPES = ['Text Input', 'Section Header', 'File Upload'];
+
 export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: PropertiesPanelProps) {
     const t = useTranslations('FormBuilderPage');
     const tq = useTranslations('QuestionTypes');
@@ -153,6 +155,8 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
         </div>
     );
 
+    const showScoringFields = !NON_SCORABLE_TYPES.includes(type);
+
     return (
         <div className="p-4 bg-card h-full overflow-y-auto">
             <h2 className="text-lg font-semibold mb-4">{t('properties')}</h2>
@@ -163,15 +167,19 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                         <Label htmlFor="question-text">{type === 'Section Header' ? t('sectionHeaderTitle') : t('questionText')}</Label>
                         <Textarea id="question-text" value={label} onChange={(e) => update({ label: e.target.value })} disabled={readOnly} />
                     </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="variable-id">ID de Variable (para puntuación)</Label>
-                        <Input 
-                            id="variable-id" 
-                            value={variableId} 
-                            onChange={(e) => update({ variableId: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') })}
-                            disabled={readOnly}
-                         />
-                    </div>
+
+                    {showScoringFields && (
+                         <div className="space-y-2">
+                            <Label htmlFor="variable-id">ID de Variable (para puntuación)</Label>
+                            <Input 
+                                id="variable-id" 
+                                value={variableId} 
+                                onChange={(e) => update({ variableId: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') })}
+                                disabled={readOnly}
+                             />
+                        </div>
+                    )}
+
                     {type !== 'Section Header' && (
                         <>
                             <div className="space-y-2">
@@ -240,6 +248,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                             </div>
                         </div>
                     )}
+                    
                     {type !== 'Section Header' && (
                     <div className="flex items-center justify-between pt-4 border-t">
                         <Label htmlFor="required-switch">{t('required')}</Label>
@@ -251,3 +260,5 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
         </div>
     );
 }
+
+    
