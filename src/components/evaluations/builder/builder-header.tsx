@@ -18,9 +18,9 @@ export function BuilderHeader({ onSave }: BuilderHeaderProps) {
 
     if (!template) return null;
 
-    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: 'title' | 'description') => {
         if (!template) return;
-        setTemplate({ ...template, title: e.target.value });
+        setTemplate({ ...template, [field]: e.target.value });
     }
 
     return (
@@ -30,14 +30,17 @@ export function BuilderHeader({ onSave }: BuilderHeaderProps) {
                     <Input 
                         placeholder={t('titlePlaceholder')}
                         value={template.title}
-                        onChange={handleTitleChange}
+                        onChange={(e) => handleInputChange(e, 'title')}
                         className="text-lg md:text-xl font-bold border-none shadow-none focus-visible:ring-0 px-1 h-auto"
                     />
-                     <p className="text-xs md:text-sm text-muted-foreground px-1 h-auto">
-                        {template.description}
-                    </p>
+                     <Input
+                        placeholder="Evaluation description..."
+                        value={template.description}
+                        onChange={(e) => handleInputChange(e, 'description')}
+                        className="text-xs md:text-sm text-muted-foreground border-none shadow-none focus-visible:ring-0 px-1 h-auto"
+                    />
                 </div>
-                <div className="flex items-center gap-2 flex-wrap justify-end">
+                <div className="flex items-center gap-2 flex-wrap justify-end flex-shrink-0">
                     <Button variant="outline">
                         <Eye className="mr-0 sm:mr-2 h-4 w-4" /> 
                         <span className='hidden sm:inline'>{t('preview')}</span>
