@@ -184,7 +184,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                         </>
                     )}
                     
-                    {(type === 'Multiple Choice' || type === 'Rating Scale') && renderOptionsEditor()}
+                    {type === 'Multiple Choice' && renderOptionsEditor()}
                     {type === 'Matrix Table' && renderMatrixEditor()}
 
                     {type === 'File Upload' && fileUploadConfig && (

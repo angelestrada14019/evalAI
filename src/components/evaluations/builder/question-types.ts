@@ -3,7 +3,7 @@
 
 import { ListChecks, Pilcrow, SlidersHorizontal, Star, Table, Upload, Heading1 } from "lucide-react"
 import { v4 as uuidv4 } from 'uuid';
-import type { FormItem, Option, FormTemplate } from "./types"
+import type { FormItem, FormTemplate } from "./types"
 
 export const questionTypes = [
   { type: "Multiple Choice", icon: ListChecks },
@@ -62,11 +62,6 @@ export const getNewFormItem = (type: string, t: any, tq: any, existingItems: For
         return {
             ...finalBaseItem,
             ratingConfig: { max: 5 },
-            options: Array.from({ length: 5 }, (_, i) => ({
-                id: uuidv4(),
-                label: `${i + 1}`,
-                value: i + 1
-            }))
         }
     case 'Slider':
       return {
