@@ -101,20 +101,14 @@ export const getNewFormItem = (type: string, t: any, tq: any, existingItems: For
 export const createDefaultTemplate = (t: any, tq: any): FormTemplate => {
     const items: FormItem[] = [];
     
-    const firstName = getNewFormItem('Text Input', t, tq, items, 'Nombre');
-    firstName.required = true;
-    firstName.readOnly = true;
-    items.push(firstName);
+    const firstNameItem = getNewFormItem('Text Input', t, tq, items, 'Nombre');
+    items.push({ ...firstNameItem, required: true, readOnly: true });
 
-    const lastName = getNewFormItem('Text Input', t, tq, items, 'Apellido');
-    lastName.required = true;
-    lastName.readOnly = true;
-    items.push(lastName);
+    const lastNameItem = getNewFormItem('Text Input', t, tq, items, 'Apellido');
+    items.push({ ...lastNameItem, required: true, readOnly: true });
 
-    const email = getNewFormItem('Text Input', t, tq, items, 'Correo Electrónico');
-    email.required = true;
-    email.readOnly = true;
-    items.push(email);
+    const emailItem = getNewFormItem('Text Input', t, tq, items, 'Correo Electrónico');
+    items.push({ ...emailItem, required: true, readOnly: true });
 
     return {
         title: "New Evaluation",
