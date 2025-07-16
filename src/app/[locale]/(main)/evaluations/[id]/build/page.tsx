@@ -18,7 +18,7 @@ import { VariablesPanel } from '@/components/evaluations/builder/variables-panel
 import { FormBuilderProvider, useFormBuilder } from '@/context/form-builder-context'
 
 
-function FormBuilderContent({ pageParams }: { pageParams: { id: string }}) {
+function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
   const { 
     template, 
     setTemplate, 
@@ -38,12 +38,12 @@ function FormBuilderContent({ pageParams }: { pageParams: { id: string }}) {
   React.useEffect(() => {
     // If there's no template in the context when this page loads
     // (e.g., direct navigation to an edit URL), load a default.
-    // In a real app, this is where you'd fetch the evaluation by `pageParams.id`.
+    // In a real app, this is where you'd fetch the evaluation by `evaluationId`.
     if (!template) {
-      console.log(`No template found, loading default for ID: ${pageParams.id}`);
+      console.log(`No template found, loading default for ID: ${evaluationId}`);
       setTemplate(createDefaultTemplate(t, tq));
     }
-  }, [template, setTemplate, pageParams.id, t, tq]);
+  }, [template, setTemplate, evaluationId, t, tq]);
 
 
   const sensors = useSensors(useSensor(PointerSensor, {
@@ -290,7 +290,7 @@ function FormBuilderContent({ pageParams }: { pageParams: { id: string }}) {
 export default function FormBuilderPage({ params }: { params: { id: string }}) {
     return (
         <FormBuilderProvider>
-            <FormBuilderContent pageParams={params} />
+            <FormBuilderContent evaluationId={params.id} />
         </FormBuilderProvider>
     );
 }
