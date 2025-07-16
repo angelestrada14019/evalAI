@@ -7,6 +7,7 @@ import { AppSidebar } from '@/components/layout/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import { FormBuilderProvider } from '@/context/form-builder-context';
 
 export default function MainLayout({
   children,
@@ -38,12 +39,22 @@ export default function MainLayout({
     />
   );
 
+  const mainContent = (
+    <main className="flex-1 overflow-x-hidden bg-secondary/50 p-4 sm:p-6">
+      <FormBuilderProvider>
+        {children}
+      </FormBuilderProvider>
+    </main>
+  );
+
   if (isMobile) {
     return (
       <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
         <div className="flex min-h-screen w-full flex-col bg-background">
           <AppHeader onToggleSidebar={toggleSidebar} />
-          <main className="flex-1 p-4 sm:p-6">{children}</main>
+          <main className="flex-1 p-4 sm:p-6">
+            <FormBuilderProvider>{children}</FormBuilderProvider>
+          </main>
         </div>
         <SheetContent side="left" className="p-0 w-64" aria-describedby={undefined}>
           <SheetHeader>
@@ -70,7 +81,7 @@ export default function MainLayout({
         )}>
         <AppHeader onToggleSidebar={toggleSidebar} isSidebarCollapsed={isSidebarCollapsed} />
         <main className="flex-1 overflow-x-hidden bg-secondary/50 p-4 sm:p-6">
-          {children}
+          <FormBuilderProvider>{children}</FormBuilderProvider>
         </main>
       </div>
     </div>

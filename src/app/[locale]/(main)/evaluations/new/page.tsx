@@ -1,7 +1,7 @@
 
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,6 +14,7 @@ import { Wand2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { createDefaultTemplate } from '@/components/evaluations/builder/question-types'
 import type { FormTemplate } from '@/components/evaluations/builder/types'
+import { FormBuilderContext } from '@/context/form-builder-context'
 
 export default function NewEvaluationPage() {
   const t = useTranslations('NewEvaluationPage');
@@ -22,6 +23,8 @@ export default function NewEvaluationPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
+  const { setTemplate: setBuilderTemplate } = useContext(FormBuilderContext);
+
 
   const handleGenerate = async () => {
     if (!description.trim()) {
@@ -36,25 +39,20 @@ export default function NewEvaluationPage() {
     try {
       const result = await generateEvaluationTemplate(description)
 
-      // Parse the AI-generated template
       const aiTemplate = JSON.parse(result.template) as FormTemplate;
-
-      // Create the default user info fields
       const defaultFields = createDefaultTemplate(t, tq).items;
       
-      // Ensure all AI-generated items have unique IDs
       const processedAiItems = aiTemplate.items.map(item => ({
         ...item,
-        id: uuidv4(), // Assign a new internal UUID
+        id: uuidv4(),
       }));
 
-      // Combine default fields with processed AI items
       const finalTemplate: FormTemplate = {
         ...aiTemplate,
         items: [...defaultFields, ...processedAiItems],
       };
 
-      localStorage.setItem('generatedTemplate', JSON.stringify(finalTemplate));
+      setBuilderTemplate(finalTemplate);
       
       toast({
         title: t('successTitle'),
@@ -77,7 +75,7 @@ export default function NewEvaluationPage() {
 
   const handleCreateManually = () => {
     const defaultTemplate = createDefaultTemplate(t, tq);
-    localStorage.setItem('generatedTemplate', JSON.stringify(defaultTemplate));
+    setBuilderTemplate(defaultTemplate);
     const newEvaluationId = Date.now();
     router.push(`/evaluations/${newEvaluationId}/build`);
   };

@@ -1,11 +1,10 @@
 
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useTranslations } from 'next-intl'
-import type { FormItem, FormTemplate } from '@/components/evaluations/builder/types'
 import { BuilderHeader } from '@/components/evaluations/builder/builder-header'
 import { FormElementsPanel } from '@/components/evaluations/builder/form-elements-panel'
 import { PropertiesPanel } from '@/components/evaluations/builder/properties-panel'
@@ -16,34 +15,25 @@ import { getNewFormItem, questionTypes, createDefaultTemplate } from '@/componen
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { VariablesPanel } from '@/components/evaluations/builder/variables-panel'
+import { FormBuilderProvider, useFormBuilder } from '@/context/form-builder-context'
 
 
-export default function FormBuilderPage({ params }: { params: { id: string } }) {
-  const [template, setTemplate] = useState<FormTemplate | null>(null);
-  const [selectedQuestion, setSelectedQuestion] = useState<FormItem | null>(null);
-  const [activeId, setActiveId] = useState<string | null>(null);
-  
+function FormBuilderContent() {
+  const { 
+    template, 
+    setTemplate, 
+    selectedQuestion, 
+    setSelectedQuestion, 
+    isLargeScreen, 
+    isElementsSheetOpen, 
+    setIsElementsSheetOpen, 
+    isPropertiesSheetOpen, 
+    setIsPropertiesSheetOpen 
+  } = useFormBuilder();
+
+  const [activeId, setActiveId] = React.useState<string | null>(null);
   const t = useTranslations('FormBuilderPage');
   const tq = useTranslations('QuestionTypes');
-  
-  const [isLargeScreen, setIsLargeScreen] = useState(true);
-  const [isElementsSheetOpen, setIsElementsSheetOpen] = useState(false);
-  const [isPropertiesSheetOpen, setIsPropertiesSheetOpen] = useState(false);
-
-  useEffect(() => {
-    const checkScreenSize = () => {
-      const largeScreen = window.innerWidth >= 1024;
-      setIsLargeScreen(largeScreen);
-      if (largeScreen) {
-        setIsElementsSheetOpen(false);
-        setIsPropertiesSheetOpen(false);
-      }
-    };
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
-
 
   const sensors = useSensors(useSensor(PointerSensor, {
       activationConstraint: {
@@ -52,25 +42,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     }
   ));
 
-  useEffect(() => {
-    const storedTemplate = localStorage.getItem('generatedTemplate');
-    if (storedTemplate) {
-      try {
-        const parsedTemplate = JSON.parse(storedTemplate);
-        setTemplate(parsedTemplate);
-        if (isLargeScreen && parsedTemplate.items && parsedTemplate.items.length > 0) {
-            setSelectedQuestion(parsedTemplate.items[0]);
-        }
-      } catch (error) {
-        console.error("Failed to parse template from localStorage", error);
-        setTemplate(createDefaultTemplate(t,tq));
-      }
-    } else {
-      setTemplate(createDefaultTemplate(t,tq));
-    }
-  }, [isLargeScreen, t, tq]);
-  
-  const handleSelectQuestion = (item: FormItem) => {
+  const handleSelectQuestion = (item) => {
     setSelectedQuestion(item);
     if (!isLargeScreen) {
       setIsPropertiesSheetOpen(true);
@@ -121,7 +93,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     }
   };
 
-  const updateQuestion = (id: string, updates: Partial<FormItem>) => {
+  const updateQuestion = (id, updates) => {
     if (!template) return;
     const newItems = template.items.map(item => item.id === id ? { ...item, ...updates } : item);
     const newTemplate = { ...template, items: newItems };
@@ -131,7 +103,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     }
   };
 
-  const deleteQuestion = (id: string) => {
+  const deleteQuestion = (id) => {
     if (!template) return;
     const newItems = template.items.filter(item => item.id !== id);
     setTemplate({ ...template, items: newItems });
@@ -140,7 +112,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     }
   };
 
-  const addItemFromPalette = (type: string) => {
+  const addItemFromPalette = (type) => {
     if (!template) return;
     const newItem = getNewFormItem(type, t, tq, template.items);
     const updatedItems = [...template.items, newItem];
@@ -160,7 +132,6 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         console.log(JSON.stringify(template, null, 2));
     }
   }
-
 
   if (!template) {
     return <div className="flex w-full min-h-screen items-center justify-center">{t('loading')}</div>;
@@ -283,4 +254,12 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
       )}
     </>
   )
+}
+
+export default function FormBuilderPage() {
+    return (
+        <FormBuilderProvider>
+            <FormBuilderContent />
+        </FormBuilderProvider>
+    );
 }
