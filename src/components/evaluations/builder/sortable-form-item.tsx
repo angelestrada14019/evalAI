@@ -5,14 +5,13 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useTranslations } from "next-intl";
 import Image from 'next/image';
-import { v4 as uuidv4 } from 'uuid';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { GripVertical, Trash2, Star, Upload } from "lucide-react";
-import type { FormItem, Option } from "./types";
+import type { FormItem } from "./types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
@@ -62,8 +61,8 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                 )}
                 {item.type === 'Multiple Choice' && item.options && (
                     <RadioGroup className="space-y-2 mt-2 text-sm">
-                        {item.options.map((opt, i) => (
-                            <div className="flex items-center gap-2" key={opt.id}>
+                        {item.options.map((opt) => (
+                            <div key={opt.id} className="flex items-center gap-2">
                                 <RadioGroupItem value={opt.id} id={opt.id} disabled />
                                 <label htmlFor={opt.id}>{opt.label}</label>
                             </div>
@@ -101,7 +100,7 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                         <Upload className="h-8 w-8 mb-2" />
                         <p>{t('fileUploadArea')}</p>
                         {item.fileUploadConfig &&
-                            <div className="text-xs text-center mt-1">
+                            <div className="text-xs text-center mt-1 space-y-1">
                                 <div>{t('accepts')}{' '}
                                 {item.fileUploadConfig.allowedTypes.map(t => t.split('/')[1]).join(', ')}
                                 </div>
@@ -118,7 +117,7 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                             <TableHeader>
                                 <TableRow>
                                     <TableHead></TableHead>
-                                    {item.matrixConfig?.columns.map((col, i) => (
+                                    {item.matrixConfig?.columns.map((col) => (
                                         <TableHead key={col.id} className="text-center">{col.label}</TableHead>
                                     ))}
                                 </TableRow>
@@ -127,8 +126,8 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                                 {item.matrixConfig?.rows.map((row, i) => (
                                     <TableRow key={i}>
                                         <TableCell className="font-medium">{row}</TableCell>
-                                        {item.matrixConfig?.columns.map((col, j) => (
-                                             <TableCell key={col.id}><RadioGroup className="mx-auto w-min"><RadioGroupItem value={`${i}-${j}`} disabled/></RadioGroup></TableCell>
+                                        {item.matrixConfig?.columns.map((col) => (
+                                             <TableCell key={col.id}><RadioGroup className="mx-auto w-min"><RadioGroupItem value={`${i}-${col.id}`} disabled/></RadioGroup></TableCell>
                                         ))}
                                     </TableRow>
                                 ))}
