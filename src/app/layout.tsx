@@ -1,28 +1,12 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import { Toaster } from "@/components/ui/toaster";
-import { AppHeader } from '@/components/layout/header';
-import { AppSidebar } from '@/components/layout/sidebar';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-
-export const metadata: Metadata = {
-  title: 'EvalAI',
-  description: 'AI-Powered Evaluation Platform',
-};
+// This file is intentionally minimal.
+// The main layout, including <html> and <body>, is in /[locale]/layout.tsx
+// to ensure the locale is available for all rendered content.
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en" className="h-full">
-      <body className={`${inter.variable} font-sans antialiased h-full`}>
-        {children}
-        <Toaster />
-      </body>
-    </html>
-  );
+}) {
+  return children;
 }
