@@ -37,17 +37,15 @@ function DraggablePaletteItem({
 
 export function FormElementsPanel({ onAddItem }: { onAddItem?: (type: string) => void }) {
     return (
-        <div className="p-4">
-            <div className="space-y-2">
-                {questionTypes.map((q) => (
-                  <DraggablePaletteItem 
-                    key={q.type} 
-                    type={q.type} 
-                    icon={q.icon}
-                    onClick={onAddItem ? () => onAddItem(q.type) : undefined}
-                  />
-                ))}
-            </div>
+        <div className="p-4 space-y-2">
+            {questionTypes.map((q) => (
+              <DraggablePaletteItem 
+                key={q.type} 
+                type={q.type} 
+                icon={q.icon}
+                onClick={onAddItem ? () => onAddItem(q.type) : undefined}
+              />
+            ))}
         </div>
     );
 }

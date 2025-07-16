@@ -28,7 +28,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
 
     if (!selectedQuestion) {
         return (
-            <div className="p-4 bg-card h-full overflow-y-auto">
+            <div className="p-4 h-full">
                 <div className="text-center py-12 text-muted-foreground">
                     <p>{t('selectQuestion')}</p>
                 </div>
@@ -159,7 +159,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
     const showRequiredSwitch = !NON_SCORABLE_TYPES.includes(type);
 
     return (
-        <div className="p-4 bg-card h-full overflow-y-auto">
+        <div className="p-4 bg-card h-full">
             <Card>
                 <CardHeader><CardTitle className="text-base">{tq(type as any)}</CardTitle></CardHeader>
                 <CardContent className="space-y-4">

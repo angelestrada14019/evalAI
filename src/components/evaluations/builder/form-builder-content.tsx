@@ -78,7 +78,7 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
             loadEvaluation();
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [evaluationId, router, setTemplate, t, tq]); 
+    }, [evaluationId, router, setTemplate]); 
 
 
     useEffect(() => {
@@ -193,12 +193,14 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
 
     const renderDesktopLayout = () => (
         <div className="flex-1 grid grid-cols-12 overflow-hidden">
-            <aside className="col-span-2 border-r overflow-y-auto">
-                 <Tabs defaultValue="elements" className="h-full flex flex-col">
-                    <TabsList className="m-4">
-                        <TabsTrigger value="elements" className="flex-1">{t('formElements')}</TabsTrigger>
-                        <TabsTrigger value="variables" className="flex-1">Variables</TabsTrigger>
-                    </TabsList>
+            <aside className="col-span-2 border-r flex flex-col">
+                 <Tabs defaultValue="elements" className="flex-1 flex flex-col overflow-y-hidden">
+                    <div className="p-2">
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="elements">{t('formElements')}</TabsTrigger>
+                            <TabsTrigger value="variables">Variables</TabsTrigger>
+                        </TabsList>
+                    </div>
                     <TabsContent value="elements" className="flex-1 overflow-y-auto">
                        <FormElementsPanel />
                     </TabsContent>
@@ -246,7 +248,7 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
                 }}
             />
             <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
-                <SheetContent side="left">
+                <SheetContent>
                     <SheetHeader>
                         <SheetTitle>{t('formElements')}</SheetTitle>
                     </SheetHeader>
@@ -254,7 +256,7 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
                 </SheetContent>
             </Sheet>
             <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
-                <SheetContent side="right">
+                <SheetContent>
                     <SheetHeader>
                         <SheetTitle>{t('properties')}</SheetTitle>
                     </SheetHeader>
