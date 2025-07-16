@@ -2,6 +2,7 @@
 'use client';
 
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { useDroppable } from "@dnd-kit/core";
 import { useTranslations } from "next-intl";
 import { SortableFormItem } from "./sortable-form-item";
 import type { FormItem } from "./types";
@@ -15,10 +16,11 @@ interface FormCanvasProps {
 
 export function FormCanvas({ items, selectedQuestionId, onSelectQuestion, onDeleteQuestion }: FormCanvasProps) {
     const t = useTranslations('FormBuilderPage');
+    const { setNodeRef } = useDroppable({ id: 'canvas-droppable' });
     
     return (
-        <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
-            <div className="space-y-6 max-w-3xl mx-auto px-4">
+        <div ref={setNodeRef} className="space-y-6 max-w-3xl mx-auto px-4 min-h-[300px]">
+            <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
                 {items.map((item, index) => (
                     <SortableFormItem
                         key={item.id}
@@ -29,16 +31,14 @@ export function FormCanvas({ items, selectedQuestionId, onSelectQuestion, onDele
                         onDelete={onDeleteQuestion}
                     />
                 ))}
-            </div>
+            </SortableContext>
 
             {items.length === 0 && (
-                <div className="text-center py-20 border-2 border-dashed rounded-lg text-muted-foreground max-w-3xl mx-auto">
+                <div className="text-center py-20 border-2 border-dashed rounded-lg text-muted-foreground">
                     <p>{t('noQuestions')}</p>
                     <p className="text-sm">{t('noQuestionsHint')}</p>
                 </div>
             )}
-        </SortableContext>
+        </div>
     );
 }
-
-    

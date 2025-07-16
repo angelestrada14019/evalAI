@@ -86,17 +86,32 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     setActiveId(null);
     if (!over || !template) return;
 
-    if (active.id.toString().startsWith('palette-') && over.id === 'canvas-droppable') {
-        const type = active.id.toString().replace('palette-', '');
-        const newItem = getNewFormItem(type, t, tq);
-        
-        const updatedItems = [...template.items, newItem];
-        setTemplate({ ...template, items: updatedItems });
-        handleSelectQuestion(newItem);
-        return;
+    const isDroppingFromPalette = active.id.toString().startsWith('palette-');
+    const isDroppingOnCanvas = over.id === 'canvas-droppable';
+    const isDroppingOnItem = template.items.some(item => item.id === over.id);
+
+    if (isDroppingFromPalette && (isDroppingOnCanvas || isDroppingOnItem)) {
+      const type = active.id.toString().replace('palette-', '');
+      const newItem = getNewFormItem(type, t, tq);
+      
+      let newIndex = template.items.length;
+      if (isDroppingOnItem) {
+        const overIndex = template.items.findIndex(item => item.id === over.id);
+        newIndex = overIndex + 1;
+      }
+      
+      const updatedItems = [
+        ...template.items.slice(0, newIndex),
+        newItem,
+        ...template.items.slice(newIndex)
+      ];
+
+      setTemplate({ ...template, items: updatedItems });
+      handleSelectQuestion(newItem);
+      return;
     }
 
-    if (active.id !== over.id && !active.id.toString().startsWith('palette-')) {
+    if (!isDroppingFromPalette && active.id !== over.id) {
         const oldIndex = template.items.findIndex(item => item.id === active.id);
         const newIndex = template.items.findIndex(item => item.id === over.id);
         if (oldIndex !== -1 && newIndex !== -1) {
@@ -136,6 +151,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   }
   
   const activePaletteItem = activeId && activeId.startsWith('palette-') ? questionTypes.find(q => `palette-${q.type}` === activeId) : null;
+  const activeFormItem = activeId && !activeId.startsWith('palette-') ? template.items.find(i => i.id === activeId) : null;
 
   return (
     <>
@@ -150,7 +166,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
               </aside>
             )}
 
-            <main id="canvas-droppable" className="lg:col-span-7 py-4 md:py-8">
+            <main className="lg:col-span-7 py-4 md:py-8 overflow-y-auto">
               <FormCanvas 
                 items={template.items}
                 selectedQuestionId={selectedQuestion?.id}
@@ -176,9 +192,9 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                 <activePaletteItem.icon className="mr-2 h-4 w-4" />
                 {tq(activePaletteItem.type as any)}
                 </Button>
-            ) : activeId && template.items.find(i => i.id === activeId) ? (
+            ) : activeFormItem ? (
                 <div className="p-4 rounded-md shadow-xl opacity-90 bg-card">
-                    <p>{template.items.find(i => i.id === activeId)?.label}</p>
+                    <p>{activeFormItem.label}</p>
                 </div>
             ): null}
         </DragOverlay>
