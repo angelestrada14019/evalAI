@@ -16,11 +16,13 @@ export async function generateEvaluationTemplate(description: string) {
 }
 
 export async function suggestScoreFormula(template: FormTemplate) {
+  console.log('[Action] Starting suggestScoreFormula for template:', template.title);
   try {
     const result = await ai().suggestFormula({ template })
+    console.log('[Action] Successfully suggested formula.');
     return result
   } catch (error) {
-    console.error('Error suggesting formula:', error)
+    console.error('[Action] Error in suggestScoreFormula:', error)
     throw new Error('Failed to suggest formula')
   }
 }

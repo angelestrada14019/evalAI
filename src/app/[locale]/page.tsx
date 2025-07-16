@@ -11,5 +11,5 @@ export default function RootPage() {
     router.replace('/login');
   }, [router]);
 
-  return null; // O un componente de carga si se prefiere
+  return null;
 }
