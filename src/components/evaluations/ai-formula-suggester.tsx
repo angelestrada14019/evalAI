@@ -16,26 +16,57 @@ import { BrainCircuit, Loader2 } from 'lucide-react'
 import { suggestScoreFormula } from '@/actions/evaluation-actions'
 import { Card, CardContent } from '../ui/card'
 import { useToast } from '@/hooks/use-toast'
+import { useFormBuilder } from '@/context/form-builder-context'
+import type { FormItem } from '@/components/evaluations/builder/types'
 
-const MOCK_FORM_CONTENT = `
-1. How would you rate the code quality on the last project? (Multiple Choice: Excellent=4, Good=3, Average=2, Poor=1)
-2. Teamwork and Collaboration (Rating Scale 1-5)
-3. Met project deadlines? (Yes/No: Yes=1, No=0)
-4. Technical Proficiency Score (Slider 0-100)
-`
+const formatFormContentForAI = (items: FormItem[]): string => {
+  if (!items || items.length === 0) {
+    return 'The form is empty.';
+  }
+
+  return items
+    .filter(item => !['Section Header', 'Text Input', 'File Upload'].includes(item.type))
+    .map((item, index) => {
+      let details = '';
+      switch (item.type) {
+        case 'Multiple Choice':
+          details = `(Multiple Choice: ${item.options?.map(opt => `${opt.label}=${opt.value}`).join(', ')})`;
+          break;
+        case 'Rating Scale':
+          details = `(Rating Scale 1-${item.ratingConfig?.max ?? 5})`;
+          break;
+        case 'Slider':
+          details = `(Slider ${item.sliderConfig?.min ?? 0}-${item.sliderConfig?.max ?? 100})`;
+          break;
+        case 'Matrix Table':
+            details = `(Matrix Table: Rows are '${item.matrixConfig?.rows.join(', ')}'. Columns are ${item.matrixConfig?.columns.map(c => `${c.label}=${c.value}`).join(', ')})`;
+            break;
+      }
+      return `${index + 1}. ${item.label} (ID: ${item.variableId}) ${details}`;
+    })
+    .join('\n');
+};
+
 
 export function AIFormulaSuggester() {
   const t = useTranslations('AIFormulaSuggester');
+  const { template } = useFormBuilder();
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [suggestion, setSuggestion] = useState<{ suggestedFormula: string; reasoning: string } | null>(null)
+  const [formContent, setFormContent] = useState('');
   const { toast } = useToast()
 
   const handleSuggest = async () => {
+    if (!template) return;
     setIsLoading(true)
     setSuggestion(null)
+    
+    const currentFormContent = formatFormContentForAI(template.items);
+    setFormContent(currentFormContent);
+
     try {
-      const result = await suggestScoreFormula(MOCK_FORM_CONTENT)
+      const result = await suggestScoreFormula(currentFormContent)
       setSuggestion(result)
     } catch (error) {
       toast({
@@ -67,8 +98,8 @@ export function AIFormulaSuggester() {
           <Card>
             <CardContent className="p-4">
                 <h4 className="font-semibold text-sm mb-2">{t('formContentTitle')}</h4>
-                <pre className="text-xs p-3 bg-secondary rounded-md whitespace-pre-wrap font-mono">
-                    {MOCK_FORM_CONTENT.trim()}
+                <pre className="text-xs p-3 bg-secondary rounded-md whitespace-pre-wrap font-mono max-h-40 overflow-auto">
+                    {formContent || "Click 'Suggest Formula' to see the content sent to the AI."}
                 </pre>
             </CardContent>
           </Card>
@@ -101,7 +132,7 @@ export function AIFormulaSuggester() {
           )}
         </div>
         <DialogFooter>
-          <Button onClick={handleSuggest} disabled={isLoading} className="bg-accent text-accent-foreground hover:bg-accent/90">
+          <Button onClick={handleSuggest} disabled={isLoading || !template} className="bg-accent text-accent-foreground hover:bg-accent/90">
             {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t('thinkingButton')}</> : t('suggestButton')}
           </Button>
           <Button variant="secondary" onClick={() => setIsOpen(false)}>{t('closeButton')}</Button>
