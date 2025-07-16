@@ -201,10 +201,10 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
                             <TabsTrigger value="variables">Variables</TabsTrigger>
                         </TabsList>
                     </div>
-                    <TabsContent value="elements" className="flex-1 overflow-y-auto">
+                    <TabsContent value="elements" className="flex-1 overflow-y-auto p-4">
                        <FormElementsPanel />
                     </TabsContent>
-                    <TabsContent value="variables" className="flex-1 overflow-y-auto">
+                    <TabsContent value="variables" className="flex-1 overflow-y-auto p-4">
                         <VariablesPanel items={template.items} />
                     </TabsContent>
                 </Tabs>
@@ -252,17 +252,17 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
                     <SheetHeader className="p-6 pb-2 shrink-0">
                         <SheetTitle>{t('formElements')}</SheetTitle>
                     </SheetHeader>
-                    <div className="overflow-y-auto">
+                    <div className="overflow-y-auto p-4">
                        <FormElementsPanel onAddItem={addQuestion} />
                     </div>
                 </SheetContent>
             </Sheet>
             <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
                 <SheetContent className="flex flex-col">
-                    <SheetHeader className="shrink-0">
+                    <SheetHeader className="shrink-0 p-6 pb-2">
                         <SheetTitle>{t('properties')}</SheetTitle>
                     </SheetHeader>
-                    <div className="overflow-y-auto -mx-6 px-6">
+                    <div className="overflow-y-auto flex-1">
                        <PropertiesPanel
                           selectedQuestion={selectedQuestion}
                           onUpdateQuestion={updateQuestion}
