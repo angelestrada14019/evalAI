@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { MainLayoutClient } from './main-layout-client';
 import { AppHeader } from '@/components/layout/header';
 import { AppSidebar } from '@/components/layout/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -40,7 +39,7 @@ export default function MainLayout({
   );
 
   const mainContent = (
-     <FormBuilderProvider>{children}</FormBuilderProvider>
+     <FormBuilderProvider initialTemplate={null}>{children}</FormBuilderProvider>
   );
 
   if (isMobile) {

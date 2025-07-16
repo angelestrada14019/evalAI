@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { DndContext, closestCenter, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { SortableContext, arrayMove } from '@dnd-kit/sortable';
+import { arrayMove } from '@dnd-kit/sortable';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/navigation';
-import { useFormBuilder } from '@/context/form-builder-context';
-import { getNewFormItem, createDefaultTemplate } from '@/components/evaluations/builder/question-types';
+import { FormBuilderProvider, useFormBuilder } from '@/context/form-builder-context';
+import { getNewFormItem } from '@/components/evaluations/builder/question-types';
 import type { FormItem, FormTemplate } from '@/components/evaluations/builder/types';
 import { BuilderHeader } from '@/components/evaluations/builder/builder-header';
 import { FormElementsPanel } from '@/components/evaluations/builder/form-elements-panel';
@@ -19,11 +19,14 @@ import { VariablesPanel } from '@/components/evaluations/builder/variables-panel
 import { SortableFormItem } from '@/components/evaluations/builder/sortable-form-item';
 import { backend } from '@/services/backend/backend';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useEvaluationLoader } from '@/hooks/use-evaluation-loader';
 
-export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
+
+function FormBuilderUI() {
     const t = useTranslations('FormBuilderPage');
     const tq = useTranslations('QuestionTypes');
     const router = useRouter();
+
     const { 
         template, 
         setTemplate, 
@@ -33,46 +36,14 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
         isElementsSheetOpen,
         setIsElementsSheetOpen,
         isPropertiesSheetOpen,
-        setIsPropertiesSheetOpen,
-        isContextLoading,
-        setIsContextLoading,
+        setIsPropertiesSheetOpen
     } = useFormBuilder();
-    
+
     const [activeId, setActiveId] = useState<string | null>(null);
     const sensors = useSensors(useSensor(PointerSensor));
-
-    useEffect(() => {
-        const loadEvaluation = async () => {
-            setIsContextLoading(true);
-            const isNewEvaluation = evaluationId.startsWith('new_');
-
-            if (!isNewEvaluation) {
-                try {
-                    const existingEvaluation = await backend().getEvaluationById(evaluationId);
-                    if (existingEvaluation) {
-                        setTemplate(existingEvaluation);
-                    } else {
-                        console.error(`Evaluation with id ${evaluationId} not found.`);
-                        router.push('/evaluations');
-                    }
-                } catch (error) {
-                    console.error("Failed to load evaluation:", error);
-                    router.push('/evaluations');
-                }
-            } else if (isNewEvaluation && !template) {
-                // Only set default template if one isn't already in context (e.g. from AI generation)
-                setTemplate(createDefaultTemplate(t, tq));
-            }
-            setIsContextLoading(false);
-        };
-
-        loadEvaluation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [evaluationId, router, t, tq]);
-
+    
     useEffect(() => {
       if(template && !selectedQuestion && template.items.length > 0) {
-        // Automatically select the first non-readonly question if available
         const firstEditableQuestion = template.items.find(item => !item.readOnly);
         if (firstEditableQuestion) {
             setSelectedQuestion(firstEditableQuestion);
@@ -80,27 +51,7 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
       }
     }, [template, selectedQuestion, setSelectedQuestion]);
 
-
-    if (isContextLoading || !template) {
-        return (
-            <div className="flex flex-col h-full">
-                 <header className="flex-shrink-0 p-3 md:p-4 border-b bg-card">
-                    <div className="flex items-center justify-between flex-wrap gap-4">
-                        <Skeleton className="h-10 w-1/3" />
-                         <div className="flex items-center gap-2">
-                            <Skeleton className="h-10 w-24" />
-                            <Skeleton className="h-10 w-24" />
-                            <Skeleton className="h-10 w-24" />
-                        </div>
-                    </div>
-                 </header>
-                 <div className="p-8 space-y-4">
-                    <Skeleton className="h-32 w-full" />
-                    <Skeleton className="h-32 w-full mt-4" />
-                </div>
-            </div>
-        );
-    }
+    if (!template) return null;
 
     const handleDragStart = (event: any) => {
         setActiveId(event.active.id);
@@ -169,7 +120,7 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
 
         alert(`Evaluation "${savedEvaluation.title}" saved!`);
 
-        if (evaluationId !== savedEvaluation.id) {
+        if (template.id !== savedEvaluation.id) {
             router.replace(`/evaluations/${savedEvaluation.id}/build`);
         }
     }
@@ -258,7 +209,7 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
              <DragOverlay>
                 {activeId && activeId.startsWith('palette-') ? (
                     <div className="p-2 bg-primary text-primary-foreground rounded-md shadow-lg">
-                        {t('newQuestionLabel', { type: tq(activeId.replace('palette-', '') as any) })}
+                        {tq(activeId.replace('palette-', '') as any)}
                     </div>
                 ) : activeItem ? (
                      <div className="opacity-75">
@@ -273,5 +224,41 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
                 ) : null}
             </DragOverlay>
         </DndContext>
+    );
+}
+
+
+export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
+    const { template: initialTemplate, isLoading } = useEvaluationLoader(evaluationId);
+
+    if (isLoading) {
+       return (
+            <div className="flex flex-col h-full">
+                 <header className="flex-shrink-0 p-3 md:p-4 border-b bg-card">
+                    <div className='flex flex-col gap-4'>
+                        <div className="min-w-0 flex-1 space-y-2">
+                             <Skeleton className="h-7 w-1/2" />
+                             <Skeleton className="h-5 w-3/4" />
+                        </div>
+                        <div className="flex items-center gap-2 flex-wrap justify-start sm:justify-end flex-shrink-0">
+                            <Skeleton className="h-10 w-24" />
+                            <Skeleton className="h-10 w-24" />
+                            <Skeleton className="h-10 w-24" />
+                        </div>
+                    </div>
+                 </header>
+                 <div className="p-8 space-y-4">
+                    <Skeleton className="h-32 w-full" />
+                    <Skeleton className="h-32 w-full" />
+                    <Skeleton className="h-32 w-full" />
+                </div>
+            </div>
+        );
+    }
+    
+    return (
+        <FormBuilderProvider initialTemplate={initialTemplate}>
+            <FormBuilderUI />
+        </FormBuilderProvider>
     );
 }
