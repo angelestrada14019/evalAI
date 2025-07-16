@@ -172,7 +172,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   return (
     <>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-full">
           <BuilderHeader 
             title={template.title} 
             description={template.description}
