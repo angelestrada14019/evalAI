@@ -95,7 +95,9 @@
     "sliderConfigTitle": "Configuración del Deslizador",
     "min": "Mín",
     "max": "Máx",
-    "step": "Paso"
+    "step": "Paso",
+    "variableIdLabel": "ID de Variable (para puntuación)",
+    "variableIdHint": "Un ID único usado en las fórmulas. Sin espacios ni caracteres especiales."
   },
   "AIFormulaSuggester": {
     "buttonText": "Lógica de Puntuación con IA",
