@@ -1,8 +1,7 @@
 'use client'
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Home, FileText, BarChart2, Settings, LifeBuoy, PackagePlus } from 'lucide-react'
+import { Link, usePathname } from '@/navigation';
+import { Home, FileText, BarChart2, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AppLogo } from '@/components/icons'
 import {
@@ -12,6 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useIsMobile } from '@/hooks/use-mobile'
+import { useTranslations } from 'next-intl'
 
 interface AppSidebarProps {
   isCollapsed: boolean;
@@ -21,6 +21,7 @@ interface AppSidebarProps {
 export function AppSidebar({ isCollapsed, closeSidebar }: AppSidebarProps) {
   const pathname = usePathname();
   const isMobile = useIsMobile();
+  const t = useTranslations('Sidebar');
 
   const handleLinkClick = () => {
     if (isMobile && closeSidebar) {
@@ -29,18 +30,18 @@ export function AppSidebar({ isCollapsed, closeSidebar }: AppSidebarProps) {
   };
 
   const navItems = [
-    { href: '/dashboard', icon: Home, label: 'Dashboard' },
-    { href: '/evaluations', icon: FileText, label: 'Evaluations' },
-    { href: '/reports', icon: BarChart2, label: 'Reports' },
+    { href: '/dashboard', icon: Home, label: t('dashboard') },
+    { href: '/evaluations', icon: FileText, label: t('evaluations') },
+    { href: '/reports', icon: BarChart2, label: t('reports') },
   ];
 
   const bottomNavItems = [
-    { href: '/settings', icon: Settings, label: 'Settings' },
+    { href: '/settings', icon: Settings, label: t('settings') },
   ];
 
   const isNavItemActive = (href: string) => {
-    if (href === '/dashboard') return pathname === href;
-    return pathname.startsWith(href);
+    // Exact match for dashboard, startsWith for others to catch sub-pages
+    return href === '/dashboard' ? pathname === href : pathname.startsWith(href);
   };
 
   const SidebarLink = ({ item }: { item: typeof navItems[0] }) => {

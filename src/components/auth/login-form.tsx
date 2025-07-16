@@ -3,8 +3,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { Link, useRouter } from '@/navigation'
+import { useTranslations } from 'next-intl'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -24,6 +24,7 @@ import { LoginInputSchema } from '@/services/auth/types'
 export function LoginForm() {
   const router = useRouter()
   const { toast } = useToast()
+  const t = useTranslations('LoginPage');
   
   const form = useForm<z.infer<typeof LoginInputSchema>>({
     resolver: zodResolver(LoginInputSchema),
@@ -55,8 +56,8 @@ export function LoginForm() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>Welcome back</CardTitle>
-        <CardDescription>Enter your credentials to access your account.</CardDescription>
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -66,9 +67,9 @@ export function LoginForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t('emailLabel')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="name@example.com" {...field} />
+                    <Input placeholder={t('emailPlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -79,23 +80,23 @@ export function LoginForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{t('passwordLabel')}</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input type="password" placeholder={t('passwordPlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Signing In...' : 'Sign In'}
+              {form.formState.isSubmitting ? t('signingInButton') : t('signInButton')}
             </Button>
           </form>
         </Form>
         <div className="mt-4 text-center text-sm">
-          Don't have an account?{' '}
+          {t('noAccount')}{' '}
           <Link href="/signup" className="underline text-primary">
-            Sign up
+            {t('signUpLink')}
           </Link>
         </div>
       </CardContent>

@@ -1,13 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import {Link, useRouter} from '@/navigation';
 import {
   Bell,
   ChevronsUpDown,
   PanelLeft,
-  Search,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -17,15 +15,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { auth } from '@/services/auth/auth';
 import type { User } from '@/services/auth/types';
 import { Skeleton } from '../ui/skeleton';
-import { AppLogo } from '../icons';
-import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useTranslations } from 'next-intl';
 
 interface AppHeaderProps {
   onToggleSidebar: () => void;
@@ -37,6 +33,7 @@ export function AppHeader({ onToggleSidebar, isSidebarCollapsed }: AppHeaderProp
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const isMobile = useIsMobile();
+  const t = useTranslations('AppHeader');
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -81,7 +78,7 @@ export function AppHeader({ onToggleSidebar, isSidebarCollapsed }: AppHeaderProp
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-52 md:w-full">
-        <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('workspaces')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <Avatar className="mr-2 h-5 w-5">
@@ -97,7 +94,7 @@ export function AppHeader({ onToggleSidebar, isSidebarCollapsed }: AppHeaderProp
           </Avatar>
           Monolith Corp.
         </DropdownMenuItem>
-        <DropdownMenuItem>Create Workspace</DropdownMenuItem>
+        <DropdownMenuItem>{t('createWorkspace')}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -133,15 +130,15 @@ export function AppHeader({ onToggleSidebar, isSidebarCollapsed }: AppHeaderProp
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{user?.name || 'My Account'}</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('myAccount')}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                <Link href="/settings">Settings</Link>
+                <Link href="/settings">{t('settings')}</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
+                <DropdownMenuItem>{t('support')}</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
-                Logout
+                {t('logout')}
                 </DropdownMenuItem>
             </DropdownMenuContent>
             </DropdownMenu>
