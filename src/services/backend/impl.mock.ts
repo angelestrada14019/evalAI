@@ -25,6 +25,20 @@ const MOCK_FULL_EVALUATIONS: { [key: string]: FormTemplate } = {
             { id: uuidv4(), type: 'Rating Scale', label: 'Team Collaboration', variableId: 'team_collab', required: true, ratingConfig: { max: 5 } },
             { id: uuidv4(), type: 'Text Input', label: 'General Feedback', variableId: 'feedback', required: false },
         ]
+    },
+    'eval_004': {
+        id: 'eval_004',
+        title: 'Sales Team Q2 Skills Assessment',
+        description: 'Assessing the skills of the sales team for the second quarter.',
+        items: [
+            { id: uuidv4(), type: 'Slider', label: 'Negotiation Skills', variableId: 'negotiation_skills', required: true, sliderConfig: { min: 1, max: 10, step: 1 } },
+            { id: uuidv4(), type: 'Multiple Choice', label: 'Product Knowledge', variableId: 'product_knowledge', required: true, options: [
+                { id: uuidv4(), label: 'Needs Improvement', value: 1 },
+                { id: uuidv4(), label: 'Meets Expectations', value: 2 },
+                { id: uuidv4(), label: 'Exceeds Expectations', value: 3 },
+            ] },
+            { id: uuidv4(), type: 'Text Input', label: 'Client Feedback Highlights', variableId: 'client_feedback', required: false },
+        ]
     }
 };
 
