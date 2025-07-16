@@ -52,6 +52,7 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
                     if (existingEvaluation) {
                         setTemplate(existingEvaluation);
                     } else {
+                        console.error(`Evaluation with id ${evaluationId} not found.`);
                         router.push('/evaluations');
                     }
                 } catch (error) {
@@ -59,21 +60,26 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
                     router.push('/evaluations');
                 }
             } else if (isNewEvaluation && !template) {
-                 setTemplate(createDefaultTemplate(t, tq));
+                // Only set default template if one isn't already in context (e.g. from AI generation)
+                setTemplate(createDefaultTemplate(t, tq));
             }
             setIsContextLoading(false);
         };
 
         loadEvaluation();
-    }, [evaluationId, setTemplate, setIsContextLoading, router, t, tq, template]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [evaluationId, router, t, tq]);
 
     useEffect(() => {
       if(template && !selectedQuestion && template.items.length > 0) {
         // Automatically select the first non-readonly question if available
         const firstEditableQuestion = template.items.find(item => !item.readOnly);
-        setSelectedQuestion(firstEditableQuestion || template.items[0]);
+        if (firstEditableQuestion) {
+            setSelectedQuestion(firstEditableQuestion);
+        }
       }
     }, [template, selectedQuestion, setSelectedQuestion]);
+
 
     if (isContextLoading || !template) {
         return (
