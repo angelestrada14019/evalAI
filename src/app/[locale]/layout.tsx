@@ -2,7 +2,7 @@ import { NextIntlClientProvider, useMessages } from 'next-intl';
 
 export default function LocaleLayout({
   children,
-  params: { locale },
+  params,
 }: {
   children: React.ReactNode;
   params: { locale: string };
@@ -10,7 +10,7 @@ export default function LocaleLayout({
   const messages = useMessages();
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider locale={params.locale} messages={messages}>
       {children}
     </NextIntlClientProvider>
   );
