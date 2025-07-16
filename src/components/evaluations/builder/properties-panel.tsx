@@ -224,32 +224,32 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                             <div className='flex items-center gap-2'>
                                 <div className='flex-1 space-y-1'>
                                     <Label htmlFor="slider-min" className='text-xs'>{t('min')}</Label>
-                                    <Input id="slider-min" type="number" value={sliderConfig?.min} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, min: Number(e.target.value) } })} />
+                                    <Input id="slider-min" type="number" value={sliderConfig?.min ?? 0} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, min: Number(e.target.value) } })} />
                                 </div>
                                 <div className='flex-1 space-y-1'>
                                     <Label htmlFor="slider-max" className='text-xs'>{t('max')}</Label>
-                                    <Input id="slider-max" type="number" value={sliderConfig?.max} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, max: Number(e.target.value) } })} />
+                                    <Input id="slider-max" type="number" value={sliderConfig?.max ?? 100} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, max: Number(e.target.value) } })} />
                                 </div>
                                 <div className='flex-1 space-y-1'>
                                     <Label htmlFor="slider-step" className='text-xs'>{t('step')}</Label>
-                                    <Input id="slider-step" type="number" value={sliderConfig?.step} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, step: Number(e.target.value) } })} />
+                                    <Input id="slider-step" type="number" value={sliderConfig?.step ?? 1} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, step: Number(e.target.value) } })} />
                                 </div>
                             </div>
                         </div>
                     )}
-                     {type === 'Rating Scale' && ratingConfig && (
+                     {type === 'Rating Scale' && (
                          <div className="space-y-4">
                             <Label>{t('sliderConfigTitle')}</Label>
                             <div className='flex items-center gap-2'>
                                 <div className='flex-1 space-y-1'>
                                     <Label htmlFor="rating-max" className='text-xs'>{t('max')}</Label>
-                                    <Input id="rating-max" type="number" value={ratingConfig?.max} onChange={(e) => update({ ratingConfig: { ...ratingConfig!, max: Number(e.target.value) } })} />
+                                    <Input id="rating-max" type="number" value={ratingConfig?.max ?? 5} onChange={(e) => update({ ratingConfig: { ...(ratingConfig ?? {max: 5}), max: Number(e.target.value) } })} />
                                 </div>
                             </div>
                         </div>
                     )}
                     
-                    {type !== 'Section Header' && (
+                    {showScoringFields && (
                     <div className="flex items-center justify-between pt-4 border-t">
                         <Label htmlFor="required-switch">{t('required')}</Label>
                         <Switch id="required-switch" checked={required} onCheckedChange={(checked) => update({ required: checked })} disabled={readOnly}/>
@@ -260,3 +260,5 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
         </div>
     );
 }
+
+    
