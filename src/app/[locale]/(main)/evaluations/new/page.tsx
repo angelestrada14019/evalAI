@@ -42,6 +42,7 @@ export default function NewEvaluationPage() {
   }
 
   const handleGenerate = async () => {
+    console.log("ingresa a generar form con IA con desc: ",description);
     if (!description.trim()) {
       toast({
         variant: 'destructive',
@@ -52,8 +53,9 @@ export default function NewEvaluationPage() {
     }
     setIsLoading(true)
     try {
+      console.log("ingresa a generar form con IA");
       const result = await generateEvaluationTemplate(description)
-
+      console.log("result en crear nuevo form", result);
       // The AI-generated template is now complete on its own.
       // We just need to ensure all items and options have unique client-side IDs.
       const processedItems = result.items.map(item => ({
