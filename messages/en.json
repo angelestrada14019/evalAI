@@ -96,7 +96,7 @@
     "min": "Min",
     "max": "Max",
     "step": "Step",
-    "variableIdLabel": "ID Variable (para puntuación)",
+    "variableIdLabel": "ID Variable (for reference)",
     "variableIdHint": "Unique ID variable."
   },
   "AIFormulaSuggester": {
