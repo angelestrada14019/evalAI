@@ -97,7 +97,8 @@
     "max": "Max",
     "step": "Step",
     "variableIdLabel": "ID Variable (for reference)",
-    "variableIdHint": "Unique ID variable."
+    "variableIdHint": "Unique ID variable.",
+    "titlePlaceholder": "Evaluation Title"
   },
   "AIFormulaSuggester": {
     "buttonText": "AI Scoring Logic",

@@ -97,7 +97,8 @@
     "max": "Máx",
     "step": "Paso",
     "variableIdLabel": "ID de Variable (para referencia)",
-    "variableIdHint": "Un ID único usado en las fórmulas. Sin espacios ni caracteres especiales."
+    "variableIdHint": "Un ID único usado en las fórmulas. Sin espacios ni caracteres especiales.",
+    "titlePlaceholder": "Título de la Evaluación"
   },
   "AIFormulaSuggester": {
     "buttonText": "Lógica de Puntuación con IA",
