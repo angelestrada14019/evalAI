@@ -98,7 +98,9 @@
     "step": "Step",
     "variableIdLabel": "ID Variable (for reference)",
     "variableIdHint": "Unique ID variable.",
-    "titlePlaceholder": "Evaluation Title"
+    "titlePlaceholder": "Evaluation Title",
+    "panelTitle": "Panel",
+    "variables":"variables"
   },
   "AIFormulaSuggester": {
     "buttonText": "AI Scoring Logic",
