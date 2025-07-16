@@ -173,10 +173,11 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                             <Label htmlFor="variable-id">{t('variableIdLabel')}</Label>
                             <Input 
                                 id="variable-id" 
-                                value={variableId} 
+                                value={variableId || ''} 
                                 onChange={(e) => update({ variableId: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') })}
                                 disabled={readOnly}
                              />
+                             <p className="text-xs text-muted-foreground">{t('variableIdHint')}</p>
                         </div>
                     )}
 

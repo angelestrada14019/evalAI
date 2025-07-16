@@ -19,6 +19,11 @@ const generateVariableId = (type: string, existingItems: FormItem[] = []): strin
     const questionTypeInfo = questionTypes.find(q => q.type === type);
     const prefix = questionTypeInfo ? questionTypeInfo.idPrefix : 'pregunta';
     
+    // For non-scorable types, we can return an empty string as they don't need a variable ID.
+    if (['Text Input', 'Section Header', 'File Upload'].includes(type)) {
+        return '';
+    }
+
     let counter = 1;
     let newId = `${prefix}_${counter}`;
     
