@@ -119,7 +119,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
         <div className="space-y-2">
             <Label>{t('options')}</Label>
             {options?.map((opt, i) => (
-                <div key={`${id}-${opt.id}-${i}`} className="flex items-center gap-2">
+                <div key={`${opt.id}-${i}`} className="flex items-center gap-2">
                     <Input className="flex-1" value={opt.label} onChange={(e) => handleOptionChange(i, 'label', e.target.value)} />
                     <Input type="number" className="w-20" value={opt.value} onChange={(e) => handleOptionChange(i, 'value', e.target.value)} />
                     <Button variant="ghost" size="icon" onClick={() => deleteOption(i)}><Trash2 className="h-4 w-4 text-muted-foreground"/></Button>
@@ -129,11 +129,11 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
         </div>
     );
 
-    const renderMatrixEditor = () => (
+    const renderMatrixEditor = () => matrixConfig && (
          <div className="space-y-4">
             <div>
                 <Label>{t('matrixRows')}</Label>
-                {matrixConfig?.rows.map((row, i) => (
+                {matrixConfig.rows.map((row, i) => (
                     <div key={i} className="flex items-center gap-2 mt-1">
                         <Input value={row} onChange={(e) => handleMatrixListChange('rows', i, 'label', e.target.value)} />
                         <Button variant="ghost" size="icon" onClick={() => deleteMatrixFromList('rows', i)}><Trash2 className="h-4 w-4 text-muted-foreground"/></Button>
@@ -143,7 +143,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
             </div>
             <div>
                 <Label>{t('matrixCols')}</Label>
-                {matrixConfig?.columns.map((col, i) => (
+                {matrixConfig.columns.map((col, i) => (
                     <div key={col.id} className="flex items-center gap-2 mt-1">
                         <Input className="flex-1" value={col.label} onChange={(e) => handleMatrixListChange('columns', i, 'label', e.target.value)} />
                         <Input type="number" className="w-20" value={col.value} onChange={(e) => handleMatrixListChange('columns', i, 'value', e.target.value)} />
@@ -170,7 +170,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
 
                     {showScoringFields && (
                          <div className="space-y-2">
-                            <Label htmlFor="variable-id">ID de Variable (para Fórmulas)</Label>
+                            <Label htmlFor="variable-id">{t('variableIdLabel')}</Label>
                             <Input 
                                 id="variable-id" 
                                 value={variableId} 
@@ -218,32 +218,32 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                         </div>
                     )}
 
-                    {type === 'Slider' && (
+                    {type === 'Slider' && sliderConfig && (
                         <div className="space-y-4">
                             <Label>{t('sliderConfigTitle')}</Label>
                             <div className='flex items-center gap-2'>
                                 <div className='flex-1 space-y-1'>
                                     <Label htmlFor="slider-min" className='text-xs'>{t('min')}</Label>
-                                    <Input id="slider-min" type="number" value={sliderConfig?.min ?? 0} onChange={(e) => update({ sliderConfig: { ...(sliderConfig ?? {min: 0, max: 100, step: 1}), min: Number(e.target.value) } })} />
+                                    <Input id="slider-min" type="number" value={sliderConfig.min} onChange={(e) => update({ sliderConfig: { ...sliderConfig, min: Number(e.target.value) } })} />
                                 </div>
                                 <div className='flex-1 space-y-1'>
                                     <Label htmlFor="slider-max" className='text-xs'>{t('max')}</Label>
-                                    <Input id="slider-max" type="number" value={sliderConfig?.max ?? 100} onChange={(e) => update({ sliderConfig: { ...(sliderConfig ?? {min: 0, max: 100, step: 1}), max: Number(e.target.value) } })} />
+                                    <Input id="slider-max" type="number" value={sliderConfig.max} onChange={(e) => update({ sliderConfig: { ...sliderConfig, max: Number(e.target.value) } })} />
                                 </div>
                                 <div className='flex-1 space-y-1'>
                                     <Label htmlFor="slider-step" className='text-xs'>{t('step')}</Label>
-                                    <Input id="slider-step" type="number" value={sliderConfig?.step ?? 1} onChange={(e) => update({ sliderConfig: { ...(sliderConfig ?? {min: 0, max: 100, step: 1}), step: Number(e.target.value) } })} />
+                                    <Input id="slider-step" type="number" value={sliderConfig.step} onChange={(e) => update({ sliderConfig: { ...sliderConfig, step: Number(e.target.value) } })} />
                                 </div>
                             </div>
                         </div>
                     )}
-                     {type === 'Rating Scale' && (
+                     {type === 'Rating Scale' && ratingConfig && (
                          <div className="space-y-4">
                             <Label>{t('sliderConfigTitle')}</Label>
                             <div className='flex items-center gap-2'>
                                 <div className='flex-1 space-y-1'>
                                     <Label htmlFor="rating-max" className='text-xs'>{t('max')}</Label>
-                                    <Input id="rating-max" type="number" value={ratingConfig?.max ?? 5} onChange={(e) => update({ ratingConfig: { ...(ratingConfig ?? { max: 5 }), max: Number(e.target.value) } })} />
+                                    <Input id="rating-max" type="number" value={ratingConfig.max} onChange={(e) => update({ ratingConfig: { ...ratingConfig, max: Number(e.target.value) } })} />
                                 </div>
                             </div>
                         </div>
