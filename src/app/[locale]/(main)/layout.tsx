@@ -39,13 +39,17 @@ export default function MainLayout({
     />
   );
 
+  const mainContent = (
+     <FormBuilderProvider>{children}</FormBuilderProvider>
+  );
+
   if (isMobile) {
     return (
         <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
           <div className="flex min-h-screen w-full flex-col bg-background">
             <AppHeader onToggleSidebar={toggleSidebar} />
             <main className="flex-1 p-4 sm:p-6">
-              <FormBuilderProvider>{children}</FormBuilderProvider>
+              {mainContent}
             </main>
           </div>
           <SheetContent side="left" className="p-0 w-64" aria-describedby={undefined}>
@@ -73,7 +77,7 @@ export default function MainLayout({
           )}>
           <AppHeader onToggleSidebar={toggleSidebar} isSidebarCollapsed={isSidebarCollapsed} />
           <main className="flex-1 overflow-x-hidden bg-secondary/50 p-4 sm:p-6">
-            <FormBuilderProvider>{children}</FormBuilderProvider>
+            {mainContent}
           </main>
         </div>
       </div>
