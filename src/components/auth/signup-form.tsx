@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useTranslations } from 'next-intl'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -22,9 +21,7 @@ import { useToast } from '@/hooks/use-toast'
 import { auth } from '@/services/auth/auth'
 import { SignUpInputSchema } from '@/services/auth/types'
 
-
 export function SignUpForm() {
-  const t = useTranslations('SignUpPage');
   const router = useRouter()
   const { toast } = useToast()
   
@@ -60,8 +57,8 @@ export function SignUpForm() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>{t('title')}</CardTitle>
-        <CardDescription>{t('description')}</CardDescription>
+        <CardTitle>Create an account</CardTitle>
+        <CardDescription>Enter your details below to get started.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -71,9 +68,9 @@ export function SignUpForm() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('nameLabel')}</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('namePlaceholder')} {...field} />
+                    <Input placeholder="Your Name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -84,9 +81,9 @@ export function SignUpForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('emailLabel')}</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('emailPlaceholder')} {...field} />
+                    <Input placeholder="name@example.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -97,23 +94,23 @@ export function SignUpForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('passwordLabel')}</FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder={t('passwordPlaceholder')} {...field} />
+                    <Input type="password" placeholder="••••••••" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? t('creatingAccountButton') : t('createAccountButton')}
+              {form.formState.isSubmitting ? 'Creating Account...' : 'Create Account'}
             </Button>
           </form>
         </Form>
         <div className="mt-4 text-center text-sm">
-          {t('hasAccount')}{' '}
+          Already have an account?{' '}
           <Link href="/login" className="underline text-primary">
-            {t('signInLink')}
+            Sign in
           </Link>
         </div>
       </CardContent>

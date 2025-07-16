@@ -31,7 +31,7 @@ export default function NewEvaluationPage() {
       const result = await generateEvaluationTemplate(description)
 
       // Store the generated template in localStorage to pass it to the builder page
-      localStorage.setItem('generatedTemplate', result.template);
+      localStorage.setItem('generatedTemplate', JSON.stringify(result));
       
       toast({
         title: 'Template Generated!',
@@ -91,5 +91,3 @@ export default function NewEvaluationPage() {
     </div>
   )
 }
-
-    

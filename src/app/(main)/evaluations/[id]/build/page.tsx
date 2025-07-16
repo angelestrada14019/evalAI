@@ -59,15 +59,19 @@ export default function FormBuilderPage({ params }: { params: { id: string }}) {
                 if (parsedTemplate.items && parsedTemplate.items.length > 0) {
                     setSelectedQuestion(parsedTemplate.items[0]);
                 }
-                // localStorage.removeItem('generatedTemplate'); // Clean up after loading
+                // Clean up after loading to avoid using stale data on next visit.
+                localStorage.removeItem('generatedTemplate'); 
             } catch (error) {
                 console.error("Failed to parse template from localStorage", error);
                 setTemplate({ title: "Error Loading Template", description: "Could not load the evaluation template.", items: [] });
             }
         } else {
+             // If no template is passed, this is either a new manual form or an edit.
+             // For now, we'll default to a blank new evaluation.
+             // A future implementation would fetch an existing evaluation by `params.id`.
              setTemplate({ title: "New Evaluation", description: "Start building your form.", items: [] });
         }
-    }, []);
+    }, [params.id]);
 
     const renderQuestion = (question: FormItem, index: number) => {
         return (
@@ -105,12 +109,22 @@ export default function FormBuilderPage({ params }: { params: { id: string }}) {
         )
     }
 
+    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!template) return;
+        setTemplate({ ...template, title: e.target.value });
+    }
+
     return (
         <div className="h-full flex flex-col">
             <header className="flex items-center justify-between p-4 border-b bg-card">
-                <div>
-                    <h1 className="text-xl font-bold">{template?.title || "Loading..."}</h1>
-                    <p className="text-sm text-muted-foreground">{template?.description || "Please wait"}</p>
+                <div className="min-w-0 flex-1">
+                     <Input 
+                        placeholder="Evaluation Title"
+                        value={template?.title || ''}
+                        onChange={handleTitleChange}
+                        className="text-lg md:text-xl font-bold border-none shadow-none focus-visible:ring-0 px-1 h-auto"
+                    />
+                    <p className="text-sm text-muted-foreground px-1 h-auto">{template?.description || "Please wait"}</p>
                 </div>
                 <div className="flex items-center gap-2">
                     <Button variant="outline">
@@ -146,7 +160,7 @@ export default function FormBuilderPage({ params }: { params: { id: string }}) {
                         {(!template || template.items.length === 0) && (
                             <div className="text-center py-12 text-muted-foreground">
                                 <p>No questions yet.</p>
-                                <p className="text-sm">Drag elements from the left panel to start building.</p>
+                                <p className="text-sm">Click an element from the left panel to start building.</p>
                             </div>
                         )}
                     </div>
@@ -190,5 +204,3 @@ export default function FormBuilderPage({ params }: { params: { id: string }}) {
         </div>
     )
 }
-
-    

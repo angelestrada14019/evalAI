@@ -1,30 +1,35 @@
-
 'use client'
 
-import React, { useState, useContext } from 'react'
-import { v4 as uuidv4 } from 'uuid'
-import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
+import { useRouter } from '@/navigation'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
 import { generateEvaluationTemplate } from '@/actions/evaluation-actions'
-import { Wand2 } from 'lucide-react'
+import { Wand2, Edit } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { createDefaultTemplate, getNewFormItem } from '@/components/evaluations/builder/question-types'
-import type { FormTemplate } from '@/components/evaluations/builder/types'
-import { FormBuilderContext } from '@/context/form-builder-context'
+import type { FormItem } from '@/components/evaluations/builder/types'
+import { useFormBuilder } from '@/context/form-builder-context'
+import { v4 as uuidv4 } from 'uuid'
 
 export default function NewEvaluationPage() {
-  const t = useTranslations('NewEvaluationPage');
-  const tq = useTranslations('QuestionTypes');
   const [description, setDescription] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
-  const { setTemplate: setBuilderTemplate } = useContext(FormBuilderContext);
+  const t = useTranslations('NewEvaluationPage')
+  const tFormBuilder = useTranslations('FormBuilderPage');
+  const tQuestionTypes = useTranslations('QuestionTypes');
+  const { setTemplate } = useFormBuilder();
 
+  const handleCreateManual = () => {
+    setTemplate(createDefaultTemplate(tFormBuilder, tQuestionTypes));
+    const newEvaluationId = Date.now()
+    router.push(`/evaluations/${newEvaluationId}/build`)
+  }
 
   const handleGenerate = async () => {
     if (!description.trim()) {
@@ -39,21 +44,25 @@ export default function NewEvaluationPage() {
     try {
       const result = await generateEvaluationTemplate(description)
 
-      const aiTemplate = result as FormTemplate;
-      const defaultFields = createDefaultTemplate(t, tq).items;
-      
-      const processedAiItems = aiTemplate.items.map(item => ({
-        ...getNewFormItem(item.type, t, tq, [], item.label), 
-        ...item, 
-        id: uuidv4(), 
+      const initialItems: FormItem[] = [];
+      const defaultItems: FormItem[] = [
+        {...getNewFormItem('Text Input', tFormBuilder, tQuestionTypes, initialItems, 'Nombre'), variableId: 'nombre', required: true, readOnly: true},
+        {...getNewFormItem('Text Input', tFormBuilder, tQuestionTypes, initialItems, 'Apellido'), variableId: 'apellido', required: true, readOnly: true},
+        {...getNewFormItem('Text Input', tFormBuilder, tQuestionTypes, initialItems, 'Correo Electrónico'), variableId: 'email', required: true, readOnly: true},
+      ];
+
+      const processedItems = result.items.map(item => ({
+        ...item,
+        id: uuidv4(),
+        options: item.options?.map(opt => ({...opt, id: uuidv4()})),
       }));
 
-      const finalTemplate: FormTemplate = {
-        ...aiTemplate,
-        items: [...defaultFields, ...processedAiItems],
-      };
-
-      setBuilderTemplate(finalTemplate);
+      const finalTemplate = {
+        ...result,
+        items: [...defaultItems, ...processedItems],
+      }
+      
+      setTemplate(finalTemplate);
       
       toast({
         title: t('successTitle'),
@@ -67,28 +76,19 @@ export default function NewEvaluationPage() {
       toast({
         variant: 'destructive',
         title: t('failTitle'),
-        description: `Generation Failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        description: t('failDescription'),
       })
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleCreateManually = () => {
-    const defaultTemplate = createDefaultTemplate(t, tq);
-    setBuilderTemplate(defaultTemplate);
-    const newEvaluationId = Date.now();
-    router.push(`/evaluations/${newEvaluationId}/build`);
-  };
-
   return (
     <div className="container mx-auto max-w-3xl py-8">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">{t('title')}</CardTitle>
-          <CardDescription>
-            {t('description')}
-          </CardDescription>
+          <CardDescription>{t('description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid w-full gap-2">
@@ -101,19 +101,22 @@ export default function NewEvaluationPage() {
               onChange={(e) => setDescription(e.target.value)}
               disabled={isLoading}
             />
-            <p className="text-sm text-muted-foreground">
-              {t('detailedResultsHint')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('detailedResultsHint')}</p>
           </div>
         </CardContent>
         <CardFooter className="flex justify-between">
-           <Button variant="outline" onClick={handleCreateManually}>
-              Crear Manualmente
-            </Button>
+           <Button
+            onClick={handleCreateManual}
+            disabled={isLoading}
+            variant="outline"
+          >
+            <Edit className="mr-2 h-4 w-4" />
+            Crear Manualmente
+          </Button>
           <Button
             onClick={handleGenerate}
             disabled={isLoading}
-            className="ml-auto bg-accent text-accent-foreground hover:bg-accent/90"
+            className="bg-accent text-accent-foreground hover:bg-accent/90"
           >
             <Wand2 className="mr-2 h-4 w-4" />
             {isLoading ? t('generatingButton') : t('generateButton')}

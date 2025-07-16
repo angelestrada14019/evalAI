@@ -1,9 +1,8 @@
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { Link, useRouter } from '@/navigation';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Bell,
   ChevronsUpDown,
@@ -34,7 +33,6 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ onToggleSidebar, isSidebarCollapsed }: AppHeaderProps) {
-  const t = useTranslations('AppHeader');
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -83,7 +81,7 @@ export function AppHeader({ onToggleSidebar, isSidebarCollapsed }: AppHeaderProp
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-52 md:w-full">
-        <DropdownMenuLabel>{t('workspaces')}</DropdownMenuLabel>
+        <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <Avatar className="mr-2 h-5 w-5">
@@ -99,7 +97,7 @@ export function AppHeader({ onToggleSidebar, isSidebarCollapsed }: AppHeaderProp
           </Avatar>
           Monolith Corp.
         </DropdownMenuItem>
-        <DropdownMenuItem>{t('createWorkspace')}</DropdownMenuItem>
+        <DropdownMenuItem>Create Workspace</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -135,15 +133,15 @@ export function AppHeader({ onToggleSidebar, isSidebarCollapsed }: AppHeaderProp
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{user?.name || t('myAccount')}</DropdownMenuLabel>
+                <DropdownMenuLabel>{user?.name || 'My Account'}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                <Link href="/settings">{t('settings')}</Link>
+                <Link href="/settings">Settings</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>{t('support')}</DropdownMenuItem>
+                <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
-                {t('logout')}
+                Logout
                 </DropdownMenuItem>
             </DropdownMenuContent>
             </DropdownMenu>

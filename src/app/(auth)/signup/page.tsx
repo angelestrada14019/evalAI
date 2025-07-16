@@ -1,6 +1,15 @@
-// This file is obsolete.
-// The page is now handled by /src/app/[locale]/(auth)/signup/page.tsx
-// It can be deleted, but we'll keep it empty for now to avoid breaking references.
-export default function ObsoleteSignUpPage() {
-  return null;
+import { SignUpForm } from '@/components/auth/signup-form'
+import { AppLogo } from '@/components/icons'
+import Link from 'next/link'
+
+export default function SignUpPage() {
+  return (
+    <div className="flex flex-col items-center justify-center w-full max-w-md">
+       <Link href="/dashboard" className="mb-6 flex items-center gap-2 text-2xl font-bold">
+        <AppLogo className="w-8 h-8 text-primary" />
+        <span className="text-foreground">EvalAI</span>
+      </Link>
+      <SignUpForm />
+    </div>
+  )
 }

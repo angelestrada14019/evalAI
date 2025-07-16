@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useTranslations } from 'next-intl'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -23,7 +22,6 @@ import { auth } from '@/services/auth/auth'
 import { LoginInputSchema } from '@/services/auth/types'
 
 export function LoginForm() {
-  const t = useTranslations('LoginPage');
   const router = useRouter()
   const { toast } = useToast()
   
@@ -57,8 +55,8 @@ export function LoginForm() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>{t('title')}</CardTitle>
-        <CardDescription>{t('description')}</CardDescription>
+        <CardTitle>Welcome back</CardTitle>
+        <CardDescription>Enter your credentials to access your account.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -68,9 +66,9 @@ export function LoginForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('emailLabel')}</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('emailPlaceholder')} {...field} />
+                    <Input placeholder="name@example.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -81,23 +79,23 @@ export function LoginForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('passwordLabel')}</FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder={t('passwordPlaceholder')} {...field} />
+                    <Input type="password" placeholder="••••••••" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? t('signingInButton') : t('signInButton')}
+              {form.formState.isSubmitting ? 'Signing In...' : 'Sign In'}
             </Button>
           </form>
         </Form>
         <div className="mt-4 text-center text-sm">
-          {t('noAccount')}{' '}
+          Don't have an account?{' '}
           <Link href="/signup" className="underline text-primary">
-            {t('signUpLink')}
+            Sign up
           </Link>
         </div>
       </CardContent>
