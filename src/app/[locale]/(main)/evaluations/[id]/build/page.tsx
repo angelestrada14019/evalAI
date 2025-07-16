@@ -18,7 +18,7 @@ import { VariablesPanel } from '@/components/evaluations/builder/variables-panel
 import { FormBuilderProvider, useFormBuilder } from '@/context/form-builder-context'
 
 
-function FormBuilderContent() {
+function FormBuilderContent({ pageParams }: { pageParams: { id: string }}) {
   const { 
     template, 
     setTemplate, 
@@ -34,6 +34,17 @@ function FormBuilderContent() {
   const [activeId, setActiveId] = React.useState<string | null>(null);
   const t = useTranslations('FormBuilderPage');
   const tq = useTranslations('QuestionTypes');
+
+  React.useEffect(() => {
+    // If there's no template in the context when this page loads
+    // (e.g., direct navigation to an edit URL), load a default.
+    // In a real app, this is where you'd fetch the evaluation by `pageParams.id`.
+    if (!template) {
+      console.log(`No template found, loading default for ID: ${pageParams.id}`);
+      setTemplate(createDefaultTemplate(t, tq));
+    }
+  }, [template, setTemplate, pageParams.id, t, tq]);
+
 
   const sensors = useSensors(useSensor(PointerSensor, {
       activationConstraint: {
@@ -140,35 +151,72 @@ function FormBuilderContent() {
   const activePaletteItem = activeId && activeId.startsWith('palette-') ? questionTypes.find(q => `palette-${q.type}` === activeId) : null;
   const activeFormItem = activeId && !activeId.startsWith('palette-') ? template.items.find(i => i.id === activeId) : null;
 
+  if (isLargeScreen) {
+    return (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+            <div className="flex flex-col h-full">
+            <BuilderHeader 
+                onSave={handleSave}
+            />
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
+                <aside className="lg:col-span-2 bg-card border-r">
+                    <Tabs defaultValue="elements" className="h-full flex flex-col">
+                        <TabsList className="m-2">
+                            <TabsTrigger value="elements">Elements</TabsTrigger>
+                            <TabsTrigger value="variables">Variables</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="elements" className="flex-1 overflow-y-auto">
+                            <SortableContext items={questionTypes.map(q => `palette-${q.type}`)} strategy={verticalListSortingStrategy}>
+                                <FormElementsPanel />
+                            </SortableContext>
+                        </TabsContent>
+                        <TabsContent value="variables" className="flex-1 overflow-y-auto">
+                            <VariablesPanel items={template.items} />
+                        </TabsContent>
+                    </Tabs>
+                </aside>
+
+                <main className="lg:col-span-7 py-4 md:py-8 overflow-y-auto">
+                <FormCanvas 
+                    items={template.items}
+                    selectedQuestionId={selectedQuestion?.id}
+                    onSelectQuestion={handleSelectQuestion}
+                    onDeleteQuestion={deleteQuestion}
+                />
+                </main>
+                
+                <aside className="lg:col-span-3 bg-card border-l overflow-y-auto">
+                    <PropertiesPanel 
+                    selectedQuestion={selectedQuestion}
+                    onUpdateQuestion={updateQuestion}
+                    />
+                </aside>
+            </div>
+            </div>
+
+            <DragOverlay>
+                {activePaletteItem ? (
+                    <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
+                    <activePaletteItem.icon className="mr-2 h-4 w-4" />
+                    {tq(activePaletteItem.type as any)}
+                    </Button>
+                ) : activeFormItem ? (
+                    <div id={activeFormItem.id} className="p-4 rounded-md shadow-xl opacity-90 bg-card">
+                        <p>{activeFormItem.label}</p>
+                    </div>
+                ): null}
+            </DragOverlay>
+        </DndContext>
+    )
+  }
+
+  // Mobile layout
   return (
     <>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex flex-col h-full">
-          <BuilderHeader 
-            onSave={handleSave}
-          />
-          <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
-            
-            {isLargeScreen && (
-              <aside className="lg:col-span-2 bg-card border-r">
-                 <Tabs defaultValue="elements" className="h-full flex flex-col">
-                    <TabsList className="m-2">
-                        <TabsTrigger value="elements">Elements</TabsTrigger>
-                        <TabsTrigger value="variables">Variables</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="elements" className="flex-1 overflow-y-auto">
-                        <SortableContext items={questionTypes.map(q => `palette-${q.type}`)} strategy={verticalListSortingStrategy}>
-                            <FormElementsPanel />
-                        </SortableContext>
-                    </TabsContent>
-                    <TabsContent value="variables" className="flex-1 overflow-y-auto">
-                        <VariablesPanel items={template.items} />
-                    </TabsContent>
-                </Tabs>
-              </aside>
-            )}
-
-            <main className="lg:col-span-7 py-4 md:py-8 overflow-y-auto">
+          <BuilderHeader onSave={handleSave} />
+           <main className="lg:col-span-7 py-4 md:py-8 overflow-y-auto">
               <FormCanvas 
                 items={template.items}
                 selectedQuestionId={selectedQuestion?.id}
@@ -176,18 +224,7 @@ function FormBuilderContent() {
                 onDeleteQuestion={deleteQuestion}
               />
             </main>
-            
-            {isLargeScreen && (
-              <aside className="lg:col-span-3 bg-card border-l overflow-y-auto">
-                <PropertiesPanel 
-                  selectedQuestion={selectedQuestion}
-                  onUpdateQuestion={updateQuestion}
-                />
-              </aside>
-            )}
-          </div>
         </div>
-
         <DragOverlay>
             {activePaletteItem ? (
                 <Button variant="default" className="w-full justify-start cursor-grabbing shadow-lg">
@@ -201,63 +238,59 @@ function FormBuilderContent() {
             ): null}
         </DragOverlay>
       </DndContext>
-      
-      {!isLargeScreen && (
-        <>
-          <MobileFAB 
-            onElementsClick={() => setIsElementsSheetOpen(true)}
-            onPropertiesClick={() => {
-              if(selectedQuestion) {
-                setIsPropertiesSheetOpen(true);
-              }
-            }}
-          />
 
-          <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
-            <SheetContent side="left" className="p-0 w-[85vw] max-w-sm flex flex-col">
-              <SheetHeader className="p-4 border-b">
-                <SheetTitle>{t('formElements')}</SheetTitle>
-              </SheetHeader>
-              <div className="flex-1 overflow-y-auto">
-                 <Tabs defaultValue="elements" className="h-full flex flex-col">
-                    <TabsList className="m-2">
-                        <TabsTrigger value="elements">Elements</TabsTrigger>
-                        <TabsTrigger value="variables">Variables</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="elements" className="flex-1 overflow-y-auto p-2">
-                        <FormElementsPanel onAddItem={addItemFromPalette} />
-                    </TabsContent>
-                    <TabsContent value="variables" className="flex-1 overflow-y-auto">
-                        <VariablesPanel items={template.items} />
-                    </TabsContent>
-                </Tabs>
-              </div>
-            </SheetContent>
-          </Sheet>
+      <MobileFAB 
+        onElementsClick={() => setIsElementsSheetOpen(true)}
+        onPropertiesClick={() => {
+          if(selectedQuestion) {
+            setIsPropertiesSheetOpen(true);
+          }
+        }}
+      />
 
-          <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
-            <SheetContent side="right" className="p-0 w-[85vw] max-w-sm flex flex-col">
-              <SheetHeader className="p-4 border-b">
-                <SheetTitle>{t('properties')}</SheetTitle>
-              </SheetHeader>
-              <div className="flex-1 overflow-y-auto">
-                <PropertiesPanel 
-                  selectedQuestion={selectedQuestion}
-                  onUpdateQuestion={updateQuestion}
-                />
-              </div>
-            </SheetContent>
-          </Sheet>
-        </>
-      )}
+      <Sheet open={isElementsSheetOpen} onOpenChange={setIsElementsSheetOpen}>
+        <SheetContent side="left" className="p-0 w-[85vw] max-w-sm flex flex-col">
+          <SheetHeader className="p-4 border-b">
+            <SheetTitle>{t('formElements')}</SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto">
+              <Tabs defaultValue="elements" className="h-full flex flex-col">
+                <TabsList className="m-2">
+                    <TabsTrigger value="elements">Elements</TabsTrigger>
+                    <TabsTrigger value="variables">Variables</TabsTrigger>
+                </TabsList>
+                <TabsContent value="elements" className="flex-1 overflow-y-auto p-2">
+                    <FormElementsPanel onAddItem={addItemFromPalette} />
+                </TabsContent>
+                <TabsContent value="variables" className="flex-1 overflow-y-auto">
+                    <VariablesPanel items={template.items} />
+                </TabsContent>
+            </Tabs>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
+        <SheetContent side="right" className="p-0 w-[85vw] max-w-sm flex flex-col">
+          <SheetHeader className="p-4 border-b">
+            <SheetTitle>{t('properties')}</SheetTitle>
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto">
+            <PropertiesPanel 
+              selectedQuestion={selectedQuestion}
+              onUpdateQuestion={updateQuestion}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
     </>
   )
 }
 
-export default function FormBuilderPage() {
+export default function FormBuilderPage({ params }: { params: { id: string }}) {
     return (
         <FormBuilderProvider>
-            <FormBuilderContent />
+            <FormBuilderContent pageParams={params} />
         </FormBuilderProvider>
     );
 }

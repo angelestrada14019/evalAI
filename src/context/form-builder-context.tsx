@@ -4,8 +4,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import type { FormItem, FormTemplate } from '@/components/evaluations/builder/types';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useTranslations } from 'next-intl';
-import { createDefaultTemplate } from '@/components/evaluations/builder/question-types';
 
 interface FormBuilderContextType {
     template: FormTemplate | null;
@@ -46,15 +44,6 @@ export const FormBuilderProvider = ({ children }: { children: React.ReactNode })
     const [isElementsSheetOpen, setIsElementsSheetOpen] = useState(false);
     const [isPropertiesSheetOpen, setIsPropertiesSheetOpen] = useState(false);
     
-    const t = useTranslations('FormBuilderPage');
-    const tq = useTranslations('QuestionTypes');
-
-    useEffect(() => {
-        if (template === null) {
-            setTemplate(createDefaultTemplate(t, tq));
-        }
-    }, [template, t, tq]);
-
     useEffect(() => {
         if (!isMobile) {
             setIsElementsSheetOpen(false);
