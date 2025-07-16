@@ -7,6 +7,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { FormBuilderProvider } from '@/context/form-builder-context';
+import { AuthProvider } from '@/context/auth-context';
 
 export default function MainLayout({
   children,
@@ -39,7 +40,11 @@ export default function MainLayout({
   );
 
   const mainContent = (
-     <FormBuilderProvider initialTemplate={null}>{children}</FormBuilderProvider>
+     <FormBuilderProvider>
+        <AuthProvider>
+            {children}
+        </AuthProvider>
+     </FormBuilderProvider>
   );
 
   if (isMobile) {

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import type { FormItem, FormTemplate } from '@/components/evaluations/builder/types';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -26,17 +26,13 @@ export const useFormBuilder = () => {
     return context;
 };
 
-export const FormBuilderProvider = ({ children, initialTemplate }: { children: React.ReactNode, initialTemplate: FormTemplate | null }) => {
-    const [template, setTemplate] = useState<FormTemplate | null>(initialTemplate);
+export const FormBuilderProvider = ({ children }: { children: ReactNode }) => {
+    const [template, setTemplate] = useState<FormTemplate | null>(null);
     const [selectedQuestion, setSelectedQuestion] = useState<FormItem | null>(null);
     const isMobile = useIsMobile();
     const [isElementsSheetOpen, setIsElementsSheetOpen] = useState(false);
     const [isPropertiesSheetOpen, setIsPropertiesSheetOpen] = useState(false);
     
-    useEffect(() => {
-        setTemplate(initialTemplate);
-    }, [initialTemplate]);
-
     useEffect(() => {
         if (!isMobile) {
             setIsElementsSheetOpen(false);

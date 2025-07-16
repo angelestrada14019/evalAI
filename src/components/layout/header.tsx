@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {Link, useRouter} from '@/navigation';
 import {
   Bell,
@@ -18,10 +18,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { auth } from '@/services/auth/auth';
-import type { User } from '@/services/auth/types';
 import { Skeleton } from '../ui/skeleton';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useTranslations } from 'next-intl';
+import { useAuth } from '@/context/auth-context';
 
 interface AppHeaderProps {
   onToggleSidebar: () => void;
@@ -30,24 +30,9 @@ interface AppHeaderProps {
 
 export function AppHeader({ onToggleSidebar, isSidebarCollapsed }: AppHeaderProps) {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const isMobile = useIsMobile();
   const t = useTranslations('AppHeader');
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const { user: currentUser } = await auth().getCurrentUser();
-        setUser(currentUser);
-      } catch (error) {
-        console.error("Failed to fetch user", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchUser();
-  }, []);
+  const { user, isLoading } = useAuth();
 
   const handleLogout = async () => {
     await auth().logout();

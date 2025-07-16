@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from '@/navigation';
 import { FormBuilderProvider, useFormBuilder } from '@/context/form-builder-context';
 import { getNewFormItem } from '@/components/evaluations/builder/question-types';
-import type { FormItem, FormTemplate } from '@/components/evaluations/builder/types';
+import type { FormItem } from '@/components/evaluations/builder/types';
 import { BuilderHeader } from '@/components/evaluations/builder/builder-header';
 import { FormElementsPanel } from '@/components/evaluations/builder/form-elements-panel';
 import { FormCanvas } from '@/components/evaluations/builder/form-canvas';
@@ -229,7 +229,7 @@ function FormBuilderUI() {
 
 
 export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
-    const { template: initialTemplate, isLoading } = useEvaluationLoader(evaluationId);
+    const { template, isLoading } = useEvaluationLoader(evaluationId);
 
     if (isLoading) {
        return (
@@ -257,7 +257,7 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
     }
     
     return (
-        <FormBuilderProvider initialTemplate={initialTemplate}>
+        <FormBuilderProvider>
             <FormBuilderUI />
         </FormBuilderProvider>
     );

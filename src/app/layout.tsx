@@ -1,28 +1,11 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import { Toaster } from "@/components/ui/toaster";
-import './globals.css';
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-
-export const metadata: Metadata = {
-  title: 'EvalAI',
-  description: 'AI-Powered Evaluation Platform',
-};
+// This file is intentionally left almost empty.
+// The root layout for next-intl is at src/app/[locale]/layout.tsx
+// See: https://next-intl.dev/docs/getting-started/app-router/with-i18n-routing
 
 export default function RootLayout({
-  children,
-  params: { locale }
+  children
 }: {
   children: React.ReactNode;
-  params: { locale: string };
 }) {
-  return (
-    <html lang={locale} className="h-full">
-      <body className={`${inter.variable} font-sans antialiased h-full`}>
-        {children}
-        <Toaster />
-      </body>
-    </html>
-  );
+  return children;
 }

@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/navigation";
 import { backend } from "@/services/backend/backend";
 import { createDefaultTemplate } from "@/components/evaluations/builder/question-types";
 import type { FormTemplate } from "@/components/evaluations/builder/types";
-import { useFormBuilder } from "@/context/form-builder-context";
+import { FormBuilderContext } from "@/context/form-builder-context";
 
 export const useEvaluationLoader = (evaluationId: string) => {
     const [template, setTemplate] = useState<FormTemplate | null>(null);
@@ -14,7 +14,7 @@ export const useEvaluationLoader = (evaluationId: string) => {
     const router = useRouter();
     const t = useTranslations('FormBuilderPage');
     const tq = useTranslations('QuestionTypes');
-    const context = useFormBuilder();
+    const context = useContext(FormBuilderContext);
 
     useEffect(() => {
         const loadEvaluation = async () => {
@@ -23,7 +23,7 @@ export const useEvaluationLoader = (evaluationId: string) => {
 
             try {
                 if (isNewEvaluation) {
-                    if (context.template) {
+                    if (context && context.template) {
                         setTemplate(context.template);
                     } else {
                         setTemplate(createDefaultTemplate(t, tq));
@@ -46,7 +46,7 @@ export const useEvaluationLoader = (evaluationId: string) => {
         };
 
         loadEvaluation();
-    }, [evaluationId, router, t, tq, context.template]);
+    }, [evaluationId, router, t, tq, context]);
 
     return { template, isLoading };
 };
