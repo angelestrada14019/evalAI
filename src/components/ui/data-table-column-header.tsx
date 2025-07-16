@@ -3,7 +3,7 @@
 
 import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react"
 import { Column } from "@tanstack/react-table"
-import { useTranslations } from "next-intl"
+import type { useTranslations } from "next-intl"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -18,14 +18,15 @@ interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>
   title: string
+  tDataTable: ReturnType<typeof useTranslations>
 }
 
 export function DataTableColumnHeader<TData, TValue>({
   column,
   title,
   className,
+  tDataTable
 }: DataTableColumnHeaderProps<TData, TValue>) {
-    const t = useTranslations();
     
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>

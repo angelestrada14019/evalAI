@@ -2,12 +2,12 @@
 "use client"
 
 import { useMemo } from "react"
-import { ColumnDef } from "@tanstack/react-table"
-import { Evaluation } from "@/services/backend/types"
+import type { ColumnDef } from "@tanstack/react-table"
+import type { Evaluation } from "@/services/backend/types"
 import { Link } from "@/navigation"
 import { MoreHorizontal } from "lucide-react"
 import { format } from "date-fns"
-import { useTranslations } from "next-intl"
+import type { useTranslations } from "next-intl"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -28,14 +28,17 @@ const statusVariant = (status: string): 'secondary' | 'default' | 'outline' => {
     }
 };
 
-export const useEvaluationColumns = (): ColumnDef<Evaluation>[] => {
-    const t = useTranslations('EvaluationsPage');
+interface UseEvaluationColumnsProps {
+  t: ReturnType<typeof useTranslations>;
+  tDataTable: ReturnType<typeof useTranslations>;
+}
 
+export const useEvaluationColumns = ({ t, tDataTable }: UseEvaluationColumnsProps): ColumnDef<Evaluation>[] => {
     return useMemo(() => [
         {
             accessorKey: "title",
             header: ({ column }) => {
-                return <DataTableColumnHeader column={column} title={t('tableTitle')} />
+                return <DataTableColumnHeader column={column} title={t('tableTitle')} tDataTable={tDataTable} />
             },
             cell: ({ row }) => {
                 const evaluation = row.original
@@ -49,7 +52,7 @@ export const useEvaluationColumns = (): ColumnDef<Evaluation>[] => {
         {
             accessorKey: "status",
             header: ({ column }) => {
-                return <DataTableColumnHeader column={column} title={t('tableStatus')} />
+                return <DataTableColumnHeader column={column} title={t('tableStatus')} tDataTable={tDataTable} />
             },
             cell: ({ row }) => (
                 <Badge variant={statusVariant(row.getValue("status"))}>
@@ -63,14 +66,14 @@ export const useEvaluationColumns = (): ColumnDef<Evaluation>[] => {
         {
             accessorKey: "responses",
             header: ({ column }) => {
-                return <DataTableColumnHeader column={column} title={t('tableResponses')} />
+                return <DataTableColumnHeader column={column} title={t('tableResponses')} tDataTable={tDataTable} />
             },
             cell: ({ row }) => <div className="text-center">{row.getValue("responses")}</div>
         },
         {
             accessorKey: "lastModified",
             header: ({ column }) => {
-                return <DataTableColumnHeader column={column} title={t('tableModified')} />
+                return <DataTableColumnHeader column={column} title={t('tableModified')} tDataTable={tDataTable} />
             },
             cell: ({ row }) => format(new Date(row.getValue("lastModified")), "PP")
         },
@@ -98,5 +101,5 @@ export const useEvaluationColumns = (): ColumnDef<Evaluation>[] => {
                 )
             },
         },
-    ], [t]);
+    ], [t, tDataTable]);
 }

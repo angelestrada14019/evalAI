@@ -20,11 +20,13 @@ import { VariablesPanel } from '@/components/evaluations/builder/variables-panel
 import { SortableFormItem } from '@/components/evaluations/builder/sortable-form-item';
 import { backend } from '@/services/backend/backend';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 
 export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
     const t = useTranslations('FormBuilderPage');
     const tq = useTranslations('QuestionTypes');
     const router = useRouter();
+    const { toast } = useToast();
 
     const { 
         template, 
@@ -152,14 +154,25 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
     const handleSave = async () => {
         if (!template) return;
         
-        const savedEvaluation = await backend().saveEvaluation(template);
-        
-        setTemplate(savedEvaluation);
+        try {
+            const savedEvaluation = await backend().saveEvaluation(template);
+            setTemplate(savedEvaluation); // Update state with potentially new ID from backend
 
-        alert(`Evaluation "${savedEvaluation.title}" saved!`);
+            toast({
+                title: "Evaluation Saved",
+                description: `"${savedEvaluation.title}" has been saved successfully.`,
+            });
+            
+            // Redirect to the evaluations list page
+            router.push('/evaluations');
 
-        if (!template.id || template.id !== savedEvaluation.id) {
-            router.replace(`/evaluations/${savedEvaluation.id}/build`);
+        } catch (error) {
+            console.error("Failed to save evaluation:", error);
+            toast({
+                variant: "destructive",
+                title: "Save Failed",
+                description: "There was a problem saving your evaluation. Please try again.",
+            });
         }
     }
 
@@ -242,7 +255,11 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
                   if (selectedQuestion) {
                     setIsPropertiesSheetOpen(true)
                   } else {
-                    alert('Please select a question first.')
+                    toast({
+                      variant: "destructive",
+                      title: "No question selected",
+                      description: "Please select a question to view its properties."
+                    })
                   }
                 }}
             />

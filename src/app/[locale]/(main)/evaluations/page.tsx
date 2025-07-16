@@ -2,13 +2,20 @@ import { Link } from '@/navigation';
 import { PackagePlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { backend } from '@/services/backend/backend';
-import { EvaluationsClient } from '@/components/evaluations/evaluations-client';
 import { getTranslations } from 'next-intl/server';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { DataTable } from '@/components/ui/data-table';
+import { useEvaluationColumns } from '@/components/evaluations/columns';
 
-
+// Note: This is now a Server Component that fetches fresh data on every load.
 export default async function EvaluationsPage() {
   const evaluations = await backend().getEvaluations();
   const t = await getTranslations('EvaluationsPage');
+  
+  // The columns hook can be used in a Server Component if it doesn't have client-side logic.
+  // Let's adjust useEvaluationColumns to ensure it's compatible.
+  const tDataTable = await getTranslations('DataTable');
+  const columns = useEvaluationColumns({ t, tDataTable });
 
   return (
     <div className="flex flex-col gap-6">
@@ -25,7 +32,15 @@ export default async function EvaluationsPage() {
         </Button>
       </div>
 
-      <EvaluationsClient initialEvaluations={evaluations} />
+      <Card>
+          <CardHeader>
+              <CardTitle>{t('listTitle')}</CardTitle>
+              <CardDescription>{t('listDescription')}</CardDescription>
+          </CardHeader>
+          <CardContent>
+              <DataTable columns={columns} data={evaluations} filterColumnId="title" />
+          </CardContent>
+      </Card>
     </div>
   );
 }
