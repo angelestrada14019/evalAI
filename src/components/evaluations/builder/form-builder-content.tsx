@@ -69,7 +69,9 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
 
     useEffect(() => {
       if(template && !selectedQuestion && template.items.length > 0) {
-        setSelectedQuestion(template.items[0]);
+        // Automatically select the first non-readonly question if available
+        const firstEditableQuestion = template.items.find(item => !item.readOnly);
+        setSelectedQuestion(firstEditableQuestion || template.items[0]);
       }
     }, [template, selectedQuestion, setSelectedQuestion]);
 
