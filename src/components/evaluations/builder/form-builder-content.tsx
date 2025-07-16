@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -73,9 +74,11 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
             }
         };
 
-        loadEvaluation();
+        if (evaluationId) {
+            loadEvaluation();
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [evaluationId, router, t, tq]); 
+    }, [evaluationId, router, setTemplate, t, tq]); 
 
 
     useEffect(() => {
