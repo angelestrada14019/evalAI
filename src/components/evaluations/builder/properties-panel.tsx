@@ -121,57 +121,60 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                                 )}
                             </div>
                             <Separator />
-                            {type === 'Multiple Choice' && renderListEditor('Options', options, 'options')}
-
-                            {type === 'Matrix Table' && matrixConfig && (
-                                <div className="space-y-4">
-                                    {renderListEditor('Rows', matrixConfig.rows, 'matrixRows')}
-                                    {renderListEditor('Columns', matrixConfig.columns, 'matrixCols')}
-                                </div>
-                            )}
-
-                            {type === 'File Upload' && fileUploadConfig && (
-                                <div className="space-y-2">
-                                    <Label>File Upload Configuration</Label>
-                                    <div className="text-sm p-3 bg-secondary rounded-md space-y-2">
-                                        <p>Max file size: <Badge variant="secondary">{fileUploadConfig.maxSizeMB} MB</Badge></p>
-                                        <div>
-                                            Allowed types:
-                                            <div className="flex flex-wrap gap-1 mt-1">
-                                                {fileUploadConfig.allowedTypes.map(type => (
-                                                    <Badge key={type} variant="secondary">{type.split('/')[1]}</Badge>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">Configuration is currently view-only.</p>
-                                </div>
-                            )}
-
-                            {type === 'Slider' && (
-                                <div className="space-y-4">
-                                    <Label>Slider Configuration</Label>
-                                    <div className='flex items-center gap-2'>
-                                        <div className='flex-1 space-y-1'>
-                                            <Label htmlFor="slider-min" className='text-xs'>Min</Label>
-                                            <Input id="slider-min" type="number" value={sliderConfig?.min} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, min: Number(e.target.value) } })} />
-                                        </div>
-                                        <div className='flex-1 space-y-1'>
-                                            <Label htmlFor="slider-max" className='text-xs'>Max</Label>
-                                            <Input id="slider-max" type="number" value={sliderConfig?.max} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, max: Number(e.target.value) } })} />
-                                        </div>
-                                        <div className='flex-1 space-y-1'>
-                                            <Label htmlFor="slider-step" className='text-xs'>Step</Label>
-                                            <Input id="slider-step" type="number" value={sliderConfig?.step} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, step: Number(e.target.value) } })} />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                            <div className="flex items-center justify-between pt-4 border-t">
-                                <Label htmlFor="required-switch">{t('required')}</Label>
-                                <Switch id="required-switch" checked={required} onCheckedChange={(checked) => update({ required: checked })} />
-                            </div>
                         </>
+                    )}
+                    
+                    {type === 'Multiple Choice' && renderListEditor('Options', options, 'options')}
+
+                    {type === 'Matrix Table' && matrixConfig && (
+                        <div className="space-y-4">
+                            {renderListEditor('Rows', matrixConfig.rows, 'matrixRows')}
+                            {renderListEditor('Columns', matrixConfig.columns, 'matrixCols')}
+                        </div>
+                    )}
+
+                    {type === 'File Upload' && fileUploadConfig && (
+                        <div className="space-y-2">
+                            <Label>File Upload Configuration</Label>
+                            <div className="text-sm p-3 bg-secondary rounded-md space-y-2">
+                                <div>Max file size: <Badge variant="secondary">{fileUploadConfig.maxSizeMB} MB</Badge></div>
+                                <div>
+                                    Allowed types:
+                                    <div className="flex flex-wrap gap-1 mt-1">
+                                        {fileUploadConfig.allowedTypes.map(type => (
+                                            <Badge key={type} variant="secondary">{type.split('/')[1]}</Badge>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                            <p className="text-xs text-muted-foreground">Configuration is currently view-only.</p>
+                        </div>
+                    )}
+
+                    {type === 'Slider' && (
+                        <div className="space-y-4">
+                            <Label>Slider Configuration</Label>
+                            <div className='flex items-center gap-2'>
+                                <div className='flex-1 space-y-1'>
+                                    <Label htmlFor="slider-min" className='text-xs'>Min</Label>
+                                    <Input id="slider-min" type="number" value={sliderConfig?.min} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, min: Number(e.target.value) } })} />
+                                </div>
+                                <div className='flex-1 space-y-1'>
+                                    <Label htmlFor="slider-max" className='text-xs'>Max</Label>
+                                    <Input id="slider-max" type="number" value={sliderConfig?.max} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, max: Number(e.target.value) } })} />
+                                </div>
+                                <div className='flex-1 space-y-1'>
+                                    <Label htmlFor="slider-step" className='text-xs'>Step</Label>
+                                    <Input id="slider-step" type="number" value={sliderConfig?.step} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, step: Number(e.target.value) } })} />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {type !== 'Section Header' && (
+                    <div className="flex items-center justify-between pt-4 border-t">
+                        <Label htmlFor="required-switch">{t('required')}</Label>
+                        <Switch id="required-switch" checked={required} onCheckedChange={(checked) => update({ required: checked })} />
+                    </div>
                     )}
                 </CardContent>
             </Card>
