@@ -30,15 +30,17 @@ const statusVariant = (status: string): 'secondary' | 'default' | 'outline' => {
 
 interface UseEvaluationColumnsProps {
   t: ReturnType<typeof useTranslations>;
-  tDataTable: ReturnType<typeof useTranslations>;
 }
 
-export const useEvaluationColumns = ({ t, tDataTable }: UseEvaluationColumnsProps): ColumnDef<Evaluation>[] => {
+export const useEvaluationColumns = ({ t }: UseEvaluationColumnsProps): ColumnDef<Evaluation>[] => {
+    const tEvals = useTranslations('EvaluationsPage');
+    const tDataTable = useTranslations('DataTable');
+
     return useMemo(() => [
         {
             accessorKey: "title",
             header: ({ column }) => {
-                return <DataTableColumnHeader column={column} title={t('tableTitle')} tDataTable={tDataTable} />
+                return <DataTableColumnHeader column={column} title={tEvals('tableTitle')} tDataTable={tDataTable} />
             },
             cell: ({ row }) => {
                 const evaluation = row.original
@@ -52,7 +54,7 @@ export const useEvaluationColumns = ({ t, tDataTable }: UseEvaluationColumnsProp
         {
             accessorKey: "status",
             header: ({ column }) => {
-                return <DataTableColumnHeader column={column} title={t('tableStatus')} tDataTable={tDataTable} />
+                return <DataTableColumnHeader column={column} title={tEvals('tableStatus')} tDataTable={tDataTable} />
             },
             cell: ({ row }) => (
                 <Badge variant={statusVariant(row.getValue("status"))}>
@@ -66,20 +68,20 @@ export const useEvaluationColumns = ({ t, tDataTable }: UseEvaluationColumnsProp
         {
             accessorKey: "responses",
             header: ({ column }) => {
-                return <DataTableColumnHeader column={column} title={t('tableResponses')} tDataTable={tDataTable} />
+                return <DataTableColumnHeader column={column} title={tEvals('tableResponses')} tDataTable={tDataTable} />
             },
             cell: ({ row }) => <div className="text-center">{row.getValue("responses")}</div>
         },
         {
             accessorKey: "lastModified",
             header: ({ column }) => {
-                return <DataTableColumnHeader column={column} title={t('tableModified')} tDataTable={tDataTable} />
+                return <DataTableColumnHeader column={column} title={tEvals('tableModified')} tDataTable={tDataTable} />
             },
             cell: ({ row }) => format(new Date(row.getValue("lastModified")), "PP")
         },
         {
             id: "actions",
-            header: () => <div className="text-right">{t('tableActions')}</div>,
+            header: () => <div className="text-right">{tEvals('tableActions')}</div>,
             cell: function Actions({ row }) {
                 const evaluation = row.original
                 return (
@@ -91,15 +93,15 @@ export const useEvaluationColumns = ({ t, tDataTable }: UseEvaluationColumnsProp
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                                <DropdownMenuItem asChild><Link href={`/evaluations/${evaluation.id}/build`}>{t('editAction')}</Link></DropdownMenuItem>
-                                <DropdownMenuItem>{t('viewResponsesAction')}</DropdownMenuItem>
-                                <DropdownMenuItem>{t('duplicateAction')}</DropdownMenuItem>
-                                <DropdownMenuItem className="text-destructive">{t('deleteAction')}</DropdownMenuItem>
+                                <DropdownMenuItem asChild><Link href={`/evaluations/${evaluation.id}/build`}>{tEvals('editAction')}</Link></DropdownMenuItem>
+                                <DropdownMenuItem>{tEvals('viewResponsesAction')}</DropdownMenuItem>
+                                <DropdownMenuItem>{tEvals('duplicateAction')}</DropdownMenuItem>
+                                <DropdownMenuItem className="text-destructive">{tEvals('deleteAction')}</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
                 )
             },
         },
-    ], [t, tDataTable]);
+    ], [tEvals, tDataTable]);
 }
