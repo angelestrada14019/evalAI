@@ -170,7 +170,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
 
                     {showScoringFields && (
                          <div className="space-y-2">
-                            <Label htmlFor="variable-id">ID de Variable (para puntuación)</Label>
+                            <Label htmlFor="variable-id">ID de Variable (para Fórmulas)</Label>
                             <Input 
                                 id="variable-id" 
                                 value={variableId} 
@@ -260,5 +260,3 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
         </div>
     );
 }
-
-    
