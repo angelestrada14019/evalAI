@@ -117,7 +117,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
         <div className="space-y-2">
             <Label>{t('options')}</Label>
             {options?.map((opt, i) => (
-                <div key={opt.id} className="flex items-center gap-2">
+                <div key={`${opt.id}-${i}`} className="flex items-center gap-2">
                     <Input className="flex-1" value={opt.label} onChange={(e) => handleOptionChange(i, 'label', e.target.value)} />
                     <Input type="number" className="w-20" value={opt.value} onChange={(e) => handleOptionChange(i, 'value', e.target.value)} />
                     <Button variant="ghost" size="icon" onClick={() => deleteOption(i)}><Trash2 className="h-4 w-4 text-muted-foreground"/></Button>
