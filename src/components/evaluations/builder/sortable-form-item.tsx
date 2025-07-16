@@ -36,12 +36,17 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
 
     if (item.type === 'Section Header') {
         return (
-            <div ref={setNodeRef} style={style} className="relative flex items-center gap-4 py-2" onClick={onSelect}>
-                <div className={cn("absolute inset-0 -mx-4 rounded-md", selected && "bg-primary/5")}></div>
+            <div ref={setNodeRef} style={style} className="relative flex items-center gap-4 py-2">
+                <div 
+                    onClick={onSelect} 
+                    className={cn("absolute inset-0 -mx-4 rounded-md cursor-pointer", selected && "bg-primary/5")}
+                ></div>
                 <div {...attributes} {...listeners} className="cursor-grab touch-none relative z-10">
                     <GripVertical className="h-5 w-5 text-muted-foreground" />
                 </div>
-                <h3 className="text-xl font-bold flex-1 relative z-10">{item.label}</h3>
+                <div onClick={onSelect} className="flex-1 relative z-10 cursor-pointer">
+                    <h3 className="text-xl font-bold">{item.label}</h3>
+                </div>
                 <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="relative z-10"><Trash2 className="h-4 w-4 text-muted-foreground" /></Button>
             </div>
         )
@@ -52,13 +57,12 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
             ref={setNodeRef}
             style={style}
             className={cn("p-4 transition-shadow", selected ? 'border-2 border-primary shadow-lg' : 'hover:shadow-md')}
-            onClick={onSelect}
         >
             <div className="flex items-start gap-4">
                 <div {...attributes} {...listeners} className="cursor-grab touch-none">
                     <GripVertical className="h-5 w-5 text-muted-foreground mt-1" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 cursor-pointer" onClick={onSelect}>
                     <p className="text-sm text-muted-foreground">{index + 1}. {tq(item.type as any)}</p>
                     <p className="font-semibold">{item.label}</p>
                     {item.imageUrl && (
@@ -103,5 +107,3 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
         </Card>
     );
 }
-
-    
