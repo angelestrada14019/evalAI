@@ -7,14 +7,9 @@ import { AppSidebar } from '@/components/layout/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { FormBuilderProvider } from '@/context/form-builder-context';
-import { AuthProvider } from '@/context/auth-context';
+import { Providers } from '@/context/providers';
 
-export default function MainLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function MainLayoutContent({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(false);
   const isMobile = useIsMobile();
@@ -42,49 +37,56 @@ export default function MainLayout({
 
   const mainContent = (
     <main className="flex-1 overflow-x-hidden bg-secondary/50 p-4 sm:p-6">
-      <FormBuilderProvider>
-        {children}
-      </FormBuilderProvider>
+      {children}
     </main>
   );
 
   if (isMobile) {
     return (
-      <AuthProvider>
-        <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
-          <div className="flex min-h-screen w-full flex-col bg-background">
-            <AppHeader onToggleSidebar={toggleSidebar} />
-            {mainContent}
-          </div>
-          <SheetContent side="left" className="p-0 w-64" aria-describedby={undefined}>
-            <SheetHeader>
-              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-            </SheetHeader>
-            <SidebarContent />
-          </SheetContent>
-        </Sheet>
-      </AuthProvider>
+      <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+        <div className="flex min-h-screen w-full flex-col bg-background">
+          <AppHeader onToggleSidebar={toggleSidebar} />
+          {mainContent}
+        </div>
+        <SheetContent side="left" className="p-0 w-64" aria-describedby={undefined}>
+          <SheetHeader>
+            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+          </SheetHeader>
+          <SidebarContent />
+        </SheetContent>
+      </Sheet>
     );
   }
 
   return (
-    <AuthProvider>
-      <div className="min-h-screen w-full">
-        <div className={cn(
-            "hidden lg:block fixed inset-y-0 left-0 z-40 w-64 transition-all duration-300 ease-in-out",
-            isSidebarCollapsed && "w-20"
-        )}>
-          <SidebarContent />
-        </div>
-        <div className={cn(
-            "flex flex-col transition-all duration-300 ease-in-out",
-            "lg:pl-64",
-            isSidebarCollapsed && "lg:pl-20"
-          )}>
-          <AppHeader onToggleSidebar={toggleSidebar} isSidebarCollapsed={isSidebarCollapsed} />
-          {mainContent}
-        </div>
+    <div className="min-h-screen w-full">
+      <div className={cn(
+          "hidden lg:block fixed inset-y-0 left-0 z-40 w-64 transition-all duration-300 ease-in-out",
+          isSidebarCollapsed && "w-20"
+      )}>
+        <SidebarContent />
       </div>
-    </AuthProvider>
+      <div className={cn(
+          "flex flex-col transition-all duration-300 ease-in-out",
+          "lg:pl-64",
+          isSidebarCollapsed && "lg:pl-20"
+        )}>
+        <AppHeader onToggleSidebar={toggleSidebar} isSidebarCollapsed={isSidebarCollapsed} />
+        {mainContent}
+      </div>
+    </div>
+  );
+}
+
+
+export default function MainLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <Providers>
+      <MainLayoutContent>{children}</MainLayoutContent>
+    </Providers>
   );
 }
