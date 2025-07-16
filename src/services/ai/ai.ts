@@ -5,6 +5,7 @@
  * implementation specified in `systemConfig.ai.provider`.
  */
 import { systemConfig } from '@/config/system';
+// We import the types from the implementation file, which now re-exports them from the flows.
 import type { GenerateTemplateInput, GenerateTemplateOutput } from './impl.gemini';
 import type { SuggestFormulaInput, SuggestFormulaOutput } from './impl.gemini';
 
