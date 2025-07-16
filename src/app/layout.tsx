@@ -1,12 +1,28 @@
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import { Toaster } from "@/components/ui/toaster";
+import './globals.css';
 
-// This file is intentionally minimal.
-// The main layout, including <html> and <body>, is in /[locale]/layout.tsx
-// to ensure the locale is available for all rendered content.
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+
+export const metadata: Metadata = {
+  title: 'EvalAI',
+  description: 'AI-Powered Evaluation Platform',
+};
 
 export default function RootLayout({
   children,
+  params: { locale }
 }: {
   children: React.ReactNode;
+  params: { locale: string };
 }) {
-  return children;
+  return (
+    <html lang={locale} className="h-full">
+      <body className={`${inter.variable} font-sans antialiased h-full`}>
+        {children}
+        <Toaster />
+      </body>
+    </html>
+  );
 }
