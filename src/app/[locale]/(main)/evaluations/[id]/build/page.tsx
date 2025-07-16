@@ -145,8 +145,6 @@ function FormBuilderContent() {
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex flex-col h-full">
           <BuilderHeader 
-            title={template.title} 
-            description={template.description}
             onSave={handleSave}
           />
           <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
@@ -263,5 +261,3 @@ export default function FormBuilderPage() {
         </FormBuilderProvider>
     );
 }
-
-    
