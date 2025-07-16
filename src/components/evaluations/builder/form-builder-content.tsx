@@ -75,8 +75,7 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
         };
 
         loadEvaluation();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [evaluationId]); // This effect should ONLY run when the ID changes.
+    }, [evaluationId, setTemplate, router, t, tq]); 
 
 
     useEffect(() => {
@@ -119,7 +118,9 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
         const newItems = template.items.map(item =>
             item.id === id ? { ...item, ...updates } : item
         );
-        setTemplate({ ...template, items: newItems });
+        const newTemplate = { ...template, items: newItems };
+        setTemplate(newTemplate);
+
         if (selectedQuestion && selectedQuestion.id === id) {
             setSelectedQuestion({ ...selectedQuestion, ...updates });
         }
@@ -251,6 +252,9 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
             </Sheet>
             <Sheet open={isPropertiesSheetOpen} onOpenChange={setIsPropertiesSheetOpen}>
                 <SheetContent side="right">
+                    <SheetHeader>
+                        <SheetTitle>{t('properties')}</SheetTitle>
+                    </SheetHeader>
                      <PropertiesPanel
                         selectedQuestion={selectedQuestion}
                         onUpdateQuestion={updateQuestion}
