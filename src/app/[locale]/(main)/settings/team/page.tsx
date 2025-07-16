@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, unstable_setRequestLocale } from 'next-intl/server'
 
 const teamMembers = [
   { name: 'Alice Johnson', email: 'alice@acme.com', role: 'Admin', fallback: 'AJ' },
@@ -21,7 +21,8 @@ const teamMembers = [
   { name: 'Diana Prince', email: 'diana@acme.com', role: 'Participant', fallback: 'DP' },
 ]
 
-export default async function TeamSettingsPage() {
+export default async function TeamSettingsPage({params: {locale}}: {params: {locale: string}}) {
+  unstable_setRequestLocale(locale);
   const t = await getTranslations('TeamSettingsPage');
   const ts = await getTranslations('SettingsPage');
 

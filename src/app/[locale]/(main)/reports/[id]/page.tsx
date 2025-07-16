@@ -1,11 +1,14 @@
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { FileDown } from 'lucide-react'
 import Image from 'next/image'
+import { unstable_setRequestLocale } from 'next-intl/server';
 
-export default function ReportDetailPage({ params }: { params: { id: string } }) {
+export default function ReportDetailPage({ params }: { params: { id: string, locale: string } }) {
+  unstable_setRequestLocale(params.locale);
   return (
     <div className="container mx-auto max-w-4xl py-8">
       <Card className="shadow-lg">

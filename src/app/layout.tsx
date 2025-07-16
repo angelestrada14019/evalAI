@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
+import { locales } from '@/navigation';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
@@ -12,6 +13,10 @@ export const metadata: Metadata = {
   title: 'EvalAI',
   description: 'AI-Powered Evaluation Platform',
 };
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({locale}));
+}
 
 export default async function RootLayout({
   children,

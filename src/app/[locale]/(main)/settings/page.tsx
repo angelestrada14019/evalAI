@@ -1,9 +1,10 @@
 
 import { SettingsNav } from '@/components/settings/settings-nav'
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 
-export default async function SettingsPage() {
+export default async function SettingsPage({params: {locale}}: {params: {locale: string}}) {
+  unstable_setRequestLocale(locale);
   const t = await getTranslations('SettingsPage');
 
   return (

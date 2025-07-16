@@ -8,7 +8,7 @@ import { RecentEvaluations } from '@/components/dashboard/recent-evaluations'
 import { backend } from '@/services/backend/backend'
 import { DashboardStats } from '@/services/backend/types'
 import { useTranslations } from 'next-intl'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, unstable_setRequestLocale } from 'next-intl/server'
 
 async function StatsCard({ title, icon: Icon, value, change }: { title: string, icon: React.ElementType, value: string | number, change: string }) {
   return (
@@ -25,7 +25,8 @@ async function StatsCard({ title, icon: Icon, value, change }: { title: string, 
   )
 }
 
-export default async function DashboardPage() {
+export default async function DashboardPage({params: {locale}}: {params: {locale: string}}) {
+  unstable_setRequestLocale(locale);
   const stats: DashboardStats = await backend().getDashboardStats();
   const t = await getTranslations('DashboardPage');
 

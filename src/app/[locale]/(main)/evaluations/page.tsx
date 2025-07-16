@@ -1,7 +1,7 @@
 
 import { Suspense } from 'react';
 import { useTranslations } from 'next-intl';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
 import { backend } from '@/services/backend/backend';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -40,7 +40,8 @@ async function EvaluationsContent() {
 }
 
 
-export default function EvaluationsPage() {
+export default function EvaluationsPage({params: {locale}}: {params: {locale: string}}) {
+    unstable_setRequestLocale(locale);
     const t = useTranslations('EvaluationsPage');
 
     return (

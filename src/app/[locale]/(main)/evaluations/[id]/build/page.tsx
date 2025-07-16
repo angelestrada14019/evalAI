@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core'
-import { arrayMove } from '@dnd-kit/sortable'
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useTranslations } from 'next-intl'
 import type { FormItem, FormTemplate } from '@/components/evaluations/builder/types'
 import { BuilderHeader } from '@/components/evaluations/builder/builder-header'
@@ -77,9 +77,6 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
-    if (!isLargeScreen && event.active.id.toString().startsWith('palette-')) {
-        setIsElementsSheetOpen(false);
-    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -173,21 +170,23 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   return (
     <>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="flex flex-col">
+        <div className="flex flex-col h-screen">
           <BuilderHeader 
             title={template.title} 
             description={template.description}
             onSave={handleSave}
           />
-          <div className="flex-1 grid grid-cols-1 lg:grid-cols-12">
+          <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
             
             {isLargeScreen && (
-              <aside className="lg:col-span-2 bg-card border-r min-h-screen">
-                <FormElementsPanel />
+              <aside className="lg:col-span-2 bg-card border-r">
+                <SortableContext items={questionTypes.map(q => `palette-${q.type}`)} strategy={verticalListSortingStrategy}>
+                    <FormElementsPanel />
+                </SortableContext>
               </aside>
             )}
 
-            <main className="lg:col-span-7 py-4 md:py-8">
+            <main className="lg:col-span-7 py-4 md:py-8 overflow-y-auto">
               <FormCanvas 
                 items={template.items}
                 selectedQuestionId={selectedQuestion?.id}
@@ -197,7 +196,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
             </main>
             
             {isLargeScreen && (
-              <aside className="lg:col-span-3 bg-card border-l min-h-screen">
+              <aside className="lg:col-span-3 bg-card border-l overflow-y-auto">
                 <PropertiesPanel 
                   selectedQuestion={selectedQuestion}
                   onUpdateQuestion={updateQuestion}
