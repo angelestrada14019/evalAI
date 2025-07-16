@@ -6,8 +6,8 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/navigation';
 import { FormBuilderProvider, useFormBuilder } from '@/context/form-builder-context';
-import { getNewFormItem } from '@/components/evaluations/builder/question-types';
-import type { FormItem } from '@/components/evaluations/builder/types';
+import { getNewFormItem, createDefaultTemplate } from '@/components/evaluations/builder/question-types';
+import type { FormItem, FormTemplate } from '@/components/evaluations/builder/types';
 import { BuilderHeader } from '@/components/evaluations/builder/builder-header';
 import { FormElementsPanel } from '@/components/evaluations/builder/form-elements-panel';
 import { FormCanvas } from '@/components/evaluations/builder/form-canvas';
@@ -19,7 +19,6 @@ import { VariablesPanel } from '@/components/evaluations/builder/variables-panel
 import { SortableFormItem } from '@/components/evaluations/builder/sortable-form-item';
 import { backend } from '@/services/backend/backend';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useEvaluationLoader } from '@/hooks/use-evaluation-loader';
 
 
 function FormBuilderUI() {
@@ -229,7 +228,39 @@ function FormBuilderUI() {
 
 
 export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
-    const { template, isLoading } = useEvaluationLoader(evaluationId);
+    const [initialTemplate, setInitialTemplate] = useState<FormTemplate | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const router = useRouter();
+    const t = useTranslations('FormBuilderPage');
+    const tq = useTranslations('QuestionTypes');
+
+    useEffect(() => {
+        const loadEvaluation = async () => {
+            setIsLoading(true);
+            try {
+                if (evaluationId.startsWith('new_')) {
+                    // This is a new evaluation, maybe get it from context or create a default
+                    // For now, we assume a default is created on the new page, but we'll create one here as fallback
+                    setInitialTemplate(createDefaultTemplate(t, tq));
+                } else {
+                    const existingEvaluation = await backend().getEvaluationById(evaluationId);
+                    if (existingEvaluation) {
+                        setInitialTemplate(existingEvaluation);
+                    } else {
+                        console.error(`Evaluation with id ${evaluationId} not found.`);
+                        router.push('/evaluations');
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to load evaluation:", error);
+                router.push('/evaluations');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadEvaluation();
+    }, [evaluationId, router, t, tq]);
 
     if (isLoading) {
        return (
@@ -257,7 +288,7 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
     }
     
     return (
-        <FormBuilderProvider>
+        <FormBuilderProvider initialTemplate={initialTemplate}>
             <FormBuilderUI />
         </FormBuilderProvider>
     );
