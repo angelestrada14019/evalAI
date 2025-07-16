@@ -226,7 +226,7 @@ function FormBuilderContent() {
                         <TabsTrigger value="elements">Elements</TabsTrigger>
                         <TabsTrigger value="variables">Variables</TabsTrigger>
                     </TabsList>
-                    <TabsContent value="elements" className="flex-1 overflow-y-auto">
+                    <TabsContent value="elements" className="flex-1 overflow-y-auto p-2">
                         <FormElementsPanel onAddItem={addItemFromPalette} />
                     </TabsContent>
                     <TabsContent value="variables" className="flex-1 overflow-y-auto">
