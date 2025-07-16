@@ -117,7 +117,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
         <div className="space-y-2">
             <Label>{t('options')}</Label>
             {options?.map((opt, i) => (
-                <div key={`${opt.id}-${i}`} className="flex items-center gap-2">
+                <div key={`${id}-${opt.id}-${i}`} className="flex items-center gap-2">
                     <Input className="flex-1" value={opt.label} onChange={(e) => handleOptionChange(i, 'label', e.target.value)} />
                     <Input type="number" className="w-20" value={opt.value} onChange={(e) => handleOptionChange(i, 'value', e.target.value)} />
                     <Button variant="ghost" size="icon" onClick={() => deleteOption(i)}><Trash2 className="h-4 w-4 text-muted-foreground"/></Button>
@@ -165,7 +165,12 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="variable-id">ID de Variable (para puntuación)</Label>
-                        <Input id="variable-id" value={variableId} readOnly disabled />
+                        <Input 
+                            id="variable-id" 
+                            value={variableId} 
+                            onChange={(e) => update({ variableId: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') })}
+                            disabled={readOnly}
+                         />
                     </div>
                     {type !== 'Section Header' && (
                         <>
@@ -220,6 +225,17 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                                 <div className='flex-1 space-y-1'>
                                     <Label htmlFor="slider-step" className='text-xs'>{t('step')}</Label>
                                     <Input id="slider-step" type="number" value={sliderConfig?.step} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, step: Number(e.target.value) } })} />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                     {type === 'Rating Scale' && ratingConfig && (
+                         <div className="space-y-4">
+                            <Label>{t('sliderConfigTitle')}</Label>
+                            <div className='flex items-center gap-2'>
+                                <div className='flex-1 space-y-1'>
+                                    <Label htmlFor="rating-max" className='text-xs'>{t('max')}</Label>
+                                    <Input id="rating-max" type="number" value={ratingConfig?.max} onChange={(e) => update({ ratingConfig: { ...ratingConfig!, max: Number(e.target.value) } })} />
                                 </div>
                             </div>
                         </div>

@@ -6,19 +6,29 @@ import { v4 as uuidv4 } from 'uuid';
 import type { FormItem, FormTemplate } from "./types"
 
 export const questionTypes = [
-  { type: "Multiple Choice", icon: ListChecks },
-  { type: "Text Input", icon: Pilcrow },
-  { type: "Slider", icon: SlidersHorizontal },
-  { type: "Rating Scale", icon: Star },
-  { type: "Section Header", icon: Heading1 },
-  { type: "Matrix Table", icon: Table },
-  { type: "File Upload", icon: Upload },
+  { type: "Multiple Choice", icon: ListChecks, idPrefix: 'opcion' },
+  { type: "Text Input", icon: Pilcrow, idPrefix: 'texto' },
+  { type: "Slider", icon: SlidersHorizontal, idPrefix: 'deslizador' },
+  { type: "Rating Scale", icon: Star, idPrefix: 'puntuacion' },
+  { type: "Section Header", icon: Heading1, idPrefix: 'seccion' },
+  { type: "Matrix Table", icon: Table, idPrefix: 'matriz' },
+  { type: "File Upload", icon: Upload, idPrefix: 'archivo' },
 ];
 
-const generateVariableId = (label: string, itemId: string): string => {
-    const cleanLabel = label.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 15);
-    const shortId = itemId.substring(0, 4);
-    return `${cleanLabel}_${shortId}`;
+const generateVariableId = (type: string, existingItems: FormItem[] = []): string => {
+    const questionTypeInfo = questionTypes.find(q => q.type === type);
+    const prefix = questionTypeInfo ? questionTypeInfo.idPrefix : 'pregunta';
+    
+    let counter = 1;
+    let newId = `${prefix}_${counter}`;
+    
+    // Ensure the generated ID is unique within the form
+    while (existingItems.some(item => item.variableId === newId)) {
+        counter++;
+        newId = `${prefix}_${counter}`;
+    }
+    
+    return newId;
 }
 
 
@@ -35,7 +45,7 @@ export const getNewFormItem = (type: string, t: any, tq: any, existingItems: For
   };
 
   const itemWithType = { ...baseItem, type };
-  const variableId = generateVariableId(itemWithType.label, itemWithType.id);
+  const variableId = generateVariableId(itemWithType.type, existingItems);
   
   const finalBaseItem = { ...itemWithType, variableId };
 
@@ -86,18 +96,22 @@ export const getNewFormItem = (type: string, t: any, tq: any, existingItems: For
 export const createDefaultTemplate = (t: any, tq: any): FormTemplate => {
     const items: FormItem[] = [];
     
-    const firstNameItem = getNewFormItem('Text Input', t, tq, items, 'Nombre');
-    items.push({ ...firstNameItem, required: true, readOnly: true });
+    let currentItems: FormItem[] = [];
+    const firstNameItem = getNewFormItem('Text Input', t, tq, currentItems, 'Nombre');
+    firstNameItem.variableId = 'nombre';
+    currentItems.push({ ...firstNameItem, required: true, readOnly: true });
 
-    const lastNameItem = getNewFormItem('Text Input', t, tq, items, 'Apellido');
-    items.push({ ...lastNameItem, required: true, readOnly: true });
+    const lastNameItem = getNewFormItem('Text Input', t, tq, currentItems, 'Apellido');
+    lastNameItem.variableId = 'apellido';
+    currentItems.push({ ...lastNameItem, required: true, readOnly: true });
 
-    const emailItem = getNewFormItem('Text Input', t, tq, items, 'Correo Electrónico');
-    items.push({ ...emailItem, required: true, readOnly: true });
+    const emailItem = getNewFormItem('Text Input', t, tq, currentItems, 'Correo Electrónico');
+    emailItem.variableId = 'email';
+    currentItems.push({ ...emailItem, required: true, readOnly: true });
 
     return {
         title: "New Evaluation",
         description: "Start building your form.",
-        items: items
+        items: currentItems
     };
 };
