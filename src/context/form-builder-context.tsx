@@ -15,6 +15,8 @@ interface FormBuilderContextType {
     setIsElementsSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
     isPropertiesSheetOpen: boolean;
     setIsPropertiesSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    isContextLoading: boolean;
+    setIsContextLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const FormBuilderContext = createContext<FormBuilderContextType>({
@@ -27,6 +29,8 @@ export const FormBuilderContext = createContext<FormBuilderContextType>({
     setIsElementsSheetOpen: () => {},
     isPropertiesSheetOpen: false,
     setIsPropertiesSheetOpen: () => {},
+    isContextLoading: true,
+    setIsContextLoading: () => {},
 });
 
 export const useFormBuilder = () => {
@@ -43,6 +47,7 @@ export const FormBuilderProvider = ({ children }: { children: React.ReactNode })
     const isMobile = useIsMobile();
     const [isElementsSheetOpen, setIsElementsSheetOpen] = useState(false);
     const [isPropertiesSheetOpen, setIsPropertiesSheetOpen] = useState(false);
+    const [isContextLoading, setIsContextLoading] = useState(true);
     const pathname = usePathname();
     
     useEffect(() => {
@@ -72,6 +77,8 @@ export const FormBuilderProvider = ({ children }: { children: React.ReactNode })
         setIsElementsSheetOpen,
         isPropertiesSheetOpen,
         setIsPropertiesSheetOpen,
+        isContextLoading,
+        setIsContextLoading,
     };
 
     return (

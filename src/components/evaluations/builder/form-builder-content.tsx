@@ -33,60 +33,77 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
         isElementsSheetOpen,
         setIsElementsSheetOpen,
         isPropertiesSheetOpen,
-        setIsPropertiesSheetOpen
+        setIsPropertiesSheetOpen,
+        isContextLoading,
+        setIsContextLoading,
     } = useFormBuilder();
     
-    const [isLoading, setIsLoading] = useState(true);
     const [activeId, setActiveId] = useState<string | null>(null);
     const sensors = useSensors(useSensor(PointerSensor));
 
     useEffect(() => {
         const loadEvaluation = async () => {
-            setIsLoading(true);
-            // If there's already a template in context (from the 'new' page), use it.
-            if (template && evaluationId.startsWith('new_')) {
-                console.log("Using template from context for new evaluation.");
-                setIsLoading(false);
-                return;
-            }
+            setIsContextLoading(true);
+            const isNewEvaluation = evaluationId.startsWith('new_');
 
-            try {
-                // Otherwise, try fetching from the backend (simulated)
-                console.log(`Fetching evaluation with ID: ${evaluationId}`);
-                const existingEvaluation = await backend().getEvaluationById(evaluationId);
-                if (existingEvaluation) {
-                    setTemplate(existingEvaluation);
-                    if (existingEvaluation.items.length > 0) {
-                      setSelectedQuestion(existingEvaluation.items[0]);
-                    }
+            if (isNewEvaluation) {
+                // For new evaluations, we rely on the context being set by the 'new' page.
+                // If context is empty (e.g., direct navigation), create a default.
+                if (!template) {
+                     console.log("Creating default template for new evaluation.");
+                     setTemplate(createDefaultTemplate(t, tq));
                 } else {
-                    // Fallback for direct access to a new/invalid URL
-                    console.log(`No evaluation found for ID ${evaluationId}, creating default.`);
-                    setTemplate(createDefaultTemplate(t, tq));
+                     console.log("Using template from context for new evaluation.");
                 }
-            } catch (error) {
-                console.error("Failed to load evaluation:", error);
-                setTemplate(createDefaultTemplate(t, tq));
-            } finally {
-                setIsLoading(false);
+            } else {
+                // For existing evaluations, always fetch from the backend.
+                try {
+                    console.log(`Fetching evaluation with ID: ${evaluationId}`);
+                    const existingEvaluation = await backend().getEvaluationById(evaluationId);
+                    if (existingEvaluation) {
+                        setTemplate(existingEvaluation);
+                        if (existingEvaluation.items.length > 0 && !selectedQuestion) {
+                            setSelectedQuestion(existingEvaluation.items[0]);
+                        }
+                    } else {
+                        console.error(`No evaluation found for ID ${evaluationId}, redirecting.`);
+                        router.push('/evaluations');
+                        return;
+                    }
+                } catch (error) {
+                    console.error("Failed to load evaluation:", error);
+                    router.push('/evaluations');
+                    return;
+                }
             }
+            setIsContextLoading(false);
         };
 
         loadEvaluation();
-    }, [evaluationId, setTemplate, t, tq]); // Removed template from deps to avoid re-triggering
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [evaluationId, router, setTemplate, t, tq]);
 
     useEffect(() => {
+      // Logic to select the first question if none is selected
       if(template && !selectedQuestion && template.items.length > 0) {
         setSelectedQuestion(template.items[0]);
       }
     }, [template, selectedQuestion, setSelectedQuestion]);
 
-    if (isLoading || !template) {
+    if (isContextLoading || !template) {
         return (
-            <div className="p-8 space-y-4">
-                <Skeleton className="h-10 w-1/3" />
-                <Skeleton className="h-6 w-1/2" />
-                <div className="pt-8">
+            <div className="flex flex-col h-full">
+                 <header className="flex-shrink-0 p-3 md:p-4 border-b bg-card">
+                    <div className="flex items-center justify-between flex-wrap gap-4">
+                        <Skeleton className="h-10 w-1/3" />
+                         <div className="flex items-center gap-2">
+                            <Skeleton className="h-10 w-24" />
+                            <Skeleton className="h-10 w-24" />
+                            <Skeleton className="h-10 w-24" />
+                        </div>
+                    </div>
+                 </header>
+                 <div className="p-8 space-y-4">
                     <Skeleton className="h-32 w-full" />
                     <Skeleton className="h-32 w-full mt-4" />
                 </div>
@@ -143,10 +160,14 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
     const deleteQuestion = (id: string) => {
         if (!template) return;
         const newItems = template.items.filter(item => item.id !== id);
-        setTemplate({ ...template, items: newItems });
+        
+        // If the deleted question was selected, select the next one or the last one
         if (selectedQuestion && selectedQuestion.id === id) {
-            setSelectedQuestion(template.items[0] || null);
+            const deletedIndex = template.items.findIndex(item => item.id === id);
+            const newSelection = newItems[deletedIndex] || newItems[deletedIndex - 1] || null;
+            setSelectedQuestion(newSelection);
         }
+        setTemplate({ ...template, items: newItems });
     };
     
     const handleSave = async () => {
@@ -159,6 +180,7 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
 
         alert(`Evaluation "${savedEvaluation.title}" saved!`);
 
+        // If the ID has changed (from 'new_...' to 'eval_...'), update the URL
         if (evaluationId !== savedEvaluation.id) {
             router.replace(`/evaluations/${savedEvaluation.id}/build`);
         }
