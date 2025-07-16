@@ -19,7 +19,7 @@ import { useToast } from '@/hooks/use-toast'
 import { useFormBuilder } from '@/context/form-builder-context'
 import type { FormItem } from '@/components/evaluations/builder/types'
 
-const formatFormContentForAI = (items: FormItem[]): string => {
+const formatFormContentForDisplay = (items: FormItem[]): string => {
   if (!items || items.length === 0) {
     return 'The form is empty.';
   }
@@ -54,7 +54,7 @@ export function AIFormulaSuggester() {
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [suggestion, setSuggestion] = useState<{ suggestedFormula: string; reasoning: string } | null>(null)
-  const [formContent, setFormContent] = useState('');
+  const [formContentForDisplay, setFormContentForDisplay] = useState('');
   const { toast } = useToast()
 
   const handleSuggest = async () => {
@@ -62,11 +62,10 @@ export function AIFormulaSuggester() {
     setIsLoading(true)
     setSuggestion(null)
     
-    const currentFormContent = formatFormContentForAI(template.items);
-    setFormContent(currentFormContent);
+    setFormContentForDisplay(formatFormContentForDisplay(template.items));
 
     try {
-      const result = await suggestScoreFormula(currentFormContent)
+      const result = await suggestScoreFormula(template)
       setSuggestion(result)
     } catch (error) {
       toast({
@@ -99,7 +98,7 @@ export function AIFormulaSuggester() {
             <CardContent className="p-4">
                 <h4 className="font-semibold text-sm mb-2">{t('formContentTitle')}</h4>
                 <pre className="text-xs p-3 bg-secondary rounded-md whitespace-pre-wrap font-mono max-h-40 overflow-auto">
-                    {formContent || "Click 'Suggest Formula' to see the content sent to the AI."}
+                    {formContentForDisplay || "Click 'Suggest Formula' to see the content sent to the AI."}
                 </pre>
             </CardContent>
           </Card>

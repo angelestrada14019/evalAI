@@ -1,6 +1,7 @@
 'use server'
 
 import { ai } from '@/services/ai/ai'
+import type { FormTemplate } from '@/components/evaluations/builder/types'
 
 export async function generateEvaluationTemplate(description: string) {
   try {
@@ -12,9 +13,9 @@ export async function generateEvaluationTemplate(description: string) {
   }
 }
 
-export async function suggestScoreFormula(formContent: string) {
+export async function suggestScoreFormula(template: FormTemplate) {
   try {
-    const result = await ai().suggestFormula({ formContent })
+    const result = await ai().suggestFormula({ template })
     return result
   } catch (error) {
     console.error('Error suggesting formula:', error)
