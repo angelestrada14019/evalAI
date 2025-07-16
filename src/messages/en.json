@@ -189,5 +189,12 @@
     "page": "Page",
     "of": "of",
     "filterPlaceholder": "Filter items..."
+  },
+  "Breadcrumbs": {
+    "home": "Dashboard",
+    "evaluations": "Evaluations",
+    "reports": "Reports",
+    "new": "New",
+    "build": "Build"
   }
 }

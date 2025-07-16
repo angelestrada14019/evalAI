@@ -5,15 +5,23 @@ import { Button } from '@/components/ui/button';
 import { backend } from '@/services/backend/backend';
 import { getTranslations } from 'next-intl/server';
 import { EvaluationsClient } from '@/components/evaluations/evaluations-client';
+import { Breadcrumb } from '@/components/layout/breadcrumb';
 
 // Note: This is now a Server Component that fetches fresh data on every load.
 export default async function EvaluationsPage() {
   const evaluations = await backend().getEvaluations();
   const t = await getTranslations(); // We get the whole translation object
+  const tB = await getTranslations('Breadcrumbs');
+
+  const breadcrumbItems = [
+    { label: tB('home'), href: '/dashboard' },
+    { label: tB('evaluations') },
+  ];
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between mb-6">
+      <Breadcrumb items={breadcrumbItems} />
+      <div className="flex items-center justify-between">
         <div>
             <h1 className="text-3xl font-bold">{t('EvaluationsPage.title')}</h1>
             <p className="text-muted-foreground">{t('EvaluationsPage.description')}</p>

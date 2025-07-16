@@ -189,5 +189,12 @@
     "page": "Página",
     "of": "de",
     "filterPlaceholder": "Filtrar elementos..."
+  },
+   "Breadcrumbs": {
+    "home": "Dashboard",
+    "evaluations": "Evaluaciones",
+    "reports": "Reportes",
+    "new": "Nueva",
+    "build": "Construir"
   }
 }

@@ -5,17 +5,30 @@ import { Separator } from '@/components/ui/separator'
 import { FileDown } from 'lucide-react'
 import Image from 'next/image'
 import {getTranslations} from 'next-intl/server'
+import { Breadcrumb } from '@/components/layout/breadcrumb'
 
 export default async function ReportDetailPage({ params }: { params: { id: string } }) {
   const t = await getTranslations('ReportsPage');
+  const tB = await getTranslations('Breadcrumbs');
+  
+  // In a real app, you'd fetch this data
+  const report = { title: 'John Doe - Performance Review' };
+
+  const breadcrumbItems = [
+    { label: tB('home'), href: '/dashboard' },
+    { label: tB('reports'), href: '/reports' },
+    { label: report.title },
+  ];
+
   return (
     <div className="container mx-auto max-w-4xl py-8">
+      <Breadcrumb items={breadcrumbItems} />
       <Card className="shadow-lg">
         <CardHeader className="bg-secondary/50 p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Individual Report</p>
-              <CardTitle className="text-2xl">John Doe - Performance Review</CardTitle>
+              <CardTitle className="text-2xl">{report.title}</CardTitle>
               <CardDescription>Generated on: April 3, 2024</CardDescription>
             </div>
             <Button variant="outline">

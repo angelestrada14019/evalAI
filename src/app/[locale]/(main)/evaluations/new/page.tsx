@@ -13,10 +13,8 @@ import { useTranslations } from 'next-intl'
 import { createDefaultTemplate } from '@/components/evaluations/builder/question-types'
 import type { FormTemplate } from '@/components/evaluations/builder/types'
 import { v4 as uuidv4 } from 'uuid'
+import { Breadcrumb } from '@/components/layout/breadcrumb'
 
-// Note: This component no longer uses FormBuilderContext directly.
-// It prepares the template and passes it via navigation/state,
-// or the builder page will create its own default.
 
 export default function NewEvaluationPage() {
   const [description, setDescription] = useState('')
@@ -26,6 +24,15 @@ export default function NewEvaluationPage() {
   const t = useTranslations('NewEvaluationPage')
   const tFormBuilder = useTranslations('FormBuilderPage');
   const tQuestionTypes = useTranslations('QuestionTypes');
+  const tB = useTranslations('Breadcrumbs');
+
+
+  const breadcrumbItems = [
+    { label: tB('home'), href: '/dashboard' },
+    { label: tB('evaluations'), href: '/evaluations' },
+    { label: tB('new') },
+  ];
+
 
   const handleCreateManual = () => {
     // The builder page will now create its own default template if it receives a 'new_' ID.
@@ -60,25 +67,11 @@ export default function NewEvaluationPage() {
         items: [...defaultItems, ...processedItems],
       }
       
-      // We can't pass complex state easily with App Router.
-      // A more robust solution would involve a global state manager (like Zustand or Redux),
-      // or saving the draft and navigating.
-      // For now, we'll rely on the builder fetching, or we could temporarily store in localStorage.
-      // Let's stick to the simplest path: let the user know, and navigate.
-      // The builder logic will need to handle this. For now, we just navigate.
-      
       toast({
         title: t('successTitle'),
         description: t('successDescription'),
       })
 
-      // A simple way to pass the generated template is to save it immediately
-      // and get back an ID, then redirect. This is the most robust approach.
-      // Let's assume `generateEvaluationTemplate` now returns a saved entity or we call another action.
-      // For this implementation, we will assume the `new` page logic is handled on the builder.
-      // We are just showing a concept here. A better way is to save it and redirect.
-      
-      // Let's go with a temporary solution of storing in session storage for the PoC
       sessionStorage.setItem('new_evaluation_template', JSON.stringify(finalTemplate));
 
 
@@ -99,6 +92,7 @@ export default function NewEvaluationPage() {
 
   return (
     <div className="container mx-auto max-w-3xl py-8">
+      <Breadcrumb items={breadcrumbItems} />
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">{t('title')}</CardTitle>
