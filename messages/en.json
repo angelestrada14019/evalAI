@@ -71,13 +71,31 @@
     "properties": "Properties",
     "newQuestionLabel": "New {type} Question",
     "noQuestions": "No questions yet.",
-    "noQuestionsHint": "Drag elements from the left panel to start building.",
+    "noQuestionsHint": "Click an element from the left panel to start building.",
     "questionText": "Question Text",
     "options": "Options",
     "addOption": "Add Option",
     "required": "Required",
     "selectQuestion": "Select a question to see its properties.",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "fileUploadArea": "File upload area",
+    "accepts": "Accepts:",
+    "maxSize": "Max size:",
+    "fileUploadConfigTitle": "File Upload Configuration",
+    "allowedTypes": "Allowed types:",
+    "configReadOnlyHint": "Configuration is currently view-only.",
+    "matrixRows": "Rows",
+    "matrixCols": "Columns",
+    "addRow": "Add Row",
+    "addCol": "Add Column",
+    "image": "Image",
+    "addImage": "Add/Change Image",
+    "removeImage": "Remove Image",
+    "sectionHeaderTitle": "Section Title",
+    "sliderConfigTitle": "Slider Configuration",
+    "min": "Min",
+    "max": "Max",
+    "step": "Step"
   },
   "AIFormulaSuggester": {
     "buttonText": "AI Scoring Logic",
@@ -155,7 +173,6 @@
     "Text Input": "Text Input",
     "Slider": "Slider",
     "Rating Scale": "Rating Scale",
-    "Image Choice": "Image Choice",
     "Matrix Table": "Matrix Table",
     "File Upload": "File Upload",
     "Section Header": "Section Header"
@@ -169,5 +186,3 @@
     "filterPlaceholder": "Filter items..."
   }
 }
-
-    

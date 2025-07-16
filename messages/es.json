@@ -71,13 +71,31 @@
     "properties": "Propiedades",
     "newQuestionLabel": "Nueva Pregunta de {type}",
     "noQuestions": "Aún no hay preguntas.",
-    "noQuestionsHint": "Arrastra elementos del panel izquierdo para empezar a construir.",
+    "noQuestionsHint": "Haz clic en un elemento del panel izquierdo para empezar a construir.",
     "questionText": "Texto de la Pregunta",
     "options": "Opciones",
     "addOption": "Añadir Opción",
     "required": "Obligatorio",
     "selectQuestion": "Selecciona una pregunta para ver sus propiedades.",
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "fileUploadArea": "Área de subida de archivos",
+    "accepts": "Acepta:",
+    "maxSize": "Tamaño máx:",
+    "fileUploadConfigTitle": "Configuración de Subida de Archivo",
+    "allowedTypes": "Tipos permitidos:",
+    "configReadOnlyHint": "La configuración es de solo lectura por ahora.",
+    "matrixRows": "Filas",
+    "matrixCols": "Columnas",
+    "addRow": "Añadir Fila",
+    "addCol": "Añadir Columna",
+    "image": "Imagen",
+    "addImage": "Añadir/Cambiar Imagen",
+    "removeImage": "Quitar Imagen",
+    "sectionHeaderTitle": "Título de la Sección",
+    "sliderConfigTitle": "Configuración del Deslizador",
+    "min": "Mín",
+    "max": "Máx",
+    "step": "Paso"
   },
   "AIFormulaSuggester": {
     "buttonText": "Lógica de Puntuación con IA",
@@ -155,7 +173,6 @@
     "Text Input": "Entrada de Texto",
     "Slider": "Deslizador",
     "Rating Scale": "Escala de Puntuación",
-    "Image Choice": "Elección de Imagen",
     "Matrix Table": "Tabla de Matriz",
     "File Upload": "Subida de Archivo",
     "Section Header": "Encabezado de Sección"
@@ -169,5 +186,3 @@
     "filterPlaceholder": "Filtrar elementos..."
   }
 }
-
-    

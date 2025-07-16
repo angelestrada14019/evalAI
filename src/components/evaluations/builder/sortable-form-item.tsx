@@ -26,6 +26,7 @@ interface SortableFormItemProps {
 export function SortableFormItem({ item, index, selected, onSelect, onDelete }: SortableFormItemProps) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
     const tq = useTranslations('QuestionTypes');
+    const t = useTranslations('FormBuilderPage');
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -92,10 +93,12 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                 {item.type === 'File Upload' && (
                     <div className="mt-2 flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-md text-muted-foreground">
                         <Upload className="h-8 w-8 mb-2" />
-                        <p>File upload area</p>
+                        <p>{t('fileUploadArea')}</p>
                         {item.fileUploadConfig &&
                             <p className="text-xs mt-1">
-                                {`Accepts: ${item.fileUploadConfig.allowedTypes.map(t => t.split('/')[1]).join(', ')} | Max size: ${item.fileUploadConfig.maxSizeMB}MB`}
+                                {t('accepts')}{' '}
+                                {item.fileUploadConfig.allowedTypes.map(t => t.split('/')[1]).join(', ')} | {t('maxSize')}{' '}
+                                {item.fileUploadConfig.maxSizeMB}MB
                             </p>
                         }
                     </div>

@@ -84,6 +84,12 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
         }
     };
 
+    const getButtonText = (listType: 'options' | 'matrixRows' | 'matrixCols') => {
+        if (listType === 'options') return t('addOption');
+        if (listType === 'matrixRows') return t('addRow');
+        if (listType === 'matrixCols') return t('addCol');
+    }
+
     const renderListEditor = (title: string, list: string[] | undefined, listType: 'options' | 'matrixRows' | 'matrixCols') => (
         <div className="space-y-2">
             <Label>{title}</Label>
@@ -93,7 +99,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                     <Button variant="ghost" size="icon" onClick={() => deleteFromList(listType, i)}><Trash2 className="h-4 w-4 text-muted-foreground"/></Button>
                 </div>
             ))}
-            <Button variant="outline" size="sm" className="w-full" onClick={() => addToList(listType)}><PlusCircle className="mr-2 h-4 w-4" /> Add {title.slice(0,-1)}</Button>
+            <Button variant="outline" size="sm" className="w-full" onClick={() => addToList(listType)}><PlusCircle className="mr-2 h-4 w-4" /> {getButtonText(listType)}</Button>
         </div>
     );
 
@@ -104,19 +110,19 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                 <CardHeader><CardTitle className="text-base">{tq(type as any)}</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
-                        <Label htmlFor="question-text">{type === 'Section Header' ? 'Section Title' : t('questionText')}</Label>
+                        <Label htmlFor="question-text">{type === 'Section Header' ? t('sectionHeaderTitle') : t('questionText')}</Label>
                         <Textarea id="question-text" value={label} onChange={(e) => update({ label: e.target.value })} />
                     </div>
                     {type !== 'Section Header' && (
                         <>
                             <div className="space-y-2">
-                                <Label>Image</Label>
+                                <Label>{t('image')}</Label>
                                 <Button variant="outline" size="sm" className="w-full" onClick={() => update({imageUrl: `https://placehold.co/600x400.png?text=${id.substring(0,4)}` })}>
-                                    <ImagePlus className="mr-2 h-4 w-4" /> Add/Change Image
+                                    <ImagePlus className="mr-2 h-4 w-4" /> {t('addImage')}
                                 </Button>
                                 {selectedQuestion.imageUrl && (
                                     <Button variant="link" size="sm" className="w-full text-destructive" onClick={() => update({imageUrl: null})}>
-                                        Remove Image
+                                        {t('removeImage')}
                                     </Button>
                                 )}
                             </div>
@@ -124,22 +130,22 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                         </>
                     )}
                     
-                    {type === 'Multiple Choice' && renderListEditor('Options', options, 'options')}
+                    {type === 'Multiple Choice' && renderListEditor(t('options'), options, 'options')}
 
                     {type === 'Matrix Table' && matrixConfig && (
                         <div className="space-y-4">
-                            {renderListEditor('Rows', matrixConfig.rows, 'matrixRows')}
-                            {renderListEditor('Columns', matrixConfig.columns, 'matrixCols')}
+                            {renderListEditor(t('matrixRows'), matrixConfig.rows, 'matrixRows')}
+                            {renderListEditor(t('matrixCols'), matrixConfig.columns, 'matrixCols')}
                         </div>
                     )}
 
                     {type === 'File Upload' && fileUploadConfig && (
                         <div className="space-y-2">
-                            <Label>File Upload Configuration</Label>
+                            <Label>{t('fileUploadConfigTitle')}</Label>
                             <div className="text-sm p-3 bg-secondary rounded-md space-y-2">
-                                <div>Max file size: <Badge variant="secondary">{fileUploadConfig.maxSizeMB} MB</Badge></div>
+                                <div>{t('maxSize')} <Badge variant="secondary">{fileUploadConfig.maxSizeMB} MB</Badge></div>
                                 <div>
-                                    Allowed types:
+                                    {t('allowedTypes')}
                                     <div className="flex flex-wrap gap-1 mt-1">
                                         {fileUploadConfig.allowedTypes.map(type => (
                                             <Badge key={type} variant="secondary">{type.split('/')[1]}</Badge>
@@ -147,24 +153,24 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                                     </div>
                                 </div>
                             </div>
-                            <p className="text-xs text-muted-foreground">Configuration is currently view-only.</p>
+                            <p className="text-xs text-muted-foreground">{t('configReadOnlyHint')}</p>
                         </div>
                     )}
 
                     {type === 'Slider' && (
                         <div className="space-y-4">
-                            <Label>Slider Configuration</Label>
+                            <Label>{t('sliderConfigTitle')}</Label>
                             <div className='flex items-center gap-2'>
                                 <div className='flex-1 space-y-1'>
-                                    <Label htmlFor="slider-min" className='text-xs'>Min</Label>
+                                    <Label htmlFor="slider-min" className='text-xs'>{t('min')}</Label>
                                     <Input id="slider-min" type="number" value={sliderConfig?.min} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, min: Number(e.target.value) } })} />
                                 </div>
                                 <div className='flex-1 space-y-1'>
-                                    <Label htmlFor="slider-max" className='text-xs'>Max</Label>
+                                    <Label htmlFor="slider-max" className='text-xs'>{t('max')}</Label>
                                     <Input id="slider-max" type="number" value={sliderConfig?.max} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, max: Number(e.target.value) } })} />
                                 </div>
                                 <div className='flex-1 space-y-1'>
-                                    <Label htmlFor="slider-step" className='text-xs'>Step</Label>
+                                    <Label htmlFor="slider-step" className='text-xs'>{t('step')}</Label>
                                     <Input id="slider-step" type="number" value={sliderConfig?.step} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, step: Number(e.target.value) } })} />
                                 </div>
                             </div>
