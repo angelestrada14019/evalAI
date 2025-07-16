@@ -36,8 +36,11 @@ function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
   const tq = useTranslations('QuestionTypes');
 
   React.useEffect(() => {
+    // This effect ensures that if a user navigates directly to the builder URL
+    // without a template in context (e.g., from a bookmark or a direct link),
+    // a default template is loaded to prevent a blank screen.
     if (!template) {
-      console.log(`No template found, loading default for ID: ${evaluationId}`);
+      console.log(`No template found in context for ID: ${evaluationId}, loading default.`);
       setTemplate(createDefaultTemplate(t, tq));
     }
   }, [template, setTemplate, evaluationId, t, tq]);
@@ -285,8 +288,8 @@ function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
 }
 
 
-export default function FormBuilderPage({ evaluationId }: { evaluationId: string }) {
+export default function FormBuilderPage({ params }: { params: { id: string } }) {
     return (
-        <FormBuilderContent evaluationId={evaluationId} />
+        <FormBuilderContent evaluationId={params.id} />
     );
 }

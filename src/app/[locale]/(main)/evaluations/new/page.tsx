@@ -13,7 +13,7 @@ import { generateEvaluationTemplate } from '@/actions/evaluation-actions'
 import { Wand2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { createDefaultTemplate, getNewFormItem } from '@/components/evaluations/builder/question-types'
-import type { FormTemplate, FormItem } from '@/components/evaluations/builder/types'
+import type { FormTemplate } from '@/components/evaluations/builder/types'
 import { FormBuilderContext } from '@/context/form-builder-context'
 
 export default function NewEvaluationPage() {
@@ -43,9 +43,9 @@ export default function NewEvaluationPage() {
       const defaultFields = createDefaultTemplate(t, tq).items;
       
       const processedAiItems = aiTemplate.items.map(item => ({
-        ...getNewFormItem(item.type, t, tq, [], item.label), // Creates a full item with defaults
-        ...item, // Overwrites with AI-generated specifics
-        id: uuidv4(), // Ensures a unique ID
+        ...getNewFormItem(item.type, t, tq, [], item.label), 
+        ...item, 
+        id: uuidv4(), 
       }));
 
       const finalTemplate: FormTemplate = {

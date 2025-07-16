@@ -1,18 +1,11 @@
 
-import { FormBuilderProvider } from '@/context/form-builder-context';
-
 export default function BuilderLayout({
     children,
-    params
 }: {
     children: React.ReactNode;
-    params: { locale: string, id: string };
 }) {
-    // This layout provides the FormBuilder context and passes params down safely
-    // It's a server component by default
-    return (
-        <FormBuilderProvider>
-            {children}
-        </FormBuilderProvider>
-    );
+    // This layout simply passes children through. 
+    // The FormBuilderProvider has been moved to the parent layout (`/src/app/[locale]/(main)/layout.tsx`)
+    // to ensure its state is available across all main routes, including the "new evaluation" page.
+    return <>{children}</>;
 }
