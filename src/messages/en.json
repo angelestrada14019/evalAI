@@ -98,9 +98,7 @@
     "step": "Step",
     "variableIdLabel": "Variable ID (for scoring)",
     "variableIdHint": "Unique ID used in formulas. No spaces or special characters.",
-    "variableIdReportLabel": "Variable ID (for report reference)",
-    "titlePlaceholder": "Evaluation Title",
-    "descriptionPlaceholder": "Evaluation Description..."
+    "titlePlaceholder": "Evaluation Title"
   },
   "AIFormulaSuggester": {
     "buttonText": "AI Scoring Logic",

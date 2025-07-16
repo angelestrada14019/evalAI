@@ -98,8 +98,7 @@
     "step": "Paso",
     "variableIdLabel": "ID de Variable (para puntuación)",
     "variableIdHint": "Un ID único usado en las fórmulas. Sin espacios ni caracteres especiales.",
-    "titlePlaceholder": "Título de la Evaluación",
-    "descriptionPlaceholder": "Descripción de la evaluación..."
+    "titlePlaceholder": "Título de la Evaluación"
   },
   "AIFormulaSuggester": {
     "buttonText": "Lógica de Puntuación con IA",

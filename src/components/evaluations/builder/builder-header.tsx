@@ -23,11 +23,6 @@ export function BuilderHeader({ onSave }: BuilderHeaderProps) {
         setTemplate({ ...template, title: e.target.value });
     }
 
-    const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-         if (!template) return;
-        setTemplate({ ...template, description: e.target.value });
-    }
-
     return (
         <header className="flex-shrink-0 p-3 md:p-4 border-b bg-card">
             <div className='flex items-center justify-between flex-wrap gap-4'>
@@ -38,12 +33,9 @@ export function BuilderHeader({ onSave }: BuilderHeaderProps) {
                         onChange={handleTitleChange}
                         className="text-lg md:text-xl font-bold border-none shadow-none focus-visible:ring-0 px-1 h-auto"
                     />
-                     <Input 
-                        placeholder={t('descriptionPlaceholder')}
-                        value={template.description}
-                        onChange={handleDescriptionChange}
-                        className="text-xs md:text-sm text-muted-foreground border-none shadow-none focus-visible:ring-0 px-1 h-auto"
-                    />
+                     <p className="text-xs md:text-sm text-muted-foreground px-1 h-auto">
+                        {template.description}
+                    </p>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap justify-end">
                     <Button variant="outline">
