@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -40,21 +41,20 @@ export default function MainLayout({
   );
 
   const mainContent = (
-     <FormBuilderProvider>
-        <AuthProvider>
-            {children}
-        </AuthProvider>
-     </FormBuilderProvider>
+    <main className="flex-1 overflow-x-hidden bg-secondary/50 p-4 sm:p-6">
+      <FormBuilderProvider>
+        {children}
+      </FormBuilderProvider>
+    </main>
   );
 
   if (isMobile) {
     return (
+      <AuthProvider>
         <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
           <div className="flex min-h-screen w-full flex-col bg-background">
             <AppHeader onToggleSidebar={toggleSidebar} />
-            <main className="flex-1 p-4 sm:p-6">
-              {mainContent}
-            </main>
+            {mainContent}
           </div>
           <SheetContent side="left" className="p-0 w-64" aria-describedby={undefined}>
             <SheetHeader>
@@ -63,10 +63,12 @@ export default function MainLayout({
             <SidebarContent />
           </SheetContent>
         </Sheet>
+      </AuthProvider>
     );
   }
 
   return (
+    <AuthProvider>
       <div className="min-h-screen w-full">
         <div className={cn(
             "hidden lg:block fixed inset-y-0 left-0 z-40 w-64 transition-all duration-300 ease-in-out",
@@ -80,10 +82,9 @@ export default function MainLayout({
             isSidebarCollapsed && "lg:pl-20"
           )}>
           <AppHeader onToggleSidebar={toggleSidebar} isSidebarCollapsed={isSidebarCollapsed} />
-          <main className="flex-1 overflow-x-hidden bg-secondary/50 p-4 sm:p-6">
-            {mainContent}
-          </main>
+          {mainContent}
         </div>
       </div>
+    </AuthProvider>
   );
 }
