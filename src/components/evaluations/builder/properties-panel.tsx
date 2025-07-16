@@ -29,7 +29,6 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
     if (!selectedQuestion) {
         return (
             <div className="p-4 bg-card h-full overflow-y-auto">
-                <h2 className="text-lg font-semibold mb-4">{t('properties')}</h2>
                 <div className="text-center py-12 text-muted-foreground">
                     <p>{t('selectQuestion')}</p>
                 </div>
@@ -161,7 +160,6 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
 
     return (
         <div className="p-4 bg-card h-full overflow-y-auto">
-            <h2 className="text-lg font-semibold mb-4">{t('properties')}</h2>
             <Card>
                 <CardHeader><CardTitle className="text-base">{tq(type as any)}</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
