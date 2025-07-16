@@ -77,6 +77,9 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
+    if (!isLargeScreen && event.active.id.toString().startsWith('palette-')) {
+        setIsElementsSheetOpen(false);
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -122,7 +125,8 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   const updateQuestion = (id: string, updates: Partial<FormItem>) => {
     if (!template) return;
     const newItems = template.items.map(item => item.id === id ? { ...item, ...updates } : item);
-    setTemplate({ ...template, items: newItems });
+    const newTemplate = { ...template, items: newItems };
+    setTemplate(newTemplate);
     if (selectedQuestion?.id === id) {
         setSelectedQuestion(prev => prev ? { ...prev, ...updates } : null);
     }
@@ -144,13 +148,20 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     setTemplate({ ...template, items: updatedItems });
     setIsElementsSheetOpen(false);
 
-    // Give a small delay for the sheet to close before selecting
     setTimeout(() => {
         handleSelectQuestion(newItem);
         const element = document.getElementById(newItem.id);
         element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 300);
   }
+  
+  const handleSave = () => {
+    if (template) {
+        console.log("--- SAVING FORM ---");
+        console.log(JSON.stringify(template, null, 2));
+    }
+  }
+
 
   if (!template) {
     return <div className="flex w-full min-h-screen items-center justify-center">{t('loading')}</div>;
@@ -163,7 +174,11 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     <>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex flex-col">
-          <BuilderHeader title={template.title} description={template.description} />
+          <BuilderHeader 
+            title={template.title} 
+            description={template.description}
+            onSave={handleSave}
+          />
           <div className="flex-1 grid grid-cols-1 lg:grid-cols-12">
             
             {isLargeScreen && (

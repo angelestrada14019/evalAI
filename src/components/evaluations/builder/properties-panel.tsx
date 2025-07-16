@@ -117,5 +117,3 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
         </div>
     );
 }
-
-    

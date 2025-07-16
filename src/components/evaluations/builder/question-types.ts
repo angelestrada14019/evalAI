@@ -1,7 +1,7 @@
 
 'use client'
 
-import { ListChecks, Pilcrow, SlidersHorizontal, Star, Image as ImageIcon, Table, Upload, Heading1 } from "lucide-react"
+import { ListChecks, Pilcrow, SlidersHorizontal, Star, Table, Upload, Heading1 } from "lucide-react"
 import { v4 as uuidv4 } from 'uuid';
 import type { FormItem } from "./types"
 
@@ -11,7 +11,6 @@ export const questionTypes = [
   { type: "Slider", icon: SlidersHorizontal },
   { type: "Rating Scale", icon: Star },
   { type: "Section Header", icon: Heading1 },
-  { type: "Image Choice", icon: ImageIcon },
   { type: "Matrix Table", icon: Table },
   { type: "File Upload", icon: Upload },
 ];
@@ -45,5 +44,3 @@ export const getNewFormItem = (type: string, t: any, tq: any): FormItem => {
       return baseItem;
   }
 };
-
-    

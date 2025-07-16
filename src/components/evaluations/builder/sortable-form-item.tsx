@@ -10,8 +10,10 @@ import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { GripVertical, Trash2, Star } from "lucide-react";
+import { GripVertical, Trash2, Star, Upload, File } from "lucide-react";
 import type { FormItem } from "./types";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface SortableFormItemProps {
     item: FormItem;
@@ -44,8 +46,13 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
         }
         return (
             <div className="flex-1">
-                <p className="text-sm text-muted-foreground">{index + 1}. {tq(item.type as any)}</p>
-                <p className="font-semibold">{item.label}</p>
+                <div className="flex justify-between items-start">
+                    <div>
+                        <p className="text-sm text-muted-foreground">{index + 1}. {tq(item.type as any)}</p>
+                        <p className="font-semibold">{item.label}</p>
+                    </div>
+                     <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="shrink-0"><Trash2 className="h-4 w-4 text-muted-foreground" /></Button>
+                </div>
                 {item.imageUrl && (
                     <div className="mt-2 relative h-32 w-full rounded-md overflow-hidden">
                         <Image src={item.imageUrl} alt={item.label} layout="fill" objectFit="cover" data-ai-hint="question element" />
@@ -75,11 +82,48 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                         <span className="text-sm text-muted-foreground">{item.sliderConfig?.max ?? 100}</span>
                     </div>
                 )}
-                 {item.type === 'Rating Scale' && (
+                {item.type === 'Rating Scale' && (
                     <div className="flex items-center gap-1 mt-2">
                        {Array.from({ length: item.ratingConfig?.max ?? 5 }).map((_, i) => (
                            <Star key={i} className="h-6 w-6 text-yellow-400" />
                        ))}
+                    </div>
+                )}
+                {item.type === 'File Upload' && (
+                    <div className="mt-2 flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-md text-muted-foreground">
+                        <Upload className="h-8 w-8 mb-2" />
+                        <p>File upload area</p>
+                    </div>
+                )}
+                {item.type === 'Matrix Table' && (
+                    <div className="mt-2">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead></TableHead>
+                                    <TableHead className="text-center">Poor</TableHead>
+                                    <TableHead className="text-center">Average</TableHead>
+                                    <TableHead className="text-center">Good</TableHead>
+                                    <TableHead className="text-center">Excellent</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell className="font-medium">Quality</TableCell>
+                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="1" disabled/></RadioGroup></TableCell>
+                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="2" disabled/></RadioGroup></TableCell>
+                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="3" disabled/></RadioGroup></TableCell>
+                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="4" disabled/></RadioGroup></TableCell>
+                                </TableRow>
+                                 <TableRow>
+                                    <TableCell className="font-medium">Speed</TableCell>
+                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="1" disabled/></RadioGroup></TableCell>
+                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="2" disabled/></RadioGroup></TableCell>
+                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="3" disabled/></RadioGroup></TableCell>
+                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="4" disabled/></RadioGroup></TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
                     </div>
                 )}
             </div>
@@ -88,15 +132,22 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
 
     if (item.type === 'Section Header') {
         return (
-            <div ref={setNodeRef} style={style} className="relative flex items-center gap-4 py-2" onClick={onSelect}>
+             <div ref={setNodeRef} style={style} className="relative flex items-center gap-4 py-2" onClick={onSelect}>
                 <div 
                     className={cn("absolute inset-0 -mx-4 rounded-md", selected && "bg-primary/5")}
                 ></div>
                 <div {...attributes} {...listeners} className="cursor-grab touch-none relative z-10 p-2">
                     <GripVertical className="h-5 w-5 text-muted-foreground" />
                 </div>
-                {renderContent()}
-                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="relative z-10"><Trash2 className="h-4 w-4 text-muted-foreground" /></Button>
+                <div className="flex-1">
+                    <div {...attributes} {...listeners} className="cursor-grab touch-none p-1 absolute -left-2 top-1/2 -translate-y-1/2">
+                        <GripVertical className="h-5 w-5 text-muted-foreground mt-1" />
+                    </div>
+                    <div onClick={onSelect} className="flex-1">
+                        {renderContent()}
+                    </div>
+                </div>
+                 <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="relative z-10"><Trash2 className="h-4 w-4 text-muted-foreground" /></Button>
             </div>
         )
     }
@@ -106,15 +157,15 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
             ref={setNodeRef}
             style={style}
             id={item.id}
-            className={cn("p-4 transition-shadow", selected ? 'border-2 border-primary shadow-lg' : 'hover:shadow-md')}
-            onClick={onSelect}
+            className={cn("transition-shadow", selected ? 'border-2 border-primary shadow-lg' : 'hover:shadow-md')}
         >
-            <div className="flex items-start gap-4">
-                <div {...attributes} {...listeners} className="cursor-grab touch-none p-1">
-                    <GripVertical className="h-5 w-5 text-muted-foreground mt-1" />
+            <div className="flex items-start gap-2">
+                 <div {...attributes} {...listeners} className="cursor-grab touch-none p-4">
+                    <GripVertical className="h-5 w-5 text-muted-foreground" />
                 </div>
-                {renderContent()}
-                <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onDelete(item.id); }}><Trash2 className="h-4 w-4 text-muted-foreground" /></Button>
+                <div className="flex-1 py-4 pr-4" onClick={onSelect}>
+                    {renderContent()}
+                </div>
             </div>
         </Card>
     );

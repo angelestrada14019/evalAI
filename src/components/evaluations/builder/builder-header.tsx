@@ -9,9 +9,10 @@ import { AIFormulaSuggester } from "@/components/evaluations/ai-formula-suggeste
 interface BuilderHeaderProps {
     title: string;
     description: string;
+    onSave: () => void;
 }
 
-export function BuilderHeader({ title, description }: BuilderHeaderProps) {
+export function BuilderHeader({ title, description, onSave }: BuilderHeaderProps) {
     const t = useTranslations('FormBuilderPage');
 
     return (
@@ -27,7 +28,7 @@ export function BuilderHeader({ title, description }: BuilderHeaderProps) {
                         <span className='hidden sm:inline'>{t('preview')}</span>
                     </Button>
                     <AIFormulaSuggester />
-                    <Button>
+                    <Button onClick={onSave}>
                         <Save className="mr-0 sm:mr-2 h-4 w-4" />
                         <span className='hidden sm:inline'>{t('save')}</span>
                     </Button>
