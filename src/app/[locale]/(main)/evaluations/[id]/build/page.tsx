@@ -32,6 +32,10 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     const checkScreenSize = () => {
       const largeScreen = window.innerWidth >= 1024;
       setIsLargeScreen(largeScreen);
+      if (largeScreen) {
+        setIsElementsSheetOpen(false);
+        setIsPropertiesSheetOpen(false);
+      }
     };
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
@@ -72,12 +76,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   }
 
   const handleDragStart = (event: DragStartEvent) => {
-    const id = event.active.id as string;
-    setActiveId(id);
-    
-    if (!isLargeScreen && id.startsWith('palette-')) {
-      setIsElementsSheetOpen(false);
-    }
+    setActiveId(event.active.id as string);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -138,6 +137,21 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     }
   };
 
+  const addItemFromPalette = (type: string) => {
+    if (!template) return;
+    const newItem = getNewFormItem(type, t, tq);
+    const updatedItems = [...template.items, newItem];
+    setTemplate({ ...template, items: updatedItems });
+    setIsElementsSheetOpen(false);
+
+    // Give a small delay for the sheet to close before selecting
+    setTimeout(() => {
+        handleSelectQuestion(newItem);
+        const element = document.getElementById(newItem.id);
+        element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
+  }
+
   if (!template) {
     return <div className="flex w-full min-h-screen items-center justify-center">{t('loading')}</div>;
   }
@@ -185,7 +199,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                 {tq(activePaletteItem.type as any)}
                 </Button>
             ) : activeFormItem ? (
-                <div className="p-4 rounded-md shadow-xl opacity-90 bg-card">
+                <div id={activeFormItem.id} className="p-4 rounded-md shadow-xl opacity-90 bg-card">
                     <p>{activeFormItem.label}</p>
                 </div>
             ): null}
@@ -209,7 +223,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
                 <SheetTitle>{t('formElements')}</SheetTitle>
               </SheetHeader>
               <div className="flex-1 overflow-y-auto">
-                <FormElementsPanel />
+                <FormElementsPanel onAddItem={addItemFromPalette} />
               </div>
             </SheetContent>
           </Sheet>

@@ -37,13 +37,13 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
     const renderContent = () => {
         if (item.type === 'Section Header') {
             return (
-                 <div className="flex-1 relative z-10 cursor-pointer" onClick={onSelect}>
+                 <div className="flex-1" >
                     <h3 className="text-xl font-bold">{item.label}</h3>
                 </div>
             )
         }
         return (
-            <div className="flex-1 cursor-pointer" onClick={onSelect}>
+            <div className="flex-1">
                 <p className="text-sm text-muted-foreground">{index + 1}. {tq(item.type as any)}</p>
                 <p className="font-semibold">{item.label}</p>
                 {item.imageUrl && (
@@ -88,7 +88,7 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
 
     if (item.type === 'Section Header') {
         return (
-            <div ref={setNodeRef} style={style} className="relative flex items-center gap-4 py-2">
+            <div ref={setNodeRef} style={style} className="relative flex items-center gap-4 py-2" onClick={onSelect}>
                 <div 
                     className={cn("absolute inset-0 -mx-4 rounded-md", selected && "bg-primary/5")}
                 ></div>
@@ -105,7 +105,9 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
         <Card
             ref={setNodeRef}
             style={style}
+            id={item.id}
             className={cn("p-4 transition-shadow", selected ? 'border-2 border-primary shadow-lg' : 'hover:shadow-md')}
+            onClick={onSelect}
         >
             <div className="flex items-start gap-4">
                 <div {...attributes} {...listeners} className="cursor-grab touch-none p-1">
@@ -117,4 +119,3 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
         </Card>
     );
 }
-
