@@ -33,14 +33,11 @@ interface UseEvaluationColumnsProps {
 }
 
 export const useEvaluationColumns = ({ t }: UseEvaluationColumnsProps): ColumnDef<Evaluation>[] => {
-    const tEvals = useTranslations('EvaluationsPage');
-    const tDataTable = useTranslations('DataTable');
-
     return useMemo(() => [
         {
             accessorKey: "title",
             header: ({ column }) => {
-                return <DataTableColumnHeader column={column} title={tEvals('tableTitle')} tDataTable={tDataTable} />
+                return <DataTableColumnHeader column={column} title={t('EvaluationsPage.tableTitle')} tDataTable={t} />
             },
             cell: ({ row }) => {
                 const evaluation = row.original
@@ -54,7 +51,7 @@ export const useEvaluationColumns = ({ t }: UseEvaluationColumnsProps): ColumnDe
         {
             accessorKey: "status",
             header: ({ column }) => {
-                return <DataTableColumnHeader column={column} title={tEvals('tableStatus')} tDataTable={tDataTable} />
+                return <DataTableColumnHeader column={column} title={t('EvaluationsPage.tableStatus')} tDataTable={t} />
             },
             cell: ({ row }) => (
                 <Badge variant={statusVariant(row.getValue("status"))}>
@@ -68,20 +65,20 @@ export const useEvaluationColumns = ({ t }: UseEvaluationColumnsProps): ColumnDe
         {
             accessorKey: "responses",
             header: ({ column }) => {
-                return <DataTableColumnHeader column={column} title={tEvals('tableResponses')} tDataTable={tDataTable} />
+                return <DataTableColumnHeader column={column} title={t('EvaluationsPage.tableResponses')} tDataTable={t} />
             },
             cell: ({ row }) => <div className="text-center">{row.getValue("responses")}</div>
         },
         {
             accessorKey: "lastModified",
             header: ({ column }) => {
-                return <DataTableColumnHeader column={column} title={tEvals('tableModified')} tDataTable={tDataTable} />
+                return <DataTableColumnHeader column={column} title={t('EvaluationsPage.tableModified')} tDataTable={t} />
             },
             cell: ({ row }) => format(new Date(row.getValue("lastModified")), "PP")
         },
         {
             id: "actions",
-            header: () => <div className="text-right">{tEvals('tableActions')}</div>,
+            header: () => <div className="text-right">{t('EvaluationsPage.tableActions')}</div>,
             cell: function Actions({ row }) {
                 const evaluation = row.original
                 return (
@@ -93,15 +90,15 @@ export const useEvaluationColumns = ({ t }: UseEvaluationColumnsProps): ColumnDe
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                                <DropdownMenuItem asChild><Link href={`/evaluations/${evaluation.id}/build`}>{tEvals('editAction')}</Link></DropdownMenuItem>
-                                <DropdownMenuItem>{tEvals('viewResponsesAction')}</DropdownMenuItem>
-                                <DropdownMenuItem>{tEvals('duplicateAction')}</DropdownMenuItem>
-                                <DropdownMenuItem className="text-destructive">{tEvals('deleteAction')}</DropdownMenuItem>
+                                <DropdownMenuItem asChild><Link href={`/evaluations/${evaluation.id}/build`}>{t('EvaluationsPage.editAction')}</Link></DropdownMenuItem>
+                                <DropdownMenuItem>{t('EvaluationsPage.viewResponsesAction')}</DropdownMenuItem>
+                                <DropdownMenuItem>{t('EvaluationsPage.duplicateAction')}</DropdownMenuItem>
+                                <DropdownMenuItem className="text-destructive">{t('EvaluationsPage.deleteAction')}</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
                 )
             },
         },
-    ], [tEvals, tDataTable]);
+    ], [t]);
 }
