@@ -24,7 +24,7 @@ export function BuilderHeader({ onSave }: BuilderHeaderProps) {
     }
 
     return (
-        <header className="flex-shrink-0 p-3 md:p-4 border-b bg-card">
+        <header className="p-3 md:p-4 border-b bg-card">
             <div className='flex flex-col gap-4'>
                 <div className="min-w-0 flex-1 space-y-1">
                     <Input 
