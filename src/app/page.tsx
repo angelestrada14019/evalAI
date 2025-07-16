@@ -1,5 +1,6 @@
-// This page is no longer used for redirection as the logic has been moved to the middleware.
-// It will likely never be rendered.
+import { redirect } from 'next/navigation';
+
+// This page redirects to the default locale's login page.
 export default function RootPage() {
-  return null;
+  redirect('/es/login');
 }
