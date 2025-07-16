@@ -59,14 +59,14 @@ export const getNewFormItem = (type: string, t: any, tq: any, existingItems: For
         ]
       };
     case 'Rating Scale':
-        const ratingOptions: Option[] = [];
-        for (let i = 1; i <= 5; i++) {
-            ratingOptions.push({ id: uuidv4(), label: `${i}`, value: i });
-        }
         return {
             ...finalBaseItem,
             ratingConfig: { max: 5 },
-            options: ratingOptions,
+            options: Array.from({ length: 5 }, (_, i) => ({
+                id: uuidv4(),
+                label: `${i + 1}`,
+                value: i + 1
+            }))
         }
     case 'Slider':
       return {
