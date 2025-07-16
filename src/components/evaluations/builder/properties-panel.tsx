@@ -224,15 +224,15 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                             <div className='flex items-center gap-2'>
                                 <div className='flex-1 space-y-1'>
                                     <Label htmlFor="slider-min" className='text-xs'>{t('min')}</Label>
-                                    <Input id="slider-min" type="number" value={sliderConfig?.min ?? 0} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, min: Number(e.target.value) } })} />
+                                    <Input id="slider-min" type="number" value={sliderConfig?.min ?? 0} onChange={(e) => update({ sliderConfig: { ...(sliderConfig ?? {min: 0, max: 100, step: 1}), min: Number(e.target.value) } })} />
                                 </div>
                                 <div className='flex-1 space-y-1'>
                                     <Label htmlFor="slider-max" className='text-xs'>{t('max')}</Label>
-                                    <Input id="slider-max" type="number" value={sliderConfig?.max ?? 100} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, max: Number(e.target.value) } })} />
+                                    <Input id="slider-max" type="number" value={sliderConfig?.max ?? 100} onChange={(e) => update({ sliderConfig: { ...(sliderConfig ?? {min: 0, max: 100, step: 1}), max: Number(e.target.value) } })} />
                                 </div>
                                 <div className='flex-1 space-y-1'>
                                     <Label htmlFor="slider-step" className='text-xs'>{t('step')}</Label>
-                                    <Input id="slider-step" type="number" value={sliderConfig?.step ?? 1} onChange={(e) => update({ sliderConfig: { ...sliderConfig!, step: Number(e.target.value) } })} />
+                                    <Input id="slider-step" type="number" value={sliderConfig?.step ?? 1} onChange={(e) => update({ sliderConfig: { ...(sliderConfig ?? {min: 0, max: 100, step: 1}), step: Number(e.target.value) } })} />
                                 </div>
                             </div>
                         </div>
@@ -243,7 +243,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                             <div className='flex items-center gap-2'>
                                 <div className='flex-1 space-y-1'>
                                     <Label htmlFor="rating-max" className='text-xs'>{t('max')}</Label>
-                                    <Input id="rating-max" type="number" value={ratingConfig?.max ?? 5} onChange={(e) => update({ ratingConfig: { ...(ratingConfig ?? {max: 5}), max: Number(e.target.value) } })} />
+                                    <Input id="rating-max" type="number" value={ratingConfig?.max ?? 5} onChange={(e) => update({ ratingConfig: { ...(ratingConfig ?? { max: 5 }), max: Number(e.target.value) } })} />
                                 </div>
                             </div>
                         </div>
@@ -260,5 +260,3 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
         </div>
     );
 }
-
-    
