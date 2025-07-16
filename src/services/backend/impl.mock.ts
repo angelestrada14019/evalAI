@@ -20,17 +20,22 @@ const MOCK_FULL_EVALUATIONS: { [key: string]: FormTemplate } = {
         title: 'Q3 2024 Engineering Performance Review',
         description: 'A comprehensive review of engineering performance for the third quarter.',
         items: [
-            // Simplified version for the mock
+            { id: uuidv4(), variableId: 'nombre', type: 'Text Input', label: 'Nombre', required: true, readOnly: true },
+            { id: uuidv4(), variableId: 'apellido', type: 'Text Input', label: 'Apellido', required: true, readOnly: true },
+            { id: uuidv4(), variableId: 'email', type: 'Text Input', label: 'Correo Electrónico', required: true, readOnly: true },
             { id: uuidv4(), type: 'Rating Scale', label: 'Code Quality', variableId: 'code_quality', required: true, ratingConfig: { max: 5 } },
             { id: uuidv4(), type: 'Rating Scale', label: 'Team Collaboration', variableId: 'team_collab', required: true, ratingConfig: { max: 5 } },
             { id: uuidv4(), type: 'Text Input', label: 'General Feedback', variableId: 'feedback', required: false },
         ]
     },
-    'eval_004': {
+     'eval_004': {
         id: 'eval_004',
         title: 'Sales Team Q2 Skills Assessment',
         description: 'Assessing the skills of the sales team for the second quarter.',
         items: [
+            { id: uuidv4(), variableId: 'nombre', type: 'Text Input', label: 'Nombre', required: true, readOnly: true },
+            { id: uuidv4(), variableId: 'apellido', type: 'Text Input', label: 'Apellido', required: true, readOnly: true },
+            { id: uuidv4(), variableId: 'email', type: 'Text Input', label: 'Correo Electrónico', required: true, readOnly: true },
             { id: uuidv4(), type: 'Slider', label: 'Negotiation Skills', variableId: 'negotiation_skills', required: true, sliderConfig: { min: 1, max: 10, step: 1 } },
             { id: uuidv4(), type: 'Multiple Choice', label: 'Product Knowledge', variableId: 'product_knowledge', required: true, options: [
                 { id: uuidv4(), label: 'Needs Improvement', value: 1 },
@@ -65,8 +70,34 @@ export async function getEvaluations(): Promise<Evaluation[]> {
 export async function getEvaluationById(id: string): Promise<FormTemplate | null> {
     console.log(`[Backend Mock] Fetching evaluation by ID: ${id}`);
     await new Promise(resolve => setTimeout(resolve, 300));
-    const evaluation = MOCK_FULL_EVALUATIONS[id] || null;
-    return evaluation;
+    
+    // If the full evaluation already exists in our mock, return it.
+    if (MOCK_FULL_EVALUATIONS[id]) {
+        return MOCK_FULL_EVALUATIONS[id];
+    }
+
+    // If it doesn't exist in full details, but exists in the list,
+    // create a default template for it on the fly.
+    const listItem = MOCK_EVALUATIONS_LIST.find(e => e.id === id);
+    if (listItem) {
+        console.log(`[Backend Mock] No full template for ${id}, creating a default one.`);
+        const defaultTemplate: FormTemplate = {
+            id: listItem.id,
+            title: listItem.title,
+            description: `This is a generated template for ${listItem.title}.`,
+            items: [
+                 { id: uuidv4(), variableId: 'nombre', type: 'Text Input', label: 'Nombre', required: true, readOnly: true },
+                 { id: uuidv4(), variableId: 'apellido', type: 'Text Input', label: 'Apellido', required: true, readOnly: true },
+                 { id: uuidv4(), variableId: 'email', type: 'Text Input', label: 'Correo Electrónico', required: true, readOnly: true },
+            ]
+        };
+        // Save it for future requests
+        MOCK_FULL_EVALUATIONS[id] = defaultTemplate;
+        return defaultTemplate;
+    }
+
+    // If it's not in the list at all, it's not found.
+    return null;
 }
 
 export async function saveEvaluation(template: FormTemplate): Promise<FormTemplate> {
@@ -94,15 +125,16 @@ export async function saveEvaluation(template: FormTemplate): Promise<FormTempla
 
     } else {
         // This is an existing evaluation, update it
-        MOCK_FULL_EVALUATIONS[template.id] = template;
+        const idToUpdate = template.id!;
+        MOCK_FULL_EVALUATIONS[idToUpdate] = template;
         
-        const listItem = MOCK_EVALUATIONS_LIST.find(e => e.id === template.id);
+        const listItem = MOCK_EVALUATIONS_LIST.find(e => e.id === idToUpdate);
         if (listItem) {
             listItem.title = template.title;
             listItem.lastModified = new Date().toISOString();
         }
         
-        console.log(`[Backend Mock] Updated evaluation with ID: ${template.id}`);
+        console.log(`[Backend Mock] Updated evaluation with ID: ${idToUpdate}`);
         return template;
     }
 }
