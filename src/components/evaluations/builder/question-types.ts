@@ -15,29 +15,19 @@ export const questionTypes = [
   { type: "File Upload", icon: Upload },
 ];
 
-const generateVariableId = (label: string, existingIds: string[]): string => {
-    const baseId = label
-        .toLowerCase()
-        .replace(/[^a-z0-9\s]/g, '') // remove special characters
-        .replace(/\s+/g, '_') // replace spaces with underscores
-        .substring(0, 50);
-
-    let finalId = baseId;
-    let counter = 1;
-    while (existingIds.includes(finalId)) {
-        finalId = `${baseId}_${counter}`;
-        counter++;
-    }
-    return finalId;
+const generateVariableId = (label: string, itemId: string): string => {
+    const cleanLabel = label.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 15);
+    const shortId = itemId.substring(0, 4);
+    return `${cleanLabel}_${shortId}`;
 }
 
 
 export const getNewFormItem = (type: string, t: any, tq: any, existingItems: FormItem[] = [], label?: string): FormItem => {
   const defaultLabel = label || t('newQuestionLabel', { type: tq(type as any) });
-  const existingVarIds = existingItems.map(item => item.variableId);
+  const itemId = uuidv4();
 
   const baseItem: Omit<FormItem, 'variableId' | 'type'> = {
-    id: uuidv4(),
+    id: itemId,
     label: defaultLabel,
     required: false,
     readOnly: false,
@@ -45,7 +35,7 @@ export const getNewFormItem = (type: string, t: any, tq: any, existingItems: For
   };
 
   const itemWithType = { ...baseItem, type };
-  const variableId = generateVariableId(itemWithType.label, existingVarIds);
+  const variableId = generateVariableId(itemWithType.label, itemWithType.id);
   
   const finalBaseItem = { ...itemWithType, variableId };
 
