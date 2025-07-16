@@ -97,6 +97,7 @@
     "max": "Máx",
     "step": "Paso",
     "variableIdLabel": "ID de Variable (para puntuación)",
+    "variableIdReportLabel": "ID de Variable (para referencia en reporte)",
     "variableIdHint": "Un ID único usado en las fórmulas. Sin espacios ni caracteres especiales."
   },
   "AIFormulaSuggester": {

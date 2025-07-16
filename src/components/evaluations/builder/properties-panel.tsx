@@ -19,6 +19,7 @@ interface PropertiesPanelProps {
     onUpdateQuestion: (id: string, updates: Partial<FormItem>) => void;
 }
 
+const NON_VARIABLE_TYPES = ['Section Header', 'File Upload'];
 const NON_SCORABLE_TYPES = ['Text Input', 'Section Header', 'File Upload'];
 
 export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: PropertiesPanelProps) {
@@ -155,7 +156,8 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
         </div>
     );
 
-    const showScoringFields = !NON_SCORABLE_TYPES.includes(type);
+    const showVariableIdField = !NON_VARIABLE_TYPES.includes(type);
+    const showRequiredSwitch = !NON_SCORABLE_TYPES.includes(type);
 
     return (
         <div className="p-4 bg-card h-full overflow-y-auto">
@@ -168,9 +170,9 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                         <Textarea id="question-text" value={label} onChange={(e) => update({ label: e.target.value })} disabled={readOnly} />
                     </div>
 
-                    {showScoringFields && (
+                    {showVariableIdField && (
                          <div className="space-y-2">
-                            <Label htmlFor="variable-id">{t('variableIdLabel')}</Label>
+                            <Label htmlFor="variable-id">{type === 'Text Input' ? t('variableIdReportLabel') : t('variableIdLabel')}</Label>
                             <Input 
                                 id="variable-id" 
                                 value={variableId || ''} 
@@ -250,7 +252,7 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                         </div>
                     )}
                     
-                    {showScoringFields && (
+                    {showRequiredSwitch && (
                     <div className="flex items-center justify-between pt-4 border-t">
                         <Label htmlFor="required-switch">{t('required')}</Label>
                         <Switch id="required-switch" checked={required} onCheckedChange={(checked) => update({ required: checked })} disabled={readOnly}/>

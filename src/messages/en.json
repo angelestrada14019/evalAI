@@ -95,7 +95,10 @@
     "sliderConfigTitle": "Slider Configuration",
     "min": "Min",
     "max": "Max",
-    "step": "Step"
+    "step": "Step",
+    "variableIdLabel": "Variable ID (for scoring)",
+    "variableIdReportLabel": "Variable ID (for report reference)",
+    "variableIdHint": "Unique ID used in formulas. No spaces or special characters."
   },
   "AIFormulaSuggester": {
     "buttonText": "AI Scoring Logic",
