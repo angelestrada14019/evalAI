@@ -33,3 +33,7 @@ export const EvaluationSchema = z.object({
     lastModified: z.string().datetime() | z.string(),
 });
 export type Evaluation = z.infer<typeof EvaluationSchema>;
+
+
+// Re-using the builder types for the full template structure
+export type { FormTemplate } from '@/components/evaluations/builder/types';

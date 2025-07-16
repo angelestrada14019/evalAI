@@ -1,9 +1,9 @@
-
 'use client'
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import type { FormItem, FormTemplate } from '@/components/evaluations/builder/types';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { usePathname } from 'next/navigation';
 
 interface FormBuilderContextType {
     template: FormTemplate | null;
@@ -43,7 +43,18 @@ export const FormBuilderProvider = ({ children }: { children: React.ReactNode })
     const isMobile = useIsMobile();
     const [isElementsSheetOpen, setIsElementsSheetOpen] = useState(false);
     const [isPropertiesSheetOpen, setIsPropertiesSheetOpen] = useState(false);
+    const pathname = usePathname();
     
+    useEffect(() => {
+        // When the user navigates away from the builder, clear the template.
+        // This ensures that stale data isn't carried over.
+        if (!pathname.includes('/build')) {
+            setTemplate(null);
+            setSelectedQuestion(null);
+        }
+    }, [pathname]);
+
+
     useEffect(() => {
         if (!isMobile) {
             setIsElementsSheetOpen(false);

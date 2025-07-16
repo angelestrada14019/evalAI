@@ -22,6 +22,7 @@ export interface FormItem {
 }
 
 export interface FormTemplate {
+  id?: string | null; // Optional: will be null/undefined for new templates
   title: string;
   description: string;
   items: FormItem[];
