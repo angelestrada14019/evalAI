@@ -104,8 +104,19 @@ const flow = genkitAi.defineFlow(
     outputSchema: GenerateTemplateFlowOutputSchema,
   },
   async input => {
-    const { output } = await generateTemplatePrompt(input);
-    return output!;
+    console.log('[Flow] Executing generateTemplateFlow...');
+    try {
+      const { output } = await generateTemplatePrompt(input);
+      if (!output) {
+        console.error('[Flow] Genkit prompt returned a null or undefined output.');
+        throw new Error('Genkit prompt returned null output.');
+      }
+      console.log('[Flow] Successfully received output from prompt.');
+      return output;
+    } catch (e) {
+      console.error('[Flow] Error during prompt execution:', e);
+      throw e; // Re-throw the original error to be caught by the action
+    }
   }
 );
 
