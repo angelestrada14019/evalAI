@@ -47,36 +47,27 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
             const isNewEvaluation = evaluationId.startsWith('new_');
 
             if (!isNewEvaluation) {
-                // Always fetch existing evaluations from backend to ensure data is fresh
                 try {
-                    console.log(`Fetching existing evaluation with ID: ${evaluationId}`);
                     const existingEvaluation = await backend().getEvaluationById(evaluationId);
                     if (existingEvaluation) {
                         setTemplate(existingEvaluation);
                     } else {
-                        console.error(`No evaluation found for ID ${evaluationId}, redirecting.`);
                         router.push('/evaluations');
-                        return;
                     }
                 } catch (error) {
                     console.error("Failed to load evaluation:", error);
                     router.push('/evaluations');
-                    return;
                 }
             } else if (isNewEvaluation && !template) {
-                // It's a new evaluation but context is empty (e.g. direct navigation), create a default.
-                 console.log("Creating default template for new evaluation.");
                  setTemplate(createDefaultTemplate(t, tq));
             }
             setIsContextLoading(false);
         };
 
         loadEvaluation();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [evaluationId]); // Only re-run if the ID changes.
+    }, [evaluationId, setTemplate, setIsContextLoading, router, t, tq, template]);
 
     useEffect(() => {
-      // Logic to select the first question if none is selected and template is loaded
       if(template && !selectedQuestion && template.items.length > 0) {
         setSelectedQuestion(template.items[0]);
       }
@@ -153,7 +144,6 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
         if (!template) return;
         const newItems = template.items.filter(item => item.id !== id);
         
-        // If the deleted question was selected, select the next one or the last one
         if (selectedQuestion && selectedQuestion.id === id) {
             const deletedIndex = template.items.findIndex(item => item.id === id);
             const newSelection = newItems[deletedIndex] || newItems[deletedIndex - 1] || null;
@@ -164,15 +154,13 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
     
     const handleSave = async () => {
         if (!template) return;
-        console.log("Simulating save to backend:", JSON.stringify(template, null, 2));
-
+        
         const savedEvaluation = await backend().saveEvaluation(template);
         
         setTemplate(savedEvaluation);
 
         alert(`Evaluation "${savedEvaluation.title}" saved!`);
 
-        // If the ID has changed (from 'new_...' to 'eval_...'), update the URL
         if (evaluationId !== savedEvaluation.id) {
             router.replace(`/evaluations/${savedEvaluation.id}/build`);
         }
@@ -182,7 +170,7 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
 
     const renderDesktopLayout = () => (
         <div className="flex-1 grid grid-cols-12 overflow-hidden">
-            <aside className="col-span-2 border-r overflow-y-auto">
+            <aside className="col-span-2 border-r">
                  <Tabs defaultValue="elements" className="h-full flex flex-col">
                     <TabsList className="m-4">
                         <TabsTrigger value="elements" className="flex-1">{t('formElements')}</TabsTrigger>
