@@ -30,7 +30,12 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
 
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsLargeScreen(window.innerWidth >= 1024);
+      const largeScreen = window.innerWidth >= 1024;
+      setIsLargeScreen(largeScreen);
+      // If screen becomes small, close properties panel if it's not tied to a selection
+      if (!largeScreen) {
+        setSelectedQuestion(null);
+      }
     };
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
@@ -51,10 +56,8 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
       try {
         const parsedTemplate = JSON.parse(storedTemplate);
         setTemplate(parsedTemplate);
-        if (parsedTemplate.items && parsedTemplate.items.length > 0) {
-          if (isLargeScreen) {
+        if (isLargeScreen && parsedTemplate.items && parsedTemplate.items.length > 0) {
             setSelectedQuestion(parsedTemplate.items[0]);
-          }
         }
       } catch (error) {
         console.error("Failed to parse template from localStorage", error);
@@ -64,16 +67,13 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
       setTemplate({ title: "New Evaluation", description: "Start building your form.", items: [] });
     }
   }, [isLargeScreen]);
-
-  useEffect(() => {
-    if(!isLargeScreen) {
-        setSelectedQuestion(null);
-    } else {
-      if (template && template.items.length > 0 && !selectedQuestion) {
-        setSelectedQuestion(template.items[0]);
-      }
+  
+  const handleSelectQuestion = (item: FormItem) => {
+    setSelectedQuestion(item);
+    if (!isLargeScreen) {
+      setIsPropertiesSheetOpen(true);
     }
-  }, [isLargeScreen, template, selectedQuestion]);
+  }
 
   const handleDragStart = (event: DragStartEvent) => {
     const id = event.active.id as string;
@@ -141,13 +141,6 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
         setSelectedQuestion(newItems.length > 0 ? newItems[Math.max(0, newItems.findIndex(item => item.id === id) -1)] : null);
     }
   };
-  
-  const handleSelectQuestion = (item: FormItem) => {
-    setSelectedQuestion(item);
-    if (!isLargeScreen) {
-      setIsPropertiesSheetOpen(true);
-    }
-  }
 
   if (!template) {
     return <div className="flex w-full items-center justify-center">{t('loading')}</div>;
@@ -243,5 +236,3 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     </>
   )
 }
-
-    
