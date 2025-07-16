@@ -28,20 +28,15 @@ export const useFormBuilder = () => {
 
 interface FormBuilderProviderProps {
     children: ReactNode;
-    initialTemplate: FormTemplate | null;
 }
 
-export const FormBuilderProvider = ({ children, initialTemplate }: FormBuilderProviderProps) => {
-    const [template, setTemplate] = useState<FormTemplate | null>(initialTemplate);
+export const FormBuilderProvider = ({ children }: FormBuilderProviderProps) => {
+    const [template, setTemplate] = useState<FormTemplate | null>(null);
     const [selectedQuestion, setSelectedQuestion] = useState<FormItem | null>(null);
     const isMobile = useIsMobile();
     const [isElementsSheetOpen, setIsElementsSheetOpen] = useState(false);
     const [isPropertiesSheetOpen, setIsPropertiesSheetOpen] = useState(false);
     
-    useEffect(() => {
-        setTemplate(initialTemplate);
-    }, [initialTemplate]);
-
     useEffect(() => {
         if (!isMobile) {
             setIsElementsSheetOpen(false);
