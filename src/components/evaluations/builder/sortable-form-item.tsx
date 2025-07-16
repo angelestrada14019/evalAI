@@ -36,15 +36,14 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
 
     if (item.type === 'Section Header') {
         return (
-            <div ref={setNodeRef} style={style} className="relative flex items-center gap-4 py-2">
+            <div ref={setNodeRef} style={style} className="relative flex items-center gap-4 py-2" onClick={onSelect}>
                 <div 
-                    onClick={onSelect} 
                     className={cn("absolute inset-0 -mx-4 rounded-md cursor-pointer", selected && "bg-primary/5")}
                 ></div>
                 <div {...attributes} {...listeners} className="cursor-grab touch-none relative z-10">
                     <GripVertical className="h-5 w-5 text-muted-foreground" />
                 </div>
-                <div onClick={onSelect} className="flex-1 relative z-10 cursor-pointer">
+                <div className="flex-1 relative z-10 cursor-pointer">
                     <h3 className="text-xl font-bold">{item.label}</h3>
                 </div>
                 <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="relative z-10"><Trash2 className="h-4 w-4 text-muted-foreground" /></Button>
@@ -107,3 +106,5 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
         </Card>
     );
 }
+
+    

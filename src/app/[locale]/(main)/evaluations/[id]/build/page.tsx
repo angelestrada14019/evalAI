@@ -150,7 +150,7 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   }
 
   if (!template) {
-    return <div className="flex h-screen w-full items-center justify-center">{t('loading')}</div>;
+    return <div className="flex w-full items-center justify-center">{t('loading')}</div>;
   }
   
   const activePaletteItem = activeId && activeId.startsWith('palette-') ? questionTypes.find(q => `palette-${q.type}` === activeId) : null;
@@ -243,3 +243,5 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     </>
   )
 }
+
+    
