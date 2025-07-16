@@ -10,7 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { GripVertical, Trash2, Star, Upload, File } from "lucide-react";
+import { GripVertical, Trash2, Star, Upload } from "lucide-react";
 import type { FormItem } from "./types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -93,35 +93,33 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                     <div className="mt-2 flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-md text-muted-foreground">
                         <Upload className="h-8 w-8 mb-2" />
                         <p>File upload area</p>
+                        {item.fileUploadConfig &&
+                            <p className="text-xs mt-1">
+                                {`Accepts: ${item.fileUploadConfig.allowedTypes.map(t => t.split('/')[1]).join(', ')} | Max size: ${item.fileUploadConfig.maxSizeMB}MB`}
+                            </p>
+                        }
                     </div>
                 )}
                 {item.type === 'Matrix Table' && (
-                    <div className="mt-2">
+                    <div className="mt-2 overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>
                                     <TableHead></TableHead>
-                                    <TableHead className="text-center">Poor</TableHead>
-                                    <TableHead className="text-center">Average</TableHead>
-                                    <TableHead className="text-center">Good</TableHead>
-                                    <TableHead className="text-center">Excellent</TableHead>
+                                    {item.matrixConfig?.columns.map((col, i) => (
+                                        <TableHead key={i} className="text-center">{col}</TableHead>
+                                    ))}
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                <TableRow>
-                                    <TableCell className="font-medium">Quality</TableCell>
-                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="1" disabled/></RadioGroup></TableCell>
-                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="2" disabled/></RadioGroup></TableCell>
-                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="3" disabled/></RadioGroup></TableCell>
-                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="4" disabled/></RadioGroup></TableCell>
-                                </TableRow>
-                                 <TableRow>
-                                    <TableCell className="font-medium">Speed</TableCell>
-                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="1" disabled/></RadioGroup></TableCell>
-                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="2" disabled/></RadioGroup></TableCell>
-                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="3" disabled/></RadioGroup></TableCell>
-                                    <TableCell><RadioGroup className="mx-auto w-min"><RadioGroupItem value="4" disabled/></RadioGroup></TableCell>
-                                </TableRow>
+                                {item.matrixConfig?.rows.map((row, i) => (
+                                    <TableRow key={i}>
+                                        <TableCell className="font-medium">{row}</TableCell>
+                                        {item.matrixConfig?.columns.map((_, j) => (
+                                             <TableCell key={j}><RadioGroup className="mx-auto w-min"><RadioGroupItem value={`${i}-${j}`} disabled/></RadioGroup></TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))}
                             </TableBody>
                         </Table>
                     </div>
@@ -136,16 +134,11 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                 <div 
                     className={cn("absolute inset-0 -mx-4 rounded-md", selected && "bg-primary/5")}
                 ></div>
-                <div {...attributes} {...listeners} className="cursor-grab touch-none relative z-10 p-2">
+                 <div {...attributes} {...listeners} className="cursor-grab touch-none relative z-10 p-2">
                     <GripVertical className="h-5 w-5 text-muted-foreground" />
                 </div>
-                <div className="flex-1">
-                    <div {...attributes} {...listeners} className="cursor-grab touch-none p-1 absolute -left-2 top-1/2 -translate-y-1/2">
-                        <GripVertical className="h-5 w-5 text-muted-foreground mt-1" />
-                    </div>
-                    <div onClick={onSelect} className="flex-1">
-                        {renderContent()}
-                    </div>
+                <div className="flex-1" onClick={onSelect}>
+                    {renderContent()}
                 </div>
                  <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="relative z-10"><Trash2 className="h-4 w-4 text-muted-foreground" /></Button>
             </div>

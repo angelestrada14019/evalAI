@@ -39,7 +39,23 @@ export const getNewFormItem = (type: string, t: any, tq: any): FormItem => {
       return {
         ...baseItem,
         ratingConfig: { max: 5 }
-      }
+      };
+    case 'Matrix Table':
+      return {
+        ...baseItem,
+        matrixConfig: {
+            rows: ['Quality', 'Speed'],
+            columns: ['Poor', 'Average', 'Good', 'Excellent']
+        }
+      };
+    case 'File Upload':
+        return {
+            ...baseItem,
+            fileUploadConfig: {
+                allowedTypes: ['image/jpeg', 'image/png', 'application/pdf'],
+                maxSizeMB: 100,
+            }
+        }
     default:
       return baseItem;
   }

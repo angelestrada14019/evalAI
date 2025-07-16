@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ImagePlus, PlusCircle, Trash2 } from "lucide-react";
 import type { FormItem } from "./types";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 
 interface PropertiesPanelProps {
     selectedQuestion: FormItem | null;
@@ -31,26 +33,69 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
         );
     }
     
-    const { id, type, label, required, options, sliderConfig } = selectedQuestion;
+    const { id, type, label, required, options, sliderConfig, matrixConfig, fileUploadConfig } = selectedQuestion;
     
     const update = (updates: Partial<FormItem>) => {
         onUpdateQuestion(id, updates);
     };
     
-    const addOption = () => {
-        const newOptions = [...(options || []), `Option ${(options?.length || 0) + 1}`];
-        update({ options: newOptions });
+    const handleListChange = (listType: 'options' | 'matrixRows' | 'matrixCols', index: number, value: string) => {
+        let newList: string[] | undefined;
+        if (listType === 'options') {
+            newList = [...(options || [])];
+        } else if (listType === 'matrixRows') {
+            newList = [...(matrixConfig?.rows || [])];
+        } else if (listType === 'matrixCols') {
+            newList = [...(matrixConfig?.columns || [])];
+        }
+        
+        if (newList) {
+            newList[index] = value;
+            if (listType === 'options') update({ options: newList });
+            if (listType === 'matrixRows') update({ matrixConfig: { ...matrixConfig!, rows: newList }});
+            if (listType === 'matrixCols') update({ matrixConfig: { ...matrixConfig!, columns: newList }});
+        }
     };
-  
-    const deleteOption = (optionIndex: number) => {
-        const newOptions = options?.filter((_, i) => i !== optionIndex);
-        update({ options: newOptions });
+    
+    const addToList = (listType: 'options' | 'matrixRows' | 'matrixCols') => {
+        if (listType === 'options') {
+            const newOptions = [...(options || []), `Option ${(options?.length || 0) + 1}`];
+            update({ options: newOptions });
+        } else if (listType === 'matrixRows') {
+            const newRows = [...(matrixConfig?.rows || []), `New Row`];
+            update({ matrixConfig: { ...matrixConfig!, rows: newRows }});
+        } else if (listType === 'matrixCols') {
+            const newCols = [...(matrixConfig?.columns || []), `New Col`];
+            update({ matrixConfig: { ...matrixConfig!, columns: newCols }});
+        }
     };
 
-    const updateOption = (optionIndex: number, value: string) => {
-        const newOptions = options?.map((o, idx) => idx === optionIndex ? value : o);
-        update({ options: newOptions });
-    }
+    const deleteFromList = (listType: 'options' | 'matrixRows' | 'matrixCols', index: number) => {
+        let newList: string[] | undefined;
+        if (listType === 'options') {
+            newList = options?.filter((_, i) => i !== index);
+            update({ options: newList });
+        } else if (listType === 'matrixRows') {
+            newList = matrixConfig?.rows.filter((_, i) => i !== index);
+            update({ matrixConfig: { ...matrixConfig!, rows: newList || [] }});
+        } else if (listType === 'matrixCols') {
+            newList = matrixConfig?.columns.filter((_, i) => i !== index);
+            update({ matrixConfig: { ...matrixConfig!, columns: newList || [] }});
+        }
+    };
+
+    const renderListEditor = (title: string, list: string[] | undefined, listType: 'options' | 'matrixRows' | 'matrixCols') => (
+        <div className="space-y-2">
+            <Label>{title}</Label>
+            {list?.map((item, i) => (
+                <div key={i} className="flex items-center gap-2">
+                    <Input value={item} onChange={(e) => handleListChange(listType, i, e.target.value)} />
+                    <Button variant="ghost" size="icon" onClick={() => deleteFromList(listType, i)}><Trash2 className="h-4 w-4 text-muted-foreground"/></Button>
+                </div>
+            ))}
+            <Button variant="outline" size="sm" className="w-full" onClick={() => addToList(listType)}><PlusCircle className="mr-2 h-4 w-4" /> Add {title.slice(0,-1)}</Button>
+        </div>
+    );
 
     return (
         <div className="p-4 bg-card h-full overflow-y-auto">
@@ -75,18 +120,34 @@ export function PropertiesPanel({ selectedQuestion, onUpdateQuestion }: Properti
                                     </Button>
                                 )}
                             </div>
-                            {type === 'Multiple Choice' && (
-                                <div className="space-y-2">
-                                    <Label>{t('options')}</Label>
-                                    {options?.map((opt, i) => (
-                                        <div key={i} className="flex items-center gap-2">
-                                            <Input value={opt} onChange={(e) => updateOption(i, e.target.value)} />
-                                            <Button variant="ghost" size="icon" onClick={() => deleteOption(i)}><Trash2 className="h-4 w-4 text-muted-foreground"/></Button>
-                                        </div>
-                                    ))}
-                                    <Button variant="outline" size="sm" className="w-full" onClick={addOption}><PlusCircle className="mr-2 h-4 w-4" />{t('addOption')}</Button>
+                            <Separator />
+                            {type === 'Multiple Choice' && renderListEditor('Options', options, 'options')}
+
+                            {type === 'Matrix Table' && matrixConfig && (
+                                <div className="space-y-4">
+                                    {renderListEditor('Rows', matrixConfig.rows, 'matrixRows')}
+                                    {renderListEditor('Columns', matrixConfig.columns, 'matrixCols')}
                                 </div>
                             )}
+
+                            {type === 'File Upload' && fileUploadConfig && (
+                                <div className="space-y-2">
+                                    <Label>File Upload Configuration</Label>
+                                    <div className="text-sm p-3 bg-secondary rounded-md space-y-2">
+                                        <p>Max file size: <Badge variant="secondary">{fileUploadConfig.maxSizeMB} MB</Badge></p>
+                                        <div>
+                                            Allowed types:
+                                            <div className="flex flex-wrap gap-1 mt-1">
+                                                {fileUploadConfig.allowedTypes.map(type => (
+                                                    <Badge key={type} variant="secondary">{type.split('/')[1]}</Badge>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">Configuration is currently view-only.</p>
+                                </div>
+                            )}
+
                             {type === 'Slider' && (
                                 <div className="space-y-4">
                                     <Label>Slider Configuration</Label>

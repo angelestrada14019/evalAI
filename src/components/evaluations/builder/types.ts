@@ -9,6 +9,8 @@ export interface FormItem {
   options?: string[];
   sliderConfig?: { min: number; max: number; step: number };
   ratingConfig?: { max: number };
+  matrixConfig?: { rows: string[]; columns: string[] };
+  fileUploadConfig?: { allowedTypes: string[]; maxSizeMB: number };
 }
 
 export interface FormTemplate {
@@ -16,5 +18,3 @@ export interface FormTemplate {
   description: string;
   items: FormItem[];
 }
-
-    
