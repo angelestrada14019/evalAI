@@ -69,8 +69,12 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   useEffect(() => {
     if(!isLargeScreen) {
         setSelectedQuestion(null);
+    } else {
+      if (template && template.items.length > 0 && !selectedQuestion) {
+        setSelectedQuestion(template.items[0]);
+      }
     }
-  }, [isLargeScreen]);
+  }, [isLargeScreen, template, selectedQuestion]);
 
   const handleDragStart = (event: DragStartEvent) => {
     const id = event.active.id as string;
@@ -156,9 +160,9 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
   return (
     <>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="flex flex-col">
+        <div className="flex h-screen flex-col">
           <BuilderHeader title={template.title} description={template.description} />
-          <div className="flex-1 grid grid-cols-1 lg:grid-cols-12">
+          <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
             
             {isLargeScreen && (
               <aside className="lg:col-span-2 bg-card border-r">
@@ -240,3 +244,5 @@ export default function FormBuilderPage({ params }: { params: { id: string } }) 
     </>
   )
 }
+
+    
