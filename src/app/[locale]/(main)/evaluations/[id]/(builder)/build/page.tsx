@@ -44,8 +44,8 @@ function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
         const loadEvaluation = async () => {
             setIsLoading(true);
             // If there's already a template in context (from the 'new' page), use it.
-            if (template) {
-                console.log("Using template from context.");
+            if (template && evaluationId.startsWith('new_')) {
+                console.log("Using template from context for new evaluation.");
                 setIsLoading(false);
                 return;
             }
