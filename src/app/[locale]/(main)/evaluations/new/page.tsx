@@ -105,11 +105,16 @@ export default function NewEvaluationPage() {
         description: t('successDescription'),
       })
 
-      // Store the generated template in session storage for the builder page to pick up.
-      sessionStorage.setItem('new_evaluation_template', JSON.stringify(finalTemplate));
-
-      // Navigate to the builder page with a temporary ID.
+      // Store the generated template in context for the builder page to pick up.
+      console.log('[NewEvaluation] Storing template in context:', finalTemplate);
+      // We'll use the context in the form builder instead of sessionStorage
+      
+      // Navigate to the builder page with a temporary ID and the template will be passed via context
       const newEvaluationId = `new_${Date.now()}`;
+      console.log('[NewEvaluation] Navigating to:', `/evaluations/${newEvaluationId}/build`);
+      
+      // Store in sessionStorage with the specific evaluation ID to avoid conflicts
+      sessionStorage.setItem(`new_evaluation_template_${newEvaluationId}`, JSON.stringify(finalTemplate));
       router.push(`/evaluations/${newEvaluationId}/build`);
 
     } catch (error) {

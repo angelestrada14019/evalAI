@@ -112,31 +112,39 @@ export function SortableFormItem({ item, index, selected, onSelect, onDelete }: 
                     </div>
                 )}
                 {item.type === 'Matrix Table' && (
-                    <div className="mt-2 overflow-x-auto">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead></TableHead>
-                                    {item.matrixConfig?.columns.map((col) => (
-                                        <TableHead key={col.id} className="text-center">{col.label}</TableHead>
-                                    ))}
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {item.matrixConfig?.rows.map((row, i) => (
-                                    <TableRow key={i}>
-                                        <TableCell className="font-medium">{row}</TableCell>
+                    <div className="mt-2 relative">
+                        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                            <Table className="min-w-full">
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="sticky left-0 bg-background z-10 min-w-[120px]"></TableHead>
                                         {item.matrixConfig?.columns.map((col) => (
-                                             <TableCell key={col.id} className="text-center">
-                                                <RadioGroup key={`${i}-${col.id}`} className="mx-auto w-min">
-                                                    <RadioGroupItem value={`${i}-${col.id}`} disabled/>
-                                                </RadioGroup>
-                                            </TableCell>
+                                            <TableHead key={col.id} className="text-center min-w-[100px] whitespace-nowrap">{col.label}</TableHead>
                                         ))}
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                </TableHeader>
+                                <TableBody>
+                                    {item.matrixConfig?.rows.map((row, i) => (
+                                        <TableRow key={i}>
+                                            <TableCell className="font-medium sticky left-0 bg-background z-10 min-w-[120px]">{row}</TableCell>
+                                            {item.matrixConfig?.columns.map((col) => (
+                                                 <TableCell key={col.id} className="text-center min-w-[100px]">
+                                                    <RadioGroup key={`${i}-${col.id}`} className="mx-auto w-min">
+                                                        <RadioGroupItem value={`${i}-${col.id}`} disabled/>
+                                                    </RadioGroup>
+                                                </TableCell>
+                                            ))}
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
+                        {/* Scroll indicator for many columns */}
+                        {(item.matrixConfig?.columns.length || 0) > 3 && (
+                            <div className="absolute top-2 right-2 text-xs text-muted-foreground bg-background/80 px-2 py-1 rounded">
+                                ← Scroll →
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

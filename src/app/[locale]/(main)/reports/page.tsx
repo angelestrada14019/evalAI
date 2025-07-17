@@ -5,23 +5,15 @@ import { ReportsClient } from '@/components/reports/reports-client';
 import {getTranslations} from 'next-intl/server';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
 
-const reports = [
-  { id: 'REP-001', title: 'Q1 2024 Engineering Performance', date: '2024-04-05', type: 'Aggregate' as const, status: 'Completed' as const },
-  { id: 'REP-002', title: 'John Doe - Performance Review', date: '2024-04-03', type: 'Individual' as const, status: 'Completed' as const },
-  { id: 'REP-003', title: 'Sales Team Skills Assessment', date: '2024-03-28', type: 'Aggregate' as const, status: 'Completed' as const },
-  { id: 'REP-004', title: 'UX/UI Design Competency Report', date: '2024-03-15', type: 'Aggregate' as const, status: 'Completed' as const },
-  { id: 'REP-005', title: 'Jane Smith - Onboarding Evaluation', date: '2024-03-12', type: 'Individual' as const, status: 'Completed' as const },
-]
-
 export default async function ReportsPage() {
     const t = await getTranslations('ReportsPage');
     const tB = await getTranslations('Breadcrumbs');
+    const reports = await backend().getReports();
 
     const breadcrumbItems = [
       { label: tB('home'), href: '/dashboard' },
       { label: tB('reports') },
     ];
-
 
   return (
     <div className="flex flex-col gap-6">

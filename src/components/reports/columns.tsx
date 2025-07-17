@@ -16,14 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "../ui/data-table-column-header"
-
-export type Report = {
-  id: string
-  title: string
-  date: string
-  type: 'Aggregate' | 'Individual'
-  status: 'Completed'
-}
+import type { Report } from "@/services/backend/types"
 
 const statusVariant = (type: string): 'default' | 'secondary' => {
   return type === 'Aggregate' ? 'default' : 'secondary';

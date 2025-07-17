@@ -1,23 +1,37 @@
 "use client"
 
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
-
-const data = [
-  { name: "Jan", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Feb", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Mar", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Apr", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "May", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Jun", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Jul", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Aug", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Sep", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Oct", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Nov", total: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Dec", total: Math.floor(Math.random() * 5000) + 1000 },
-]
+import { useEffect, useState } from "react"
+import { backend } from "@/services/backend/backend"
+import type { ChartData } from "@/services/backend/types"
 
 export function OverviewChart() {
+  const [data, setData] = useState<ChartData[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const loadChartData = async () => {
+      try {
+        const chartData = await backend().getChartData()
+        setData(chartData)
+      } catch (error) {
+        console.error('Failed to load chart data:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadChartData()
+  }, [])
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[350px]">
+        <div className="text-muted-foreground">Loading chart data...</div>
+      </div>
+    )
+  }
+
   return (
     <ResponsiveContainer width="100%" height={350}>
       <BarChart data={data}>

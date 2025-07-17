@@ -14,6 +14,8 @@ interface FormBuilderContextType {
     setIsElementsSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
     isPropertiesSheetOpen: boolean;
     setIsPropertiesSheetOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    pendingTemplate: FormTemplate | null;
+    setPendingTemplate: React.Dispatch<React.SetStateAction<FormTemplate | null>>;
 }
 
 export const FormBuilderContext = createContext<FormBuilderContextType | undefined>(undefined);
@@ -33,6 +35,7 @@ interface FormBuilderProviderProps {
 export const FormBuilderProvider = ({ children }: FormBuilderProviderProps) => {
     const [template, setTemplate] = useState<FormTemplate | null>(null);
     const [selectedQuestion, setSelectedQuestion] = useState<FormItem | null>(null);
+    const [pendingTemplate, setPendingTemplate] = useState<FormTemplate | null>(null);
     const isMobile = useIsMobile();
     const [isElementsSheetOpen, setIsElementsSheetOpen] = useState(false);
     const [isPropertiesSheetOpen, setIsPropertiesSheetOpen] = useState(false);
@@ -54,6 +57,8 @@ export const FormBuilderProvider = ({ children }: FormBuilderProviderProps) => {
         setIsElementsSheetOpen,
         isPropertiesSheetOpen,
         setIsPropertiesSheetOpen,
+        pendingTemplate,
+        setPendingTemplate,
     };
 
     return (

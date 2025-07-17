@@ -1,18 +1,50 @@
+"use client"
+
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
-
-const evaluations = [
-  { name: 'Olivia Martin', email: 'olivia.martin@email.com', score: 89.9, fallback: 'OM' },
-  { name: 'Jackson Lee', email: 'jackson.lee@email.com', score: 92.5, fallback: 'JL' },
-  { name: 'Isabella Nguyen', email: 'isabella.nguyen@email.com', score: 78.3, fallback: 'IN' },
-  { name: 'William Kim', email: 'will@email.com', score: 95.0, fallback: 'WK' },
-  { name: 'Sofia Davis', email: 'sofia.davis@email.com', score: 81.2, fallback: 'SD' },
-];
+import { useEffect, useState } from "react"
+import { backend } from "@/services/backend/backend"
+import type { RecentEvaluation } from "@/services/backend/types"
 
 export function RecentEvaluations() {
+  const [evaluations, setEvaluations] = useState<RecentEvaluation[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const loadRecentEvaluations = async () => {
+      try {
+        const recentEvals = await backend().getRecentEvaluations()
+        setEvaluations(recentEvals)
+      } catch (error) {
+        console.error('Failed to load recent evaluations:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadRecentEvaluations()
+  }, [])
+
+  if (isLoading) {
+    return (
+      <div className="space-y-8">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <div key={index} className="flex items-center">
+            <div className="h-9 w-9 rounded-full bg-muted animate-pulse" />
+            <div className="ml-4 space-y-1">
+              <div className="h-4 w-24 bg-muted rounded animate-pulse" />
+              <div className="h-3 w-32 bg-muted rounded animate-pulse" />
+            </div>
+            <div className="ml-auto h-4 w-12 bg-muted rounded animate-pulse" />
+          </div>
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-8">
       {evaluations.map((evalItem, index) => (

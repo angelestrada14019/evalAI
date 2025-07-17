@@ -45,7 +45,7 @@ const FormItemSchema = z.object({
   label: z.string(),
   required: z.boolean(),
   readOnly: z.boolean().optional(),
-  imageUrl: z.string().url().nullable().optional(),
+  imageUrl: z.string().nullable().optional(),
   options: z.array(OptionSchema).optional(),
   sliderConfig: SliderConfigSchema.optional(),
   ratingConfig: RatingConfigSchema.optional(),
@@ -73,6 +73,7 @@ const generateTemplatePrompt = genkitAi.definePrompt({
   name: 'generateTemplatePrompt',
   input: { schema: GenerateTemplateFlowInputSchema },
   output: { schema: GenerateTemplateFlowOutputSchema },
+  model: 'googleai/gemini-1.5-flash',
   prompt: `You are an AI assistant specialized in generating evaluation form templates based on user descriptions.
   Your goal is to create a valid JSON object that matches the requested schema.
   The object must have a "title", a "description", and an "items" array.

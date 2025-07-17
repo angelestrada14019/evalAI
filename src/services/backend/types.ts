@@ -24,6 +24,29 @@ export const DashboardStatsSchema = z.object({
 });
 export type DashboardStats = z.infer<typeof DashboardStatsSchema>;
 
+export const ChartDataSchema = z.object({
+    name: z.string(),
+    total: z.number(),
+});
+export type ChartData = z.infer<typeof ChartDataSchema>;
+
+export const RecentEvaluationSchema = z.object({
+    name: z.string(),
+    email: z.string(),
+    score: z.number(),
+    fallback: z.string(),
+});
+export type RecentEvaluation = z.infer<typeof RecentEvaluationSchema>;
+
+export const ReportSchema = z.object({
+    id: z.string(),
+    title: z.string(),
+    date: z.string(),
+    type: z.enum(['Individual', 'Aggregate']),
+    status: z.enum(['Completed', 'In Progress', 'Pending']),
+});
+export type Report = z.infer<typeof ReportSchema>;
+
 
 export const EvaluationSchema = z.object({
     id: z.string(),

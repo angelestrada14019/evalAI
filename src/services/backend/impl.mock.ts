@@ -3,7 +3,7 @@
 /**
  * @fileOverview Mock implementation of the BackendService for development and testing.
  */
-import type { DashboardStats, Evaluation, FormTemplate } from './types';
+import type { DashboardStats, Evaluation, FormTemplate, ChartData, RecentEvaluation, Report } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
 const MOCK_EVALUATIONS_LIST: Evaluation[] = [
@@ -137,4 +137,50 @@ export async function saveEvaluation(template: FormTemplate): Promise<FormTempla
         console.log(`[Backend Mock] Updated evaluation with ID: ${idToUpdate}`);
         return template;
     }
+}
+
+export async function getChartData(): Promise<ChartData[]> {
+    console.log('[Backend Mock] Fetching chart data');
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    return [
+        { name: "Jan", total: Math.floor(Math.random() * 5000) + 1000 },
+        { name: "Feb", total: Math.floor(Math.random() * 5000) + 1000 },
+        { name: "Mar", total: Math.floor(Math.random() * 5000) + 1000 },
+        { name: "Apr", total: Math.floor(Math.random() * 5000) + 1000 },
+        { name: "May", total: Math.floor(Math.random() * 5000) + 1000 },
+        { name: "Jun", total: Math.floor(Math.random() * 5000) + 1000 },
+        { name: "Jul", total: Math.floor(Math.random() * 5000) + 1000 },
+        { name: "Aug", total: Math.floor(Math.random() * 5000) + 1000 },
+        { name: "Sep", total: Math.floor(Math.random() * 5000) + 1000 },
+        { name: "Oct", total: Math.floor(Math.random() * 5000) + 1000 },
+        { name: "Nov", total: Math.floor(Math.random() * 5000) + 1000 },
+        { name: "Dec", total: Math.floor(Math.random() * 5000) + 1000 },
+    ];
+}
+
+export async function getRecentEvaluations(): Promise<RecentEvaluation[]> {
+    console.log('[Backend Mock] Fetching recent evaluations');
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    return [
+        { name: 'Olivia Martin', email: 'olivia.martin@email.com', score: 89.9, fallback: 'OM' },
+        { name: 'Jackson Lee', email: 'jackson.lee@email.com', score: 92.5, fallback: 'JL' },
+        { name: 'Isabella Nguyen', email: 'isabella.nguyen@email.com', score: 78.3, fallback: 'IN' },
+        { name: 'William Kim', email: 'will@email.com', score: 95.0, fallback: 'WK' },
+        { name: 'Sofia Davis', email: 'sofia.davis@email.com', score: 81.2, fallback: 'SD' },
+    ];
+}
+
+export async function getReports(): Promise<Report[]> {
+    console.log('[Backend Mock] Fetching reports');
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    return [
+        { id: 'REP-001', title: 'Q1 2024 Engineering Performance', date: '2024-04-05', type: 'Aggregate', status: 'Completed' },
+        { id: 'REP-002', title: 'John Doe - Performance Review', date: '2024-04-03', type: 'Individual', status: 'Completed' },
+        { id: 'REP-003', title: 'Sales Team Skills Assessment', date: '2024-03-28', type: 'Aggregate', status: 'Completed' },
+        { id: 'REP-004', title: 'UX/UI Design Competency Report', date: '2024-03-15', type: 'Aggregate', status: 'Completed' },
+        { id: 'REP-005', title: 'Jane Smith - Onboarding Evaluation', date: '2024-03-12', type: 'Individual', status: 'Completed' },
+    ];
 }

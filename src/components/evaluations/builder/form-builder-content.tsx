@@ -44,31 +44,51 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
     const [activeId, setActiveId] = useState<string | null>(null);
     const sensors = useSensors(useSensor(PointerSensor));
     
-     useEffect(() => {
+    useEffect(() => {
         const loadEvaluation = async () => {
             if (!evaluationId) return;
+            
+            console.log('[FormBuilder] Loading evaluation with ID:', evaluationId);
             setIsLoading(true);
+            
             try {
                 let loadedTemplate;
+                
                 if (evaluationId.startsWith('new_')) {
-                    const storedTemplate = sessionStorage.getItem('new_evaluation_template');
+                    console.log('[FormBuilder] Loading new evaluation...');
+                    
+                    // First check sessionStorage for AI-generated templates
+                    const storedTemplate = sessionStorage.getItem(`new_evaluation_template_${evaluationId}`);
                     if (storedTemplate) {
-                        loadedTemplate = JSON.parse(storedTemplate);
-                        sessionStorage.removeItem('new_evaluation_template');
+                        try {
+                            loadedTemplate = JSON.parse(storedTemplate);
+                            console.log('[FormBuilder] Loaded template from sessionStorage:', loadedTemplate.title);
+                            // Clear it immediately to prevent reuse
+                            sessionStorage.removeItem(`new_evaluation_template_${evaluationId}`);
+                        } catch (error) {
+                            console.error('[FormBuilder] Failed to parse stored template:', error);
+                            loadedTemplate = createDefaultTemplate(t, tq);
+                        }
                     } else {
+                        console.log('[FormBuilder] No stored template, creating default template');
                         loadedTemplate = createDefaultTemplate(t, tq);
                     }
                 } else {
+                    console.log('[FormBuilder] Loading existing evaluation from backend');
                     const existingEvaluation = await backend().getEvaluationById(evaluationId);
                     if (existingEvaluation) {
                         loadedTemplate = existingEvaluation;
+                        console.log('[FormBuilder] Loaded existing evaluation:', loadedTemplate.title);
                     } else {
                         console.error(`Evaluation with id ${evaluationId} not found.`);
                         router.push('/evaluations');
                         return;
                     }
                 }
+                
+                console.log('[FormBuilder] Setting template in context:', loadedTemplate);
                 setTemplate(loadedTemplate);
+                
             } catch (error) {
                 console.error("Failed to load evaluation:", error);
                 router.push('/evaluations');
@@ -78,8 +98,7 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
         };
         
         loadEvaluation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [evaluationId, setTemplate]); 
+    }, [evaluationId, setTemplate, t, tq, router]);
 
 
     useEffect(() => {

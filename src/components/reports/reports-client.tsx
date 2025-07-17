@@ -4,8 +4,8 @@
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { DataTable } from '@/components/ui/data-table';
-import { useReportColumns, type Report } from '@/components/reports/columns';
-
+import { useReportColumns } from '@/components/reports/columns';
+import type { Report } from '@/services/backend/types';
 
 export function ReportsClient({ initialReports }: { initialReports: Report[] }) {
     const t = useTranslations('ReportsPage');

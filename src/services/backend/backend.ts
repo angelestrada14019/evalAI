@@ -5,13 +5,16 @@
  * implementation specified in `systemConfig.backend.provider`.
  */
 import { systemConfig } from '@/config/system';
-import type { DashboardStats, Evaluation, FormTemplate } from './types';
+import type { DashboardStats, Evaluation, FormTemplate, ChartData, RecentEvaluation, Report } from './types';
 
 export interface BackendService {
   getDashboardStats(): Promise<DashboardStats>;
+  getChartData(): Promise<ChartData[]>;
+  getRecentEvaluations(): Promise<RecentEvaluation[]>;
   getEvaluations(): Promise<Evaluation[]>;
   getEvaluationById(id: string): Promise<FormTemplate | null>;
   saveEvaluation(template: FormTemplate): Promise<FormTemplate>;
+  getReports(): Promise<Report[]>;
 }
 
 /**
