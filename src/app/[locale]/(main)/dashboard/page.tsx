@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DollarSign, Users, CreditCard, Activity, PackagePlus } from 'lucide-react'
-import {Link} from '@/navigation'
+import {Link} from '@/i18n/navigation'
 import { OverviewChart } from '@/components/dashboard/overview-chart'
 import { RecentEvaluations } from '@/components/dashboard/recent-evaluations'
 import { backend } from '@/services/backend/backend'

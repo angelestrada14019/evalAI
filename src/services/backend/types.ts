@@ -30,7 +30,7 @@ export const EvaluationSchema = z.object({
     title: z.string(),
     status: z.enum(['Draft', 'Active', 'Archived']),
     responses: z.number(),
-    lastModified: z.string().datetime() | z.string(),
+    lastModified: z.union([z.string().datetime(), z.string()]),
 });
 export type Evaluation = z.infer<typeof EvaluationSchema>;
 

@@ -1,5 +1,5 @@
 
-import { Link } from '@/navigation';
+import { Link } from '@/i18n/navigation';
 import { PackagePlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { backend } from '@/services/backend/backend';

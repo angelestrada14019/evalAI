@@ -32,16 +32,17 @@ async function BuilderBreadcrumb({ evaluationId }: { evaluationId: string }) {
 }
 
 
-export default function FormBuilderPage({ params }: { params: { id: string } }) {
-    // Here, we are in a Server Component. We can access params directly.
-    // We then pass the 'id' as a simple string prop to our Client Component.
+export default async function FormBuilderPage({ params }: { params: Promise<{ id: string }> }) {
+    // In Next.js 15, params must be awaited
+    const { id } = await params;
+    
     return (
         <div className="flex flex-col h-full">
             <div className="p-4 bg-background border-b">
-                 <BuilderBreadcrumb evaluationId={params.id} />
+                 <BuilderBreadcrumb evaluationId={id} />
             </div>
             <div className="flex-1 overflow-hidden">
-                <FormBuilderContent evaluationId={params.id} />
+                <FormBuilderContent evaluationId={id} />
             </div>
         </div>
     );

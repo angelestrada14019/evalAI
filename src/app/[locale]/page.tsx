@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from '@/navigation';
+import { useRouter } from '@/i18n/navigation';
 
 export default function RootPage() {
   const router = useRouter();

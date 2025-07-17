@@ -3,7 +3,7 @@
 
 import { useMemo } from "react"
 import { ColumnDef } from "@tanstack/react-table"
-import { Link } from "@/navigation"
+import { Link } from "@/i18n/navigation"
 import { MoreHorizontal } from "lucide-react"
 import { useTranslations } from "next-intl"
 
@@ -31,12 +31,13 @@ const statusVariant = (type: string): 'default' | 'secondary' => {
 
 export const useReportColumns = (): ColumnDef<Report>[] => {
   const t = useTranslations('ReportsPage');
+  const tDataTable = useTranslations('DataTable');
 
   return useMemo(() => [
     {
       accessorKey: "title",
       header: ({ column }) => {
-        return <DataTableColumnHeader column={column} title={t('tableTitle')} />
+        return <DataTableColumnHeader column={column} title={t('tableTitle')} tDataTable={tDataTable} />
       },
       cell: ({ row }) => {
         const report = row.original;
@@ -50,7 +51,7 @@ export const useReportColumns = (): ColumnDef<Report>[] => {
     {
       accessorKey: "type",
       header: ({ column }) => {
-        return <DataTableColumnHeader column={column} title={t('tableType')} />
+        return <DataTableColumnHeader column={column} title={t('tableType')} tDataTable={tDataTable} />
       },
       cell: ({ row }) => (
         <Badge variant={statusVariant(row.getValue("type"))}>
@@ -64,13 +65,13 @@ export const useReportColumns = (): ColumnDef<Report>[] => {
     {
       accessorKey: "date",
        header: ({ column }) => {
-        return <DataTableColumnHeader column={column} title={t('tableDate')} />
+        return <DataTableColumnHeader column={column} title={t('tableDate')} tDataTable={tDataTable} />
       },
     },
     {
       accessorKey: "status",
        header: ({ column }) => {
-        return <DataTableColumnHeader column={column} title={t('tableStatus')} />
+        return <DataTableColumnHeader column={column} title={t('tableStatus')} tDataTable={tDataTable} />
       },
       cell: ({ row }) => <Badge variant="outline">{row.getValue("status")}</Badge>,
     },

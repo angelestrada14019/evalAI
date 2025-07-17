@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import {Link, useRouter} from '@/navigation';
+import {Link, useRouter} from '@/i18n/navigation';
 import {
   Bell,
   ChevronsUpDown,

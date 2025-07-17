@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { DndContext, closestCenter, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { useTranslations } from 'next-intl';
-import { useRouter } from '@/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { useFormBuilder } from '@/context/form-builder-context';
 import { getNewFormItem, createDefaultTemplate } from '@/components/evaluations/builder/question-types';
 import type { FormItem, FormTemplate } from '@/components/evaluations/builder/types';

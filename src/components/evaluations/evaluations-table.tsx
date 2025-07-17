@@ -10,7 +10,7 @@ import type { Evaluation } from '@/services/backend/types';
 export function EvaluationsTable({ initialEvaluations }: { initialEvaluations: Evaluation[] }) {
     const t = useTranslations('EvaluationsPage');
     const tDataTable = useTranslations('DataTable');
-    const columns = useEvaluationColumns({t, tDataTable});
+    const columns = useEvaluationColumns({t});
 
     return (
         <Card>

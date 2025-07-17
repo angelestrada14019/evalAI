@@ -53,7 +53,7 @@ export function AIFormulaSuggester() {
   const { template } = useFormBuilder();
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [suggestion, setSuggestion] = useState<{ suggestedFormula: string; reasoning: string } | null>(null)
+  const [suggestion, setSuggestion] = useState<{ suggestedFormula?: string; reasoning?: string } | null>(null)
   const [formContentForDisplay, setFormContentForDisplay] = useState('');
   const { toast } = useToast()
 

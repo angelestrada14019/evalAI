@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useRouter } from '@/navigation'
+import { useRouter } from '@/i18n/navigation'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
@@ -61,10 +61,41 @@ export default function NewEvaluationPage() {
       const processedItems = result.items.map(item => ({
         ...item,
         id: uuidv4(),
-        options: item.options?.map(opt => ({...opt, id: uuidv4()})),
+        variableId: item.variableId || `var_${uuidv4()}`,
+        type: item.type || 'Text Input',
+        label: item.label || 'Untitled Question',
+        required: item.required ?? false,
+        options: item.options?.map(opt => ({
+          ...opt, 
+          id: uuidv4(),
+          label: opt.label || 'Option',
+          value: opt.value ?? 0
+        })),
+        sliderConfig: item.sliderConfig ? {
+          min: item.sliderConfig.min ?? 0,
+          max: item.sliderConfig.max ?? 100,
+          step: item.sliderConfig.step ?? 1
+        } : undefined,
+        ratingConfig: item.ratingConfig ? {
+          max: item.ratingConfig.max ?? 5
+        } : undefined,
+        matrixConfig: item.matrixConfig ? {
+          rows: item.matrixConfig.rows ?? ['Row 1'],
+          columns: item.matrixConfig.columns?.map(col => ({
+            id: col.id || uuidv4(),
+            label: col.label || 'Column',
+            value: col.value ?? 0
+          })) ?? [{ id: uuidv4(), label: 'Column 1', value: 1 }]
+        } : undefined,
+        fileUploadConfig: item.fileUploadConfig ? {
+          allowedTypes: item.fileUploadConfig.allowedTypes ?? ['pdf', 'doc', 'docx'],
+          maxSizeMB: item.fileUploadConfig.maxSizeMB ?? 10
+        } : undefined,
       }));
       
       const finalTemplate: FormTemplate = {
+        title: result.title || 'Nueva Evaluación',
+        description: result.description || 'Evaluación generada por IA',
         ...result,
         items: processedItems,
       }

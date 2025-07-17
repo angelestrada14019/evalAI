@@ -1,20 +1,8 @@
 
 import createMiddleware from 'next-intl/middleware';
-import {locales, localePrefix} from './src/navigation';
+import {routing} from './src/i18n/routing';
  
-export default createMiddleware({
-  // A list of all locales that are supported
-  locales,
-  localePrefix,
- 
-  // Used when no locale matches
-  defaultLocale: 'es',
-
-  // Redirect the root path to the login page
-  pathnames: {
-    '/': '/login'
-  }
-});
+export default createMiddleware(routing);
  
 export const config = {
   // Match all pathnames except for

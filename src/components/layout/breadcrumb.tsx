@@ -1,9 +1,9 @@
-import { Link } from '@/navigation';
+import { Link } from '@/i18n/navigation';
 import { cn } from '@/lib/utils';
 import { ChevronRight } from 'lucide-react';
 
 interface BreadcrumbItem {
-  label: string;
+  label: string | React.ReactNode;
   href?: string;
 }
 

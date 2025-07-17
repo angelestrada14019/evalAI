@@ -1,6 +1,6 @@
 'use client'
 
-import { Link, usePathname } from '@/navigation';
+import { Link, usePathname } from '@/i18n/navigation';
 import { Home, FileText, BarChart2, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AppLogo } from '@/components/icons'

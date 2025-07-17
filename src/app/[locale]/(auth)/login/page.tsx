@@ -1,6 +1,6 @@
 import { LoginForm } from '@/components/auth/login-form'
 import { AppLogo } from '@/components/icons'
-import {Link} from '@/navigation'
+import {Link} from '@/i18n/navigation'
 
 export default function LoginPage() {
   return (

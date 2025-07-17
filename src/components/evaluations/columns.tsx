@@ -4,7 +4,7 @@
 import { useMemo } from "react"
 import type { ColumnDef } from "@tanstack/react-table"
 import type { Evaluation } from "@/services/backend/types"
-import { Link } from "@/navigation"
+import { Link } from "@/i18n/navigation"
 import { MoreHorizontal } from "lucide-react"
 import { format } from "date-fns"
 import type { useTranslations } from "next-intl"

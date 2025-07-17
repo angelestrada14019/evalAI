@@ -1,17 +1,21 @@
-import { NextIntlClientProvider, useMessages } from 'next-intl';
+import {NextIntlClientProvider, hasLocale} from 'next-intl';
+import {notFound} from 'next/navigation';
+import {routing} from '@/i18n/routing';
 
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
-  params,
+  params
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{locale: string}>;
 }) {
-  const messages = useMessages();
+  // Ensure that the incoming `locale` is valid
+  const {locale} = await params;
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
 
   return (
-    <NextIntlClientProvider locale={params.locale} messages={messages}>
-      {children}
-    </NextIntlClientProvider>
+    <NextIntlClientProvider>{children}</NextIntlClientProvider>
   );
 }
