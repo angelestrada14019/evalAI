@@ -16,18 +16,17 @@ export async function getCurrentTenantId(): Promise<string> {
  * Get tenant ID from hostname (for middleware)
  */
 export function getTenantIdFromHost(hostname: string): string {
+  // For now, always return the default tenant UUID until multi-tenancy is fully implemented
+  // This matches the tenant you have in your database
+  return '550e8400-e29b-41d4-a716-446655440000';
+  
+  // TODO: Implement proper tenant resolution when multi-tenancy is needed
   // For development
-  if (hostname === 'localhost' || hostname.includes('127.0.0.1') || hostname.includes('localhost:')) {
-    // For localhost, we'll use a default tenant for testing
-    return 'localhost-tenant';
-  }
+  // if (hostname === 'localhost' || hostname.includes('127.0.0.1') || hostname.includes('localhost:')) {
+  //   return '550e8400-e29b-41d4-a716-446655440000';
+  // }
   
-  // For production - extract subdomain
-  const parts = hostname.split('.');
-  if (parts.length >= 3) {
-    return parts[0]; // subdomain becomes tenant ID
-  }
-  
-  // Fallback to default
-  return 'default-tenant';
+  // For production - you would lookup the tenant by subdomain/domain
+  // const subdomain = hostname.split('.')[0];
+  // return lookupTenantBySubdomain(subdomain);
 }
