@@ -109,8 +109,8 @@ export function backend(): BackendService {
       const mockImpl = require('./impl.mock');
       return mockImpl.default || mockImpl;
     case 'supabase':
-      const supabaseBackendService = require('./impl.supabase');
-      return supabaseBackendService.default || supabaseBackendService;
+      const supabaseModule = require('./impl.supabase');
+      return supabaseModule.default || supabaseModule.supabaseBackendService || supabaseModule;
     case 'rest':
       const restBackendService = require('./impl.rest');
       return restBackendService.default || restBackendService;

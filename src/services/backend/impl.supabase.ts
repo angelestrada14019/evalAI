@@ -520,4 +520,4 @@ const supabaseBackendService = new SupabaseBackendService();
 
 // Export both as default and as named export for compatibility
 export default supabaseBackendService;
-module.exports = supabaseBackendService;
+export { supabaseBackendService };
