@@ -44,12 +44,14 @@ export async function login(input: LoginInput): Promise<any> {
 
 export async function signup(input: SignUpInput): Promise<any> {
   try {
-    // First, create the auth user
+    // Create the auth user with metadata
     const { data, error } = await supabase.auth.signUp({
       email: input.email,
       password: input.password,
       options: {
         data: {
+          first_name: input.name.split(' ')[0] || input.name,
+          last_name: input.name.split(' ').slice(1).join(' ') || null,
           full_name: input.name,
         },
       },
@@ -63,47 +65,19 @@ export async function signup(input: SignUpInput): Promise<any> {
       throw new Error('No user returned from signup');
     }
 
-    // Create user profile in our users table
-    // We'll use a default tenant for now - in a real app, this would be determined by the signup flow
-    const defaultTenantId = 'default-tenant';
-    
+    // The trigger will automatically create the user profile
+    // Let's wait a moment and then try to fetch it
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Try to get the user profile that should have been created by the trigger
     const { data: userProfile, error: profileError } = await supabase
       .from('users')
-      .insert({
-        id: data.user.id,
-        tenant_id: defaultTenantId,
-        email: input.email,
-        first_name: input.name.split(' ')[0] || input.name,
-        last_name: input.name.split(' ').slice(1).join(' ') || null,
-        role: 'admin', // First user becomes admin
-        status: 'active',
-        permissions: [
-          'evaluations.create',
-          'evaluations.edit',
-          'evaluations.delete',
-          'evaluations.view',
-          'evaluations.publish',
-          'reports.create',
-          'reports.edit',
-          'reports.view',
-          'reports.export',
-          'contacts.create',
-          'contacts.edit',
-          'contacts.import',
-          'contacts.export',
-          'contacts.delete',
-          'users.invite',
-          'users.manage',
-          'tenant.settings',
-          'tenant.branding'
-        ],
-      })
-      .select()
+      .select('*')
+      .eq('id', data.user.id)
       .single();
 
     if (profileError) {
-      console.error('Error creating user profile:', profileError);
-      // Don't throw here as the auth user was created successfully
+      console.warn('Could not fetch user profile after signup:', profileError.message);
     }
 
     return {
