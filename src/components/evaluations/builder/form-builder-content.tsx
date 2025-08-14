@@ -21,6 +21,7 @@ import { SortableFormItem } from '@/components/evaluations/builder/sortable-form
 import { backend } from '@/services/backend/backend';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import { useTenant } from '@/context/tenant-context';
 
 export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
     const t = useTranslations('FormBuilderPage');
@@ -174,7 +175,11 @@ export function FormBuilderContent({ evaluationId }: { evaluationId: string }) {
         if (!template) return;
         
         try {
-            const savedEvaluation = await backend().saveEvaluation(template);
+            const { currentTenant } = useTenant();
+            if (!currentTenant) {
+                throw new Error('No tenant context available');
+            }
+            const savedEvaluation = await backend().saveEvaluation(currentTenant.id, template);
             setTemplate(savedEvaluation); // Update state with potentially new ID from backend
 
             toast({

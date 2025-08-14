@@ -1,14 +1,17 @@
-import { FileDown } from 'lucide-react';
+import { FileDown, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from '@/i18n/navigation';
 import { backend } from '@/services/backend/backend';
 import { ReportsClient } from '@/components/reports/reports-client';
-import {getTranslations} from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
+import { getCurrentTenantId } from '@/lib/server-tenant';
 
 export default async function ReportsPage() {
     const t = await getTranslations('ReportsPage');
     const tB = await getTranslations('Breadcrumbs');
-    const reports = await backend().getReports();
+    const tenantId = await getCurrentTenantId();
+    const reports = await backend().getReports(tenantId);
 
     const breadcrumbItems = [
       { label: tB('home'), href: '/dashboard' },
@@ -23,9 +26,16 @@ export default async function ReportsPage() {
           <h1 className="text-3xl font-bold">{t('title')}</h1>
           <p className="text-muted-foreground">{t('description')}</p>
         </div>
-        <Button>
-          <FileDown className="mr-2 h-4 w-4" /> {t('generateReportButton')}
-        </Button>
+        <div className="flex gap-2">
+          <Link href="/reports/templates">
+            <Button variant="outline">
+              <Settings className="mr-2 h-4 w-4" /> {t('reportTemplatesButton')}
+            </Button>
+          </Link>
+          <Button>
+            <FileDown className="mr-2 h-4 w-4" /> {t('generateReportButton')}
+          </Button>
+        </div>
       </div>
       <ReportsClient initialReports={reports} />
     </div>

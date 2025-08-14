@@ -1,0 +1,118 @@
+{
+  "localhost-tenant": {
+    "id": "localhost-tenant",
+    "name": "EvalAI Development",
+    "subdomain": "localhost",
+    "branding": {
+      "primaryColor": "#3B82F6",
+      "secondaryColor": "#F8FAFC",
+      "accentColor": "#10B981",
+      "fontFamily": "Inter"
+    },
+    "settings": {
+      "maxEvaluationsPerMonth": 100,
+      "maxContactsPerGroup": 1000,
+      "maxResponsesPerEvaluation": 10000,
+      "allowPublicEvaluations": true,
+      "allowCustomBranding": true,
+      "apiAccessEnabled": true,
+      "webhooksEnabled": true,
+      "customDomainEnabled": false,
+      "ssoEnabled": false,
+      "auditLogsEnabled": true,
+      "dataRetentionDays": 365,
+      "allowExports": true,
+      "allowIntegrations": true
+    },
+    "status": "active",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-07-20T00:00:00.000Z"
+  },
+  "default-tenant": {
+    "id": "default-tenant",
+    "name": "EvalAI Demo",
+    "subdomain": "demo",
+    "branding": {
+      "primaryColor": "#3B82F6",
+      "secondaryColor": "#F8FAFC",
+      "accentColor": "#10B981",
+      "fontFamily": "Inter"
+    },
+    "settings": {
+      "maxEvaluationsPerMonth": 50,
+      "maxContactsPerGroup": 1000,
+      "maxResponsesPerEvaluation": 10000,
+      "allowPublicEvaluations": true,
+      "allowCustomBranding": true,
+      "apiAccessEnabled": false,
+      "webhooksEnabled": false,
+      "customDomainEnabled": false,
+      "ssoEnabled": false,
+      "auditLogsEnabled": false,
+      "dataRetentionDays": 365,
+      "allowExports": true,
+      "allowIntegrations": false
+    },
+    "status": "active",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-07-20T00:00:00.000Z"
+  },
+  "acme-corp": {
+    "id": "acme-corp",
+    "name": "ACME Corporation",
+    "subdomain": "acme",
+    "branding": {
+      "primaryColor": "#FF6B35",
+      "secondaryColor": "#F7F7F7",
+      "accentColor": "#004E89",
+      "fontFamily": "Roboto"
+    },
+    "settings": {
+      "maxEvaluationsPerMonth": 100,
+      "maxContactsPerGroup": 5000,
+      "maxResponsesPerEvaluation": 50000,
+      "allowPublicEvaluations": true,
+      "allowCustomBranding": true,
+      "apiAccessEnabled": true,
+      "webhooksEnabled": true,
+      "customDomainEnabled": true,
+      "ssoEnabled": true,
+      "auditLogsEnabled": true,
+      "dataRetentionDays": 2555,
+      "allowExports": true,
+      "allowIntegrations": true
+    },
+    "status": "active",
+    "createdAt": "2024-02-15T00:00:00.000Z",
+    "updatedAt": "2024-07-18T00:00:00.000Z"
+  },
+  "tech-startup": {
+    "id": "tech-startup",
+    "name": "TechStart Inc",
+    "subdomain": "techstart",
+    "branding": {
+      "primaryColor": "#8B5CF6",
+      "secondaryColor": "#F3F4F6",
+      "accentColor": "#10B981",
+      "fontFamily": "Inter"
+    },
+    "settings": {
+      "maxEvaluationsPerMonth": 25,
+      "maxContactsPerGroup": 500,
+      "maxResponsesPerEvaluation": 5000,
+      "allowPublicEvaluations": true,
+      "allowCustomBranding": false,
+      "apiAccessEnabled": false,
+      "webhooksEnabled": false,
+      "customDomainEnabled": false,
+      "ssoEnabled": false,
+      "auditLogsEnabled": false,
+      "dataRetentionDays": 365,
+      "allowExports": true,
+      "allowIntegrations": false
+    },
+    "status": "trial",
+    "createdAt": "2024-07-01T00:00:00.000Z",
+    "updatedAt": "2024-07-20T00:00:00.000Z"
+  }
+}

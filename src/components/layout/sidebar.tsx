@@ -1,7 +1,7 @@
 'use client'
 
 import { Link, usePathname } from '@/i18n/navigation';
-import { Home, FileText, BarChart2, Settings } from 'lucide-react'
+import { Home, FileText, BarChart2, Settings, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AppLogo } from '@/components/icons'
 import {
@@ -32,6 +32,7 @@ export function AppSidebar({ isCollapsed, closeSidebar }: AppSidebarProps) {
   const navItems = [
     { href: '/dashboard', icon: Home, label: t('dashboard') },
     { href: '/evaluations', icon: FileText, label: t('evaluations') },
+    { href: '/contacts', icon: Users, label: t('contacts') },
     { href: '/reports', icon: BarChart2, label: t('reports') },
   ];
 

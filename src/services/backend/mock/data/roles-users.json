@@ -1,0 +1,225 @@
+{
+  "roles": {
+    "default-tenant": [
+      {
+        "id": "role-admin-default",
+        "tenantId": "default-tenant",
+        "name": "Tenant Admin",
+        "description": "Full administrative access to tenant resources",
+        "permissions": [
+          "evaluations.create", "evaluations.edit", "evaluations.delete", "evaluations.view", "evaluations.publish",
+          "reports.create", "reports.edit", "reports.view", "reports.export", "reports.schedule",
+          "templates.create", "templates.edit", "templates.delete", "templates.share",
+          "contacts.create", "contacts.edit", "contacts.import", "contacts.export", "contacts.delete",
+          "users.invite", "users.manage", "users.remove", "users.roles",
+          "tenant.settings", "tenant.branding", "tenant.billing", "tenant.analytics",
+          "formulas.create", "formulas.edit", "formulas.delete", "formulas.advanced",
+          "publish.public", "publish.groups", "publish.email", "publish.embed",
+          "integrations.webhooks", "integrations.api", "integrations.export"
+        ],
+        "isSystem": true,
+        "isCustom": false,
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "updatedAt": "2024-01-01T00:00:00.000Z"
+      },
+      {
+        "id": "role-editor-default",
+        "tenantId": "default-tenant",
+        "name": "Editor",
+        "description": "Can create and edit evaluations and reports",
+        "permissions": [
+          "evaluations.create", "evaluations.edit", "evaluations.view", "evaluations.publish",
+          "reports.create", "reports.edit", "reports.view", "reports.export",
+          "templates.create", "templates.edit", "templates.share",
+          "contacts.create", "contacts.edit", "contacts.import",
+          "formulas.create", "formulas.edit",
+          "publish.groups", "publish.email"
+        ],
+        "isSystem": true,
+        "isCustom": false,
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "updatedAt": "2024-01-01T00:00:00.000Z"
+      },
+      {
+        "id": "role-viewer-default",
+        "tenantId": "default-tenant",
+        "name": "Viewer",
+        "description": "Read-only access to evaluations and reports",
+        "permissions": [
+          "evaluations.view",
+          "reports.view", "reports.export",
+          "contacts.export"
+        ],
+        "isSystem": true,
+        "isCustom": false,
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "updatedAt": "2024-01-01T00:00:00.000Z"
+      }
+    ],
+    "acme-corp": [
+      {
+        "id": "role-admin-acme",
+        "tenantId": "acme-corp",
+        "name": "Admin",
+        "description": "Full access to ACME systems",
+        "permissions": [
+          "evaluations.create", "evaluations.edit", "evaluations.delete", "evaluations.view", "evaluations.publish",
+          "reports.create", "reports.edit", "reports.view", "reports.export", "reports.schedule",
+          "templates.create", "templates.edit", "templates.delete", "templates.share",
+          "contacts.create", "contacts.edit", "contacts.import", "contacts.export", "contacts.delete",
+          "users.invite", "users.manage", "users.remove", "users.roles",
+          "tenant.settings", "tenant.branding", "tenant.billing", "tenant.analytics",
+          "formulas.create", "formulas.edit", "formulas.delete", "formulas.advanced",
+          "publish.public", "publish.groups", "publish.email", "publish.embed",
+          "integrations.webhooks", "integrations.api", "integrations.export"
+        ],
+        "isSystem": true,
+        "isCustom": false,
+        "createdAt": "2024-02-15T00:00:00.000Z",
+        "updatedAt": "2024-02-15T00:00:00.000Z"
+      },
+      {
+        "id": "role-hr-manager-acme",
+        "tenantId": "acme-corp",
+        "name": "HR Manager",
+        "description": "Can manage evaluations and view reports",
+        "permissions": [
+          "evaluations.create", "evaluations.edit", "evaluations.view",
+          "reports.view", "reports.export",
+          "contacts.create", "contacts.edit", "contacts.import"
+        ],
+        "isSystem": false,
+        "isCustom": true,
+        "createdAt": "2024-02-20T00:00:00.000Z",
+        "updatedAt": "2024-02-20T00:00:00.000Z"
+      }
+    ],
+    "tech-startup": [
+      {
+        "id": "role-founder-tech",
+        "tenantId": "tech-startup",
+        "name": "Founder",
+        "description": "Startup founder with full access",
+        "permissions": [
+          "evaluations.create", "evaluations.edit", "evaluations.delete", "evaluations.view", "evaluations.publish",
+          "reports.create", "reports.edit", "reports.view", "reports.export", "reports.schedule",
+          "templates.create", "templates.edit", "templates.delete", "templates.share",
+          "contacts.create", "contacts.edit", "contacts.import", "contacts.export", "contacts.delete",
+          "users.invite", "users.manage", "users.remove", "users.roles",
+          "tenant.settings", "tenant.branding", "tenant.billing", "tenant.analytics",
+          "formulas.create", "formulas.edit", "formulas.delete", "formulas.advanced",
+          "publish.public", "publish.groups", "publish.email", "publish.embed",
+          "integrations.webhooks", "integrations.api", "integrations.export"
+        ],
+        "isSystem": false,
+        "isCustom": true,
+        "createdAt": "2024-07-01T00:00:00.000Z",
+        "updatedAt": "2024-07-01T00:00:00.000Z"
+      }
+    ]
+  },
+  "users": {
+    "default-tenant": [
+      {
+        "id": "user-admin-default",
+        "email": "admin@demo.evalai.com",
+        "firstName": "Demo",
+        "lastName": "Admin",
+        "tenantId": "default-tenant",
+        "roleIds": ["role-admin-default"],
+        "permissions": [
+          "evaluations.create", "evaluations.edit", "evaluations.delete", "evaluations.view", "evaluations.publish",
+          "reports.create", "reports.edit", "reports.view", "reports.export", "reports.schedule",
+          "templates.create", "templates.edit", "templates.delete", "templates.share",
+          "contacts.create", "contacts.edit", "contacts.import", "contacts.export", "contacts.delete",
+          "users.invite", "users.manage", "users.remove", "users.roles",
+          "tenant.settings", "tenant.branding", "tenant.billing", "tenant.analytics",
+          "formulas.create", "formulas.edit", "formulas.delete", "formulas.advanced",
+          "publish.public", "publish.groups", "publish.email", "publish.embed",
+          "integrations.webhooks", "integrations.api", "integrations.export"
+        ],
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "updatedAt": "2024-07-20T00:00:00.000Z"
+      },
+      {
+        "id": "user-editor-default",
+        "email": "editor@demo.evalai.com",
+        "firstName": "Demo",
+        "lastName": "Editor",
+        "tenantId": "default-tenant",
+        "roleIds": ["role-editor-default"],
+        "permissions": [
+          "evaluations.create", "evaluations.edit", "evaluations.view", "evaluations.publish",
+          "reports.create", "reports.edit", "reports.view", "reports.export",
+          "templates.create", "templates.edit", "templates.share",
+          "contacts.create", "contacts.edit", "contacts.import",
+          "formulas.create", "formulas.edit",
+          "publish.groups", "publish.email"
+        ],
+        "createdAt": "2024-01-05T00:00:00.000Z",
+        "updatedAt": "2024-07-15T00:00:00.000Z"
+      }
+    ],
+    "acme-corp": [
+      {
+        "id": "user-admin-acme",
+        "email": "admin@acme.com",
+        "firstName": "John",
+        "lastName": "Smith",
+        "tenantId": "acme-corp",
+        "roleIds": ["role-admin-acme"],
+        "permissions": [
+          "evaluations.create", "evaluations.edit", "evaluations.delete", "evaluations.view", "evaluations.publish",
+          "reports.create", "reports.edit", "reports.view", "reports.export", "reports.schedule",
+          "templates.create", "templates.edit", "templates.delete", "templates.share",
+          "contacts.create", "contacts.edit", "contacts.import", "contacts.export", "contacts.delete",
+          "users.invite", "users.manage", "users.remove", "users.roles",
+          "tenant.settings", "tenant.branding", "tenant.billing", "tenant.analytics",
+          "formulas.create", "formulas.edit", "formulas.delete", "formulas.advanced",
+          "publish.public", "publish.groups", "publish.email", "publish.embed",
+          "integrations.webhooks", "integrations.api", "integrations.export"
+        ],
+        "createdAt": "2024-02-15T00:00:00.000Z",
+        "updatedAt": "2024-07-18T00:00:00.000Z"
+      },
+      {
+        "id": "user-hr-acme",
+        "email": "hr@acme.com",
+        "firstName": "Sarah",
+        "lastName": "Johnson",
+        "tenantId": "acme-corp",
+        "roleIds": ["role-hr-manager-acme"],
+        "permissions": [
+          "evaluations.create", "evaluations.edit", "evaluations.view",
+          "reports.view", "reports.export",
+          "contacts.create", "contacts.edit", "contacts.import"
+        ],
+        "createdAt": "2024-02-20T00:00:00.000Z",
+        "updatedAt": "2024-07-10T00:00:00.000Z"
+      }
+    ],
+    "tech-startup": [
+      {
+        "id": "user-founder-tech",
+        "email": "founder@techstart.com",
+        "firstName": "Alex",
+        "lastName": "Chen",
+        "tenantId": "tech-startup",
+        "roleIds": ["role-founder-tech"],
+        "permissions": [
+          "evaluations.create", "evaluations.edit", "evaluations.delete", "evaluations.view", "evaluations.publish",
+          "reports.create", "reports.edit", "reports.view", "reports.export", "reports.schedule",
+          "templates.create", "templates.edit", "templates.delete", "templates.share",
+          "contacts.create", "contacts.edit", "contacts.import", "contacts.export", "contacts.delete",
+          "users.invite", "users.manage", "users.remove", "users.roles",
+          "tenant.settings", "tenant.branding", "tenant.billing", "tenant.analytics",
+          "formulas.create", "formulas.edit", "formulas.delete", "formulas.advanced",
+          "publish.public", "publish.groups", "publish.email", "publish.embed",
+          "integrations.webhooks", "integrations.api", "integrations.export"
+        ],
+        "createdAt": "2024-07-01T00:00:00.000Z",
+        "updatedAt": "2024-07-20T00:00:00.000Z"
+      }
+    ]
+  }
+}

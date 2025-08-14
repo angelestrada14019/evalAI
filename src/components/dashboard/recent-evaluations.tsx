@@ -7,16 +7,20 @@ import {
 } from "@/components/ui/avatar"
 import { useEffect, useState } from "react"
 import { backend } from "@/services/backend/backend"
+import { useTenant } from "@/context/tenant-context"
 import type { RecentEvaluation } from "@/services/backend/types"
 
 export function RecentEvaluations() {
   const [evaluations, setEvaluations] = useState<RecentEvaluation[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const { currentTenant } = useTenant()
 
   useEffect(() => {
     const loadRecentEvaluations = async () => {
+      if (!currentTenant?.id) return
+      
       try {
-        const recentEvals = await backend().getRecentEvaluations()
+        const recentEvals = await backend().getRecentEvaluations(currentTenant.id)
         setEvaluations(recentEvals)
       } catch (error) {
         console.error('Failed to load recent evaluations:', error)
@@ -26,7 +30,7 @@ export function RecentEvaluations() {
     }
 
     loadRecentEvaluations()
-  }, [])
+  }, [currentTenant?.id])
 
   if (isLoading) {
     return (

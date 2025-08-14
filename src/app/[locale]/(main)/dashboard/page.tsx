@@ -6,7 +6,8 @@ import { OverviewChart } from '@/components/dashboard/overview-chart'
 import { RecentEvaluations } from '@/components/dashboard/recent-evaluations'
 import { backend } from '@/services/backend/backend'
 import type { DashboardStats } from '@/services/backend/types'
-import {getTranslations} from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
+import { getCurrentTenantId } from '@/lib/server-tenant';
 
 async function StatsCard({ title, icon: Icon, value, change }: { title: string, icon: React.ElementType, value: string | number, change: string }) {
   return (
@@ -24,7 +25,8 @@ async function StatsCard({ title, icon: Icon, value, change }: { title: string, 
 }
 
 export default async function DashboardPage() {
-  const stats: DashboardStats = await backend().getDashboardStats();
+  const tenantId = await getCurrentTenantId();
+  const stats: DashboardStats = await backend().getDashboardStats(tenantId);
   const t = await getTranslations('DashboardPage');
 
   return (

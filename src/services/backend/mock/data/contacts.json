@@ -1,0 +1,241 @@
+{
+  "contactGroups": {
+    "default-tenant": [
+      {
+        "id": "group-employees-default",
+        "tenantId": "default-tenant",
+        "name": "All Employees",
+        "description": "All company employees",
+        "tags": ["internal", "employees"],
+        "contactCount": 150,
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "updatedAt": "2024-07-20T00:00:00.000Z"
+      },
+      {
+        "id": "group-managers-default",
+        "tenantId": "default-tenant",
+        "name": "Managers",
+        "description": "Team managers and leads",
+        "tags": ["internal", "management"],
+        "contactCount": 25,
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "updatedAt": "2024-07-15T00:00:00.000Z"
+      },
+      {
+        "id": "group-new-hires-default",
+        "tenantId": "default-tenant",
+        "name": "New Hires 2024",
+        "description": "Employees hired in 2024",
+        "tags": ["onboarding", "2024"],
+        "contactCount": 35,
+        "createdAt": "2024-01-15T00:00:00.000Z",
+        "updatedAt": "2024-07-20T00:00:00.000Z"
+      }
+    ],
+    "acme-corp": [
+      {
+        "id": "group-sales-acme",
+        "tenantId": "acme-corp",
+        "name": "Sales Team",
+        "description": "Sales representatives and managers",
+        "tags": ["sales", "revenue"],
+        "contactCount": 45,
+        "createdAt": "2024-02-15T00:00:00.000Z",
+        "updatedAt": "2024-07-18T00:00:00.000Z"
+      },
+      {
+        "id": "group-engineering-acme",
+        "tenantId": "acme-corp",
+        "name": "Engineering",
+        "description": "Software engineers and technical staff",
+        "tags": ["engineering", "technical"],
+        "contactCount": 80,
+        "createdAt": "2024-02-15T00:00:00.000Z",
+        "updatedAt": "2024-07-10T00:00:00.000Z"
+      },
+      {
+        "id": "group-leadership-acme",
+        "tenantId": "acme-corp",
+        "name": "Leadership Team",
+        "description": "C-level executives and VPs",
+        "tags": ["leadership", "executives"],
+        "contactCount": 12,
+        "createdAt": "2024-02-15T00:00:00.000Z",
+        "updatedAt": "2024-06-01T00:00:00.000Z"
+      }
+    ],
+    "tech-startup": [
+      {
+        "id": "group-team-tech",
+        "tenantId": "tech-startup",
+        "name": "Core Team",
+        "description": "Founding team and early employees",
+        "tags": ["core", "founding"],
+        "contactCount": 15,
+        "createdAt": "2024-07-01T00:00:00.000Z",
+        "updatedAt": "2024-07-20T00:00:00.000Z"
+      }
+    ]
+  },
+  "contacts": {
+    "default-tenant": [
+      {
+        "id": "contact-1-default",
+        "tenantId": "default-tenant",
+        "email": "john.doe@demo.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "customFields": {
+          "department": "Engineering",
+          "level": "Senior",
+          "startDate": "2023-03-15",
+          "location": "Remote"
+        },
+        "groupIds": ["group-employees-default"],
+        "status": "active",
+        "createdAt": "2024-01-15T00:00:00.000Z",
+        "updatedAt": "2024-07-20T00:00:00.000Z"
+      },
+      {
+        "id": "contact-2-default",
+        "tenantId": "default-tenant",
+        "email": "jane.smith@demo.com",
+        "firstName": "Jane",
+        "lastName": "Smith",
+        "customFields": {
+          "department": "Marketing",
+          "level": "Manager",
+          "startDate": "2022-08-01",
+          "location": "New York"
+        },
+        "groupIds": ["group-employees-default", "group-managers-default"],
+        "status": "active",
+        "createdAt": "2024-01-20T00:00:00.000Z",
+        "updatedAt": "2024-07-15T00:00:00.000Z"
+      },
+      {
+        "id": "contact-3-default",
+        "tenantId": "default-tenant",
+        "email": "mike.wilson@demo.com",
+        "firstName": "Mike",
+        "lastName": "Wilson",
+        "customFields": {
+          "department": "Engineering",
+          "level": "Junior",
+          "startDate": "2024-02-01",
+          "location": "San Francisco"
+        },
+        "groupIds": ["group-employees-default", "group-new-hires-default"],
+        "status": "active",
+        "createdAt": "2024-02-01T00:00:00.000Z",
+        "updatedAt": "2024-07-10T00:00:00.000Z"
+      },
+      {
+        "id": "contact-4-default",
+        "tenantId": "default-tenant",
+        "email": "sarah.johnson@demo.com",
+        "firstName": "Sarah",
+        "lastName": "Johnson",
+        "customFields": {
+          "department": "HR",
+          "level": "Director",
+          "startDate": "2021-11-15",
+          "location": "Chicago"
+        },
+        "groupIds": ["group-employees-default", "group-managers-default"],
+        "status": "active",
+        "createdAt": "2024-01-10T00:00:00.000Z",
+        "updatedAt": "2024-07-05T00:00:00.000Z"
+      }
+    ],
+    "acme-corp": [
+      {
+        "id": "contact-1-acme",
+        "tenantId": "acme-corp",
+        "email": "mike.wilson@acme.com",
+        "firstName": "Mike",
+        "lastName": "Wilson",
+        "customFields": {
+          "territory": "West Coast",
+          "quota": 500000,
+          "experience": "5 years",
+          "specialization": "Enterprise Sales"
+        },
+        "groupIds": ["group-sales-acme"],
+        "status": "active",
+        "createdAt": "2024-02-20T00:00:00.000Z",
+        "updatedAt": "2024-07-18T00:00:00.000Z"
+      },
+      {
+        "id": "contact-2-acme",
+        "tenantId": "acme-corp",
+        "email": "lisa.chen@acme.com",
+        "firstName": "Lisa",
+        "lastName": "Chen",
+        "customFields": {
+          "role": "Senior Software Engineer",
+          "team": "Backend",
+          "skills": "Python, Go, Kubernetes",
+          "experience": "8 years"
+        },
+        "groupIds": ["group-engineering-acme"],
+        "status": "active",
+        "createdAt": "2024-02-25T00:00:00.000Z",
+        "updatedAt": "2024-07-12T00:00:00.000Z"
+      },
+      {
+        "id": "contact-3-acme",
+        "tenantId": "acme-corp",
+        "email": "robert.taylor@acme.com",
+        "firstName": "Robert",
+        "lastName": "Taylor",
+        "customFields": {
+          "position": "CTO",
+          "department": "Technology",
+          "reportingTo": "CEO",
+          "experience": "15 years"
+        },
+        "groupIds": ["group-leadership-acme", "group-engineering-acme"],
+        "status": "active",
+        "createdAt": "2024-02-15T00:00:00.000Z",
+        "updatedAt": "2024-06-01T00:00:00.000Z"
+      }
+    ],
+    "tech-startup": [
+      {
+        "id": "contact-1-tech",
+        "tenantId": "tech-startup",
+        "email": "alex.chen@techstart.com",
+        "firstName": "Alex",
+        "lastName": "Chen",
+        "customFields": {
+          "role": "Founder & CEO",
+          "equity": "40%",
+          "background": "Former Google PM",
+          "focus": "Product & Strategy"
+        },
+        "groupIds": ["group-team-tech"],
+        "status": "active",
+        "createdAt": "2024-07-01T00:00:00.000Z",
+        "updatedAt": "2024-07-20T00:00:00.000Z"
+      },
+      {
+        "id": "contact-2-tech",
+        "tenantId": "tech-startup",
+        "email": "maria.garcia@techstart.com",
+        "firstName": "Maria",
+        "lastName": "Garcia",
+        "customFields": {
+          "role": "Co-founder & CTO",
+          "equity": "35%",
+          "background": "Former Meta Engineer",
+          "focus": "Engineering & Architecture"
+        },
+        "groupIds": ["group-team-tech"],
+        "status": "active",
+        "createdAt": "2024-07-01T00:00:00.000Z",
+        "updatedAt": "2024-07-18T00:00:00.000Z"
+      }
+    ]
+  }
+}

@@ -5,7 +5,7 @@ import { useMemo } from "react"
 import type { ColumnDef } from "@tanstack/react-table"
 import type { Evaluation } from "@/services/backend/types"
 import { Link } from "@/i18n/navigation"
-import { MoreHorizontal } from "lucide-react"
+import { MoreHorizontal, Mail } from "lucide-react"
 import { format } from "date-fns"
 import type { useTranslations } from "next-intl"
 
@@ -15,6 +15,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "../ui/data-table-column-header"
@@ -30,9 +31,10 @@ const statusVariant = (status: string): 'secondary' | 'default' | 'outline' => {
 
 interface UseEvaluationColumnsProps {
   t: ReturnType<typeof useTranslations>;
+  onDistribute?: (evaluation: Evaluation) => void;
 }
 
-export const useEvaluationColumns = ({ t }: UseEvaluationColumnsProps): ColumnDef<Evaluation>[] => {
+export const useEvaluationColumns = ({ t, onDistribute }: UseEvaluationColumnsProps): ColumnDef<Evaluation>[] => {
     return useMemo(() => [
         {
             accessorKey: "title",
@@ -92,7 +94,15 @@ export const useEvaluationColumns = ({ t }: UseEvaluationColumnsProps): ColumnDe
                             <DropdownMenuContent align="end">
                                 <DropdownMenuItem asChild><Link href={`/evaluations/${evaluation.id}/build`}>{t('EvaluationsPage.editAction')}</Link></DropdownMenuItem>
                                 <DropdownMenuItem>{t('EvaluationsPage.viewResponsesAction')}</DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                {onDistribute && (
+                                    <DropdownMenuItem onClick={() => onDistribute(evaluation)}>
+                                        <Mail className="mr-2 h-4 w-4" />
+                                        Send to Contacts
+                                    </DropdownMenuItem>
+                                )}
                                 <DropdownMenuItem>{t('EvaluationsPage.duplicateAction')}</DropdownMenuItem>
+                                <DropdownMenuSeparator />
                                 <DropdownMenuItem className="text-destructive">{t('EvaluationsPage.deleteAction')}</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -100,5 +110,5 @@ export const useEvaluationColumns = ({ t }: UseEvaluationColumnsProps): ColumnDe
                 )
             },
         },
-    ], [t]);
+    ], [t, onDistribute]);
 }

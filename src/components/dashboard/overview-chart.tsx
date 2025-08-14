@@ -3,16 +3,20 @@
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
 import { useEffect, useState } from "react"
 import { backend } from "@/services/backend/backend"
+import { useTenant } from "@/context/tenant-context"
 import type { ChartData } from "@/services/backend/types"
 
 export function OverviewChart() {
   const [data, setData] = useState<ChartData[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const { currentTenant } = useTenant()
 
   useEffect(() => {
     const loadChartData = async () => {
+      if (!currentTenant?.id) return
+      
       try {
-        const chartData = await backend().getChartData()
+        const chartData = await backend().getChartData(currentTenant.id)
         setData(chartData)
       } catch (error) {
         console.error('Failed to load chart data:', error)
@@ -22,7 +26,7 @@ export function OverviewChart() {
     }
 
     loadChartData()
-  }, [])
+  }, [currentTenant?.id])
 
   if (isLoading) {
     return (

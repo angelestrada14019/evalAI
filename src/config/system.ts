@@ -8,7 +8,7 @@ export const systemConfig = {
      * The active authentication provider.
      * @type {'mock' | 'supabase' | 'keycloak' | 'b2c'}
      */
-    provider: 'mock',
+    provider: 'supabase',
   },
   ai: {
     /**
@@ -29,7 +29,7 @@ export const systemConfig = {
      * The active data backend provider.
      * @type {'mock' | 'supabase' | 'rest'}
      */
-    provider: 'mock',
+    provider: 'supabase',
   }
 };
 

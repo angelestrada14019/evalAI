@@ -1,0 +1,341 @@
+{
+  "evaluations": {
+    "default-tenant": [
+      {
+        "id": "evaluation_001",
+        "tenantId": "default-tenant",
+        "title": "Q3 2024 Engineering Performance Review",
+        "description": "Quarterly performance review for engineering team",
+        "status": "Active",
+        "responses": 45,
+        "lastModified": "2024-07-15T10:00:00.000Z",
+        "publicLink": "https://demo.evalai.com/public/evaluation_001",
+        "audienceGroups": ["group-employees-default"],
+        "createdAt": "2024-07-01T00:00:00.000Z",
+        "updatedAt": "2024-07-15T00:00:00.000Z"
+      },
+      {
+        "id": "evaluation_002",
+        "tenantId": "default-tenant",
+        "title": "New Hire Onboarding Survey",
+        "description": "Feedback collection for new employee onboarding process",
+        "status": "Active",
+        "responses": 120,
+        "lastModified": "2024-07-12T14:30:00.000Z",
+        "audienceGroups": ["group-new-hires-default"],
+        "createdAt": "2024-06-15T00:00:00.000Z",
+        "updatedAt": "2024-07-12T00:00:00.000Z"
+      },
+      {
+        "id": "evaluation_003",
+        "tenantId": "default-tenant",
+        "title": "Manager Effectiveness Assessment",
+        "description": "360-degree feedback for management team",
+        "status": "Draft",
+        "responses": 0,
+        "lastModified": "2024-07-20T09:15:00.000Z",
+        "audienceGroups": ["group-managers-default"],
+        "createdAt": "2024-07-18T00:00:00.000Z",
+        "updatedAt": "2024-07-20T00:00:00.000Z"
+      }
+    ],
+    "acme-corp": [
+      {
+        "id": "evaluation_acme_001",
+        "tenantId": "acme-corp",
+        "title": "Sales Skills Assessment Q3",
+        "description": "Quarterly assessment of sales team capabilities",
+        "status": "Active",
+        "responses": 35,
+        "lastModified": "2024-07-18T09:00:00.000Z",
+        "publicLink": "https://acme.evalai.com/public/sales-q3",
+        "audienceGroups": ["group-sales-acme"],
+        "createdAt": "2024-07-01T00:00:00.000Z",
+        "updatedAt": "2024-07-18T00:00:00.000Z"
+      },
+      {
+        "id": "evaluation_acme_002",
+        "tenantId": "acme-corp",
+        "title": "Engineering Team Culture Survey",
+        "description": "Annual culture and satisfaction survey for engineering",
+        "status": "Active",
+        "responses": 72,
+        "lastModified": "2024-07-10T16:45:00.000Z",
+        "audienceGroups": ["group-engineering-acme"],
+        "createdAt": "2024-06-01T00:00:00.000Z",
+        "updatedAt": "2024-07-10T00:00:00.000Z"
+      },
+      {
+        "id": "evaluation_acme_003",
+        "tenantId": "acme-corp",
+        "title": "Leadership 360 Review",
+        "description": "Comprehensive leadership assessment for executives",
+        "status": "Completed",
+        "responses": 12,
+        "lastModified": "2024-06-30T12:00:00.000Z",
+        "audienceGroups": ["group-leadership-acme"],
+        "createdAt": "2024-05-15T00:00:00.000Z",
+        "updatedAt": "2024-06-30T00:00:00.000Z"
+      }
+    ],
+    "tech-startup": [
+      {
+        "id": "evaluation_tech_001",
+        "tenantId": "tech-startup",
+        "title": "Startup Team Alignment Check",
+        "description": "Quarterly alignment and goal-setting for core team",
+        "status": "Active",
+        "responses": 12,
+        "lastModified": "2024-07-20T11:30:00.000Z",
+        "publicLink": "https://techstart.evalai.com/public/team-alignment",
+        "audienceGroups": ["group-team-tech"],
+        "createdAt": "2024-07-15T00:00:00.000Z",
+        "updatedAt": "2024-07-20T00:00:00.000Z"
+      }
+    ],
+    "localhost-tenant": [
+      {
+        "id": "evaluation_localhost_001",
+        "tenantId": "localhost-tenant",
+        "title": "Evaluación de Satisfacción del Cliente",
+        "description": "Encuesta para medir la satisfacción y experiencia del cliente",
+        "status": "Active",
+        "responses": 28,
+        "lastModified": "2024-07-20T15:30:00.000Z",
+        "publicLink": "https://localhost:9002/public/customer-satisfaction",
+        "audienceGroups": ["group-customers-localhost"],
+        "createdAt": "2024-07-10T00:00:00.000Z",
+        "updatedAt": "2024-07-20T00:00:00.000Z"
+      },
+      {
+        "id": "evaluation_localhost_002",
+        "tenantId": "localhost-tenant",
+        "title": "Evaluación de Desempeño Trimestral",
+        "description": "Revisión de desempeño para empleados del Q3 2024",
+        "status": "Active",
+        "responses": 15,
+        "lastModified": "2024-07-18T10:15:00.000Z",
+        "audienceGroups": ["group-employees-localhost"],
+        "createdAt": "2024-07-01T00:00:00.000Z",
+        "updatedAt": "2024-07-18T00:00:00.000Z"
+      },
+      {
+        "id": "evaluation_localhost_003",
+        "tenantId": "localhost-tenant",
+        "title": "Encuesta de Clima Organizacional",
+        "description": "Evaluación del ambiente laboral y cultura empresarial",
+        "status": "Draft",
+        "responses": 0,
+        "lastModified": "2024-07-21T09:00:00.000Z",
+        "audienceGroups": ["group-all-localhost"],
+        "createdAt": "2024-07-20T00:00:00.000Z",
+        "updatedAt": "2024-07-21T00:00:00.000Z"
+      }
+    ]
+  },
+  "customFormulas": {
+    "default-tenant": [
+      {
+        "id": "formula-1-default",
+        "tenantId": "default-tenant",
+        "name": "Performance Score",
+        "variableId": "performance_score",
+        "formula": "AVG(code_quality, team_collab) * 20",
+        "description": "Average of code quality and team collaboration, scaled to 100",
+        "displayFormat": "number",
+        "category": "score",
+        "createdAt": "2024-01-15T00:00:00.000Z",
+        "updatedAt": "2024-07-10T00:00:00.000Z"
+      },
+      {
+        "id": "formula-2-default",
+        "tenantId": "default-tenant",
+        "name": "Growth Potential",
+        "variableId": "growth_potential",
+        "formula": "IF(learning_agility > 8 AND performance_score > 80, \"High\", IF(learning_agility > 6 OR performance_score > 70, \"Medium\", \"Low\"))",
+        "description": "Categorizes employee growth potential based on learning agility and performance",
+        "displayFormat": "text",
+        "category": "classification",
+        "createdAt": "2024-02-01T00:00:00.000Z",
+        "updatedAt": "2024-07-05T00:00:00.000Z"
+      }
+    ],
+    "acme-corp": [
+      {
+        "id": "formula-1-acme",
+        "tenantId": "acme-corp",
+        "name": "Sales Effectiveness",
+        "variableId": "sales_effectiveness",
+        "formula": "IF(negotiation_skills > 7, \"High\", IF(negotiation_skills > 4, \"Medium\", \"Low\"))",
+        "description": "Categorizes sales effectiveness based on negotiation skills",
+        "displayFormat": "text",
+        "category": "classification",
+        "createdAt": "2024-02-20T00:00:00.000Z",
+        "updatedAt": "2024-07-15T00:00:00.000Z"
+      },
+      {
+        "id": "formula-2-acme",
+        "tenantId": "acme-corp",
+        "name": "Revenue Impact Score",
+        "variableId": "revenue_impact",
+        "formula": "(deals_closed * avg_deal_size) / quota * 100",
+        "description": "Calculates revenue impact as percentage of quota achievement",
+        "displayFormat": "percentage",
+        "category": "performance",
+        "createdAt": "2024-03-01T00:00:00.000Z",
+        "updatedAt": "2024-07-12T00:00:00.000Z"
+      }
+    ],
+    "tech-startup": [
+      {
+        "id": "formula-1-tech",
+        "tenantId": "tech-startup",
+        "name": "Startup Fit Score",
+        "variableId": "startup_fit",
+        "formula": "AVG(adaptability, ownership, innovation) * 10",
+        "description": "Measures how well someone fits startup culture",
+        "displayFormat": "number",
+        "category": "culture",
+        "createdAt": "2024-07-05T00:00:00.000Z",
+        "updatedAt": "2024-07-18T00:00:00.000Z"
+      }
+    ],
+    "localhost-tenant": [
+      {
+        "id": "formula-1-localhost",
+        "tenantId": "localhost-tenant",
+        "name": "Puntuación de Satisfacción",
+        "variableId": "satisfaction_score",
+        "formula": "AVG(calidad_servicio, tiempo_respuesta, facilidad_uso) * 20",
+        "description": "Promedio de calidad de servicio, tiempo de respuesta y facilidad de uso, escalado a 100",
+        "displayFormat": "number",
+        "category": "score",
+        "createdAt": "2024-07-10T00:00:00.000Z",
+        "updatedAt": "2024-07-20T00:00:00.000Z"
+      },
+      {
+        "id": "formula-2-localhost",
+        "tenantId": "localhost-tenant",
+        "name": "Nivel de Recomendación",
+        "variableId": "recommendation_level",
+        "formula": "IF(satisfaction_score > 85, \"Alto\", IF(satisfaction_score > 70, \"Medio\", \"Bajo\"))",
+        "description": "Categoriza el nivel de recomendación basado en la puntuación de satisfacción",
+        "displayFormat": "text",
+        "category": "classification",
+        "createdAt": "2024-07-12T00:00:00.000Z",
+        "updatedAt": "2024-07-20T00:00:00.000Z"
+      }
+    ]
+  },
+  "reports": {
+    "default-tenant": [
+      {
+        "id": "REP-001",
+        "tenantId": "default-tenant",
+        "evaluationId": "evaluation_001",
+        "title": "Q3 2024 Engineering Performance",
+        "date": "2024-07-15",
+        "type": "Aggregate",
+        "status": "Completed",
+        "createdAt": "2024-07-15T00:00:00.000Z",
+        "updatedAt": "2024-07-15T00:00:00.000Z"
+      },
+      {
+        "id": "REP-002",
+        "tenantId": "default-tenant",
+        "evaluationId": "evaluation_002",
+        "title": "Onboarding Survey Results",
+        "date": "2024-07-12",
+        "type": "Aggregate",
+        "status": "Completed",
+        "createdAt": "2024-07-12T00:00:00.000Z",
+        "updatedAt": "2024-07-12T00:00:00.000Z"
+      },
+      {
+        "id": "REP-003",
+        "tenantId": "default-tenant",
+        "evaluationId": "evaluation_001",
+        "title": "John Doe - Performance Review",
+        "date": "2024-07-10",
+        "type": "Individual",
+        "status": "Completed",
+        "responseId": "resp-001",
+        "createdAt": "2024-07-10T00:00:00.000Z",
+        "updatedAt": "2024-07-10T00:00:00.000Z"
+      }
+    ],
+    "acme-corp": [
+      {
+        "id": "REP-ACME-001",
+        "tenantId": "acme-corp",
+        "evaluationId": "evaluation_acme_001",
+        "title": "Q3 Sales Skills Assessment Results",
+        "date": "2024-07-18",
+        "type": "Aggregate",
+        "status": "Completed",
+        "createdAt": "2024-07-18T00:00:00.000Z",
+        "updatedAt": "2024-07-18T00:00:00.000Z"
+      },
+      {
+        "id": "REP-ACME-002",
+        "tenantId": "acme-corp",
+        "evaluationId": "evaluation_acme_002",
+        "title": "Engineering Culture Survey Analysis",
+        "date": "2024-07-10",
+        "type": "Aggregate",
+        "status": "Completed",
+        "createdAt": "2024-07-10T00:00:00.000Z",
+        "updatedAt": "2024-07-10T00:00:00.000Z"
+      }
+    ],
+    "tech-startup": [
+      {
+        "id": "REP-TECH-001",
+        "tenantId": "tech-startup",
+        "evaluationId": "evaluation_tech_001",
+        "title": "Team Alignment Check Results",
+        "date": "2024-07-20",
+        "type": "Aggregate",
+        "status": "In Progress",
+        "createdAt": "2024-07-20T00:00:00.000Z",
+        "updatedAt": "2024-07-20T00:00:00.000Z"
+      }
+    ],
+    "localhost-tenant": [
+      {
+        "id": "REP-LOCALHOST-001",
+        "tenantId": "localhost-tenant",
+        "evaluationId": "evaluation_localhost_001",
+        "title": "Reporte de Satisfacción del Cliente",
+        "date": "2024-07-20",
+        "type": "Aggregate",
+        "status": "Completed",
+        "createdAt": "2024-07-20T00:00:00.000Z",
+        "updatedAt": "2024-07-20T00:00:00.000Z"
+      },
+      {
+        "id": "REP-LOCALHOST-002",
+        "tenantId": "localhost-tenant",
+        "evaluationId": "evaluation_localhost_002",
+        "title": "Análisis de Desempeño Q3 2024",
+        "date": "2024-07-18",
+        "type": "Aggregate",
+        "status": "Completed",
+        "createdAt": "2024-07-18T00:00:00.000Z",
+        "updatedAt": "2024-07-18T00:00:00.000Z"
+      },
+      {
+        "id": "REP-LOCALHOST-003",
+        "tenantId": "localhost-tenant",
+        "evaluationId": "evaluation_localhost_001",
+        "title": "María García - Evaluación Individual",
+        "date": "2024-07-19",
+        "type": "Individual",
+        "status": "Completed",
+        "responseId": "resp-localhost-001",
+        "createdAt": "2024-07-19T00:00:00.000Z",
+        "updatedAt": "2024-07-19T00:00:00.000Z"
+      }
+    ]
+  }
+}

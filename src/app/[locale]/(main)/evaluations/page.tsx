@@ -6,10 +6,12 @@ import { backend } from '@/services/backend/backend';
 import { getTranslations } from 'next-intl/server';
 import { EvaluationsClient } from '@/components/evaluations/evaluations-client';
 import { Breadcrumb } from '@/components/layout/breadcrumb';
+import { getCurrentTenantId } from '@/lib/server-tenant';
 
 // Note: This is now a Server Component that fetches fresh data on every load.
 export default async function EvaluationsPage() {
-  const evaluations = await backend().getEvaluations();
+  const tenantId = await getCurrentTenantId();
+  const evaluations = await backend().getEvaluations(tenantId);
   const t = await getTranslations(); // We get the whole translation object
   const tB = await getTranslations('Breadcrumbs');
 
