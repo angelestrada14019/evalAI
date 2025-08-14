@@ -88,7 +88,7 @@ export class SupabaseBackendService implements BackendService {
 
     if (error || !data) return null;
 
-    return data.form_config as FormTemplate;
+    return data.form_config as unknown as FormTemplate;
   }
 
   async saveEvaluation(tenantId: string, template: FormTemplate): Promise<FormTemplate> {
@@ -109,7 +109,7 @@ export class SupabaseBackendService implements BackendService {
 
     if (error) throw new Error(`Failed to save evaluation: ${error.message}`);
 
-    return data.form_config as FormTemplate;
+    return data.form_config as unknown as FormTemplate;
   }
 
   async getReports(tenantId: string): Promise<Report[]> {
@@ -321,7 +321,7 @@ export class SupabaseBackendService implements BackendService {
       first_name: contact.firstName,
       last_name: contact.lastName,
       custom_fields: contact.customFields as any,
-      status: contact.status === 'unsubscribed' ? 'inactive' : contact.status
+      status: (contact.status === 'unsubscribed' ? 'inactive' : contact.status) as 'active' | 'inactive' | 'bounced'
     }));
 
     const { data, error } = await this.client
@@ -517,4 +517,7 @@ export class SupabaseBackendService implements BackendService {
 
 // Export the service instance
 const supabaseBackendService = new SupabaseBackendService();
+
+// Export both as default and as named export for compatibility
 export default supabaseBackendService;
+module.exports = supabaseBackendService;

@@ -107,13 +107,13 @@ export function backend(): BackendService {
   switch (provider) {
     case 'mock':
       const mockImpl = require('./impl.mock');
-      return mockImpl;
+      return mockImpl.default || mockImpl;
     case 'supabase':
       const supabaseBackendService = require('./impl.supabase');
-      return supabaseBackendService;
+      return supabaseBackendService.default || supabaseBackendService;
     case 'rest':
       const restBackendService = require('./impl.rest');
-      return restBackendService;
+      return restBackendService.default || restBackendService;
     default:
       throw new Error(`Unknown backend provider: ${provider}`);
   }
